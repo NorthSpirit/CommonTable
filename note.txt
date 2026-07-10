@@ -1,0 +1,119 @@
+Food Ingredient Stuff: DS
+    GetAllFoodIngredients DS
+    GetFoodIngredientByID DS
+    InsertFoodIngredient DS
+    UpdateFoodIngredient DS
+    DeleteFoodIngredient DS
+
+Allergen Stuff: DS
+    GetAllAllergens DS
+    GetAllergenByID DS
+    GetAllergenByCode DS
+    InsertAllergen DS
+    UpdateAllergen DS
+    DeleteAllergen DS
+
+Food Item Stuff: DS
+    GetFoodItemByID DS
+    ListFoodItemsByRestaurant DS
+    ListAvailableFoodItemsByRestaurant DS
+    InsertFoodItem DS
+    UpdateFoodItem DS
+    SetFoodItemAvailability DS
+    DeleteFoodItem DS (soft delete)
+    RestoreFoodItem DS
+
+Food Menu Stuff: DS
+    GetFoodMenuByID DS
+    ListFoodMenusByRestaurant DS
+    InsertFoodMenu DS
+    UpdateFoodMenu DS
+    DeleteFoodMenu DS
+
+Item-Menu Relationship Stuff: DS
+    AddFoodItemToMenu DS
+    RemoveFoodItemFromMenu DS
+    ListItemsInMenu DS
+    ListMenusForItem DS
+
+Ingredient-Item Relationship Stuff: DS
+    AddIngredientToItem DS
+    UpdateIngredientInItem DS
+    RemoveIngredientFromItem DS
+    ListIngredientsForItem DS
+    ListItemsUsingIngredient DS
+
+Restaurant-Ingredient Relationship Stuff: D
+    LinkRestaurantIngredient D
+    UpdateRestaurantIngredientShared D
+    UnlinkRestaurantIngredient D
+    ListIngredientsForRestaurant D
+
+Restaurant-Allergen Relationship Stuff: D
+    LinkRestaurantAllergen D
+    UnlinkRestaurantAllergen D
+    ListAllergensForRestaurant D
+
+FoodItem-Allergen Relationship Stuff: DS
+    ListAllergensForItem DS
+    ListItemsWithAllergen DS
+    AddAllergenToItem DS
+    RemoveAllergenFromItem DS
+
+Restaurant Stuff: D
+    GetRestaurant D
+    ListRestaurants D
+    InsertRestaurant D
+    UpdateRestaurant D
+    DeleteRestaurant D
+
+Employee Stuff: D
+    GetEmployeeByID D
+    ListEmployeesByRestaurant D
+    InsertEmployee D
+    UpdateEmployee D
+    SetEmployeeActive D
+    UpdateEmployeePinHash D
+    DeleteEmployee D
+
+Table Stuff: D
+    GetTableByID D
+    ListTables D
+    InsertTable D
+    UpdateTableStatus D
+    DeleteTable D
+
+Food Order Stuff: DS
+    GetFoodOrderByID DS
+    ListOrdersByRestaurant DS
+    ListOrdersByTable DS
+    ListOrdersByStatus DS
+    InsertFoodOrder DS
+    UpdateOrderStatus DS
+    UpdateFoodOrderNotes DS
+    DeleteFoodOrder DS
+
+Item-Order Relationship Stuff: DS
+    AddItemToOrder DS (with name/description snapshot)
+    UpdateItemOrderQuantity DS
+    RemoveItemFromOrder DS
+    ListItemsForOrder DS
+
+Payment Stuff: D
+    GetPaymentByID D
+    ListPaymentsByOrder D
+    InsertPayment D
+    UpdatePaymentStatus D
+    DeletePayment D
+
+Chat Message Stuff: D
+    GetChatMessageByID D
+    ListMessagesByRestaurant D
+    InsertChatMessage D
+    DeleteChatMessage D
+
+
+S = Service is done
+H = Handler is done
+R = Routing is done
+D = Repo is done

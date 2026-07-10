@@ -1,0 +1,26 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Go build artifacts
+/bin/
+/tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# GoLand / JetBrains IDE
+.idea/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Go workspace files (only if you're not intentionally committing these)
+go.work
+go.work.sum
