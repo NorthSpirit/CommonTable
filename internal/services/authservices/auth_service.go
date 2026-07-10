@@ -52,7 +52,7 @@ func (a *AuthService) VerifyRestaurantPassword(ctx context.Context, name string,
 func (a *AuthService) VerifyEmployeeLogin(ctx context.Context, restaurantID int32, employeeName string, password string) (repository.Employee, error) {
 	employee, err := a.queries.GetEmployeeByRestaurantAndName(ctx, repository.GetEmployeeByRestaurantAndNameParams{
 		RestaurantID: restaurantID,
-		Name:         helpers.TextFromString(&employeeName),
+		Name:         employeeName,
 	})
 	if err != nil {
 		return repository.Employee{}, fmt.Errorf("get employee by restaurant and name: %w", err)

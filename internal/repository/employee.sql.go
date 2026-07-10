@@ -19,7 +19,7 @@ RETURNING id, restaurant_id, name, role, pin_hash, hire_date, last_login, is_act
 
 type CreateEmployeeParams struct {
 	RestaurantID int32            `json:"restaurant_id"`
-	Name         pgtype.Text      `json:"name"`
+	Name         string           `json:"name"`
 	Role         EmployeeRole     `json:"role"`
 	PinHash      pgtype.Text      `json:"pin_hash"`
 	HireDate     pgtype.Timestamp `json:"hire_date"`
@@ -92,8 +92,8 @@ WHERE restaurant_id = $1 AND name = $2 AND is_active = true
 `
 
 type GetEmployeeByRestaurantAndNameParams struct {
-	RestaurantID int32       `json:"restaurant_id"`
-	Name         pgtype.Text `json:"name"`
+	RestaurantID int32  `json:"restaurant_id"`
+	Name         string `json:"name"`
 }
 
 func (q *Queries) GetEmployeeByRestaurantAndName(ctx context.Context, arg GetEmployeeByRestaurantAndNameParams) (Employee, error) {
@@ -212,7 +212,7 @@ WHERE id = $1
 
 type UpdateEmployeeParams struct {
 	ID          int32        `json:"id"`
-	Name        pgtype.Text  `json:"name"`
+	Name        string       `json:"name"`
 	Role        EmployeeRole `json:"role"`
 	Email       pgtype.Text  `json:"email"`
 	PhoneNumber pgtype.Text  `json:"phone_number"`

@@ -247,7 +247,7 @@ type ChatMessage struct {
 type Employee struct {
 	ID           int32            `json:"id"`
 	RestaurantID int32            `json:"restaurant_id"`
-	Name         pgtype.Text      `json:"name"`
+	Name         string           `json:"name"`
 	Role         EmployeeRole     `json:"role"`
 	PinHash      pgtype.Text      `json:"pin_hash"`
 	HireDate     pgtype.Timestamp `json:"hire_date"`

@@ -26,6 +26,18 @@ func (f *EmployeeService) GetEmployeeByID(ctx context.Context, id int32) (reposi
 	return employee, nil
 }
 
+func (f *EmployeeService) GetEmployeeByRestaurantAndName(ctx context.Context, restaurantID int32, name string) (repository.Employee, error) {
+	employee, err := f.queries.GetEmployeeByRestaurantAndName(ctx, repository.GetEmployeeByRestaurantAndNameParams{
+		RestaurantID: restaurantID,
+		Name:         name,
+	})
+	if err != nil {
+		return repository.Employee{}, fmt.Errorf("get employee by restaurant and name: %w", err)
+	}
+
+	return employee, nil
+}
+
 func (f *EmployeeService) ListEmployeesByRestaurant(ctx context.Context, restaurantID int32) ([]repository.Employee, error) {
 	employees, err := f.queries.ListEmployeesByRestaurant(ctx, restaurantID)
 	if err != nil {
@@ -47,7 +59,7 @@ func (f *EmployeeService) ListActiveEmployeesByRestaurant(ctx context.Context, r
 func (f *EmployeeService) InsertEmployee(
 	ctx context.Context,
 	restaurantID int32,
-	name *string,
+	name string,
 	role repository.EmployeeRole,
 	pinHash *string,
 	hireDate *time.Time,
@@ -57,7 +69,7 @@ func (f *EmployeeService) InsertEmployee(
 
 	employee, err := f.queries.CreateEmployee(ctx, repository.CreateEmployeeParams{
 		RestaurantID: restaurantID,
-		Name:         helpers.TextFromString(name),
+		Name:         name,
 		Role:         role,
 		PinHash:      helpers.TextFromString(pinHash),
 		HireDate:     helpers.TimestampFromTimePtr(hireDate),
@@ -74,7 +86,7 @@ func (f *EmployeeService) InsertEmployee(
 func (f *EmployeeService) UpdateEmployee(
 	ctx context.Context,
 	id int32,
-	name *string,
+	name string,
 	role repository.EmployeeRole,
 	email *string,
 	phoneNumber *string,
@@ -82,7 +94,7 @@ func (f *EmployeeService) UpdateEmployee(
 
 	err := f.queries.UpdateEmployee(ctx, repository.UpdateEmployeeParams{
 		ID:          id,
-		Name:        helpers.TextFromString(name),
+		Name:        name,
 		Role:        role,
 		Email:       helpers.TextFromString(email),
 		PhoneNumber: helpers.TextFromString(phoneNumber),

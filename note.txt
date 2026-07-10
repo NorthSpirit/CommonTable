@@ -62,13 +62,16 @@ FoodItem-Allergen Relationship Stuff: DS
 
 Restaurant Stuff: DS
     GetRestaurant DS
+    GetRestaurantByName DS
     ListRestaurants DS
     InsertRestaurant DS
     UpdateRestaurant DS
+    UpdateRestaurantPasswordHash DS
     DeleteRestaurant DS
 
-Employee Stuff: DS
+Employee Stuff: DS (pending regen after name NOT NULL migration)
     GetEmployeeByID DS
+    GetEmployeeByRestaurantAndName DS
     ListEmployeesByRestaurant DS
     InsertEmployee DS
     UpdateEmployee DS
@@ -111,6 +114,17 @@ Chat Message Stuff: DS
     ListMessagesByRestaurant DS
     InsertChatMessage DS
     DeleteChatMessage DS
+
+Auth Stuff: S
+    VerifyRestaurantPassword S
+    VerifyEmployeeLogin S
+    IssueEmployeeToken S
+    ValidateEmployeeToken S
+
+Admin Stuff: S
+    VerifyAdminLogin S
+    IssueAdminToken S
+    ValidateAdminToken S
 
 
 S = Service is done

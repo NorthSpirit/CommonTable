@@ -1,0 +1,63 @@
+package config
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"time"
+
+	"github.com/joho/godotenv"
+)
+
+type Config struct {
+	DBString string
+
+	AdminUsername     string
+	AdminPasswordHash string
+
+	JWTSecret   []byte
+	JWTTokenTTL time.Duration
+}
+
+func Load() (*Config, error) {
+	// Loading .env is optional — in production you'd typically set real
+	// env vars instead of shipping a .env file, so don't fail if it's missing.
+	_ = godotenv.Load()
+
+	dbString := os.Getenv("GOOSE_DBSTRING")
+	if dbString == "" {
+		return nil, fmt.Errorf("GOOSE_DBSTRING is not set")
+	}
+
+	adminUsername := os.Getenv("ADMIN_USERNAME")
+	if adminUsername == "" {
+		return nil, fmt.Errorf("ADMIN_USERNAME is not set")
+	}
+
+	adminPasswordHash := os.Getenv("ADMIN_PASSWORD_HASH")
+	if adminPasswordHash == "" {
+		return nil, fmt.Errorf("ADMIN_PASSWORD_HASH is not set")
+	}
+
+	jwtSecretRaw := os.Getenv("JWT_SECRET")
+	if jwtSecretRaw == "" {
+		return nil, fmt.Errorf("JWT_SECRET is not set")
+	}
+
+	ttlHoursRaw := os.Getenv("JWT_TOKEN_TTL_HOURS")
+	if ttlHoursRaw == "" {
+		return nil, fmt.Errorf("JWT_TOKEN_TTL_HOURS is not set")
+	}
+	ttlHours, err := strconv.Atoi(ttlHoursRaw)
+	if err != nil {
+		return nil, fmt.Errorf("parse JWT_TOKEN_TTL_HOURS: %w", err)
+	}
+
+	return &Config{
+		DBString:          dbString,
+		AdminUsername:     adminUsername,
+		AdminPasswordHash: adminPasswordHash,
+		JWTSecret:         []byte(jwtSecretRaw),
+		JWTTokenTTL:       time.Duration(ttlHours) * time.Hour,
+	}, nil
+}

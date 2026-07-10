@@ -25,6 +25,15 @@ func (f *RestaurantService) GetRestaurantByID(ctx context.Context, id int32) (re
 	return restaurant, nil
 }
 
+func (f *RestaurantService) GetRestaurantByName(ctx context.Context, name string) (repository.Restaurant, error) {
+	restaurant, err := f.queries.GetRestaurantByName(ctx, name)
+	if err != nil {
+		return repository.Restaurant{}, fmt.Errorf("get restaurant by name: %w", err)
+	}
+
+	return restaurant, nil
+}
+
 func (f *RestaurantService) GetRestaurantList(ctx context.Context) ([]repository.Restaurant, error) {
 	restaurants, err := f.queries.ListRestaurants(ctx)
 	if err != nil {
