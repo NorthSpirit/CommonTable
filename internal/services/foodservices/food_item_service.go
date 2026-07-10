@@ -43,6 +43,17 @@ func (f *FoodItemService) ListAvailableFoodItemsByRestaurant(ctx context.Context
 	return items, nil
 }
 
+// ListMenuItemsForDisplay returns available items on a given menu, including
+// price, for public-facing menu display (no authentication required).
+func (f *FoodItemService) ListMenuItemsForDisplay(ctx context.Context, menuID int32) ([]repository.ListMenuItemsForDisplayRow, error) {
+	items, err := f.queries.ListMenuItemsForDisplay(ctx, menuID)
+	if err != nil {
+		return nil, fmt.Errorf("list menu items for display: %w", err)
+	}
+
+	return items, nil
+}
+
 func (f *FoodItemService) InsertFoodItem(
 	ctx context.Context,
 	restaurantID int32,

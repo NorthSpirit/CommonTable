@@ -189,6 +189,52 @@ func (q *Queries) ListFoodItemsByRestaurant(ctx context.Context, restaurantID in
 	return items, nil
 }
 
+const listMenuItemsForDisplay = `-- name: ListMenuItemsForDisplay :many
+SELECT fi.id, fi.name, fi.description, fi.price, fi.image_url, fi.prep_time_mins, fi.instructions
+FROM food_items fi
+         JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
+WHERE fitm.menu_id = $1 AND fi.is_available = true AND fi.deleted_at IS NULL
+ORDER BY fi.name
+`
+
+type ListMenuItemsForDisplayRow struct {
+	ID           int32          `json:"id"`
+	Name         string         `json:"name"`
+	Description  pgtype.Text    `json:"description"`
+	Price        pgtype.Numeric `json:"price"`
+	ImageUrl     pgtype.Text    `json:"image_url"`
+	PrepTimeMins pgtype.Int4    `json:"prep_time_mins"`
+	Instructions pgtype.Text    `json:"instructions"`
+}
+
+func (q *Queries) ListMenuItemsForDisplay(ctx context.Context, menuID int32) ([]ListMenuItemsForDisplayRow, error) {
+	rows, err := q.db.Query(ctx, listMenuItemsForDisplay, menuID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListMenuItemsForDisplayRow
+	for rows.Next() {
+		var i ListMenuItemsForDisplayRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Price,
+			&i.ImageUrl,
+			&i.PrepTimeMins,
+			&i.Instructions,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const restoreFoodItem = `-- name: RestoreFoodItem :exec
 UPDATE food_items
 SET deleted_at = NULL
