@@ -336,11 +336,12 @@ type Payment struct {
 }
 
 type Restaurant struct {
-	ID      int32       `json:"id"`
-	Name    string      `json:"name"`
-	Address pgtype.Text `json:"address"`
-	Phone   pgtype.Text `json:"phone"`
-	Email   pgtype.Text `json:"email"`
+	ID           int32       `json:"id"`
+	Name         string      `json:"name"`
+	Address      pgtype.Text `json:"address"`
+	Phone        pgtype.Text `json:"phone"`
+	Email        pgtype.Text `json:"email"`
+	PasswordHash pgtype.Text `json:"password_hash"`
 }
 
 type RestaurantAllergen struct {

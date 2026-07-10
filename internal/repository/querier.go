@@ -37,6 +37,7 @@ type Querier interface {
 	GetAllergenByCode(ctx context.Context, code string) (Allergen, error)
 	GetChatMessage(ctx context.Context, id int32) (ChatMessage, error)
 	GetEmployee(ctx context.Context, id int32) (Employee, error)
+	GetEmployeeByRestaurantAndName(ctx context.Context, arg GetEmployeeByRestaurantAndNameParams) (Employee, error)
 	GetFoodIngredient(ctx context.Context, id int32) (FoodIngredient, error)
 	GetFoodItem(ctx context.Context, id int32) (GetFoodItemRow, error)
 	GetFoodMenu(ctx context.Context, id int32) (FoodMenu, error)
@@ -44,6 +45,7 @@ type Querier interface {
 	GetItemOrder(ctx context.Context, id int32) (ItemOrder, error)
 	GetPayment(ctx context.Context, id int32) (Payment, error)
 	GetRestaurant(ctx context.Context, id int32) (Restaurant, error)
+	GetRestaurantByName(ctx context.Context, name string) (Restaurant, error)
 	GetTable(ctx context.Context, id int32) (Table, error)
 	LinkRestaurantAllergen(ctx context.Context, arg LinkRestaurantAllergenParams) error
 	LinkRestaurantIngredient(ctx context.Context, arg LinkRestaurantIngredientParams) error
@@ -99,6 +101,7 @@ type Querier interface {
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) error
 	UpdateRestaurant(ctx context.Context, arg UpdateRestaurantParams) error
 	UpdateRestaurantIngredientShared(ctx context.Context, arg UpdateRestaurantIngredientSharedParams) error
+	UpdateRestaurantPasswordHash(ctx context.Context, arg UpdateRestaurantPasswordHashParams) error
 	UpdateTable(ctx context.Context, arg UpdateTableParams) error
 }
 

@@ -86,6 +86,34 @@ func (q *Queries) GetEmployee(ctx context.Context, id int32) (Employee, error) {
 	return i, err
 }
 
+const getEmployeeByRestaurantAndName = `-- name: GetEmployeeByRestaurantAndName :one
+SELECT id, restaurant_id, name, role, pin_hash, hire_date, last_login, is_active, email, phone_number FROM employee
+WHERE restaurant_id = $1 AND name = $2 AND is_active = true
+`
+
+type GetEmployeeByRestaurantAndNameParams struct {
+	RestaurantID int32       `json:"restaurant_id"`
+	Name         pgtype.Text `json:"name"`
+}
+
+func (q *Queries) GetEmployeeByRestaurantAndName(ctx context.Context, arg GetEmployeeByRestaurantAndNameParams) (Employee, error) {
+	row := q.db.QueryRow(ctx, getEmployeeByRestaurantAndName, arg.RestaurantID, arg.Name)
+	var i Employee
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.Name,
+		&i.Role,
+		&i.PinHash,
+		&i.HireDate,
+		&i.LastLogin,
+		&i.IsActive,
+		&i.Email,
+		&i.PhoneNumber,
+	)
+	return i, err
+}
+
 const listActiveEmployeesByRestaurant = `-- name: ListActiveEmployeesByRestaurant :many
 SELECT id, restaurant_id, name, role, pin_hash, hire_date, last_login, is_active, email, phone_number FROM employee
 WHERE restaurant_id = $1 AND is_active = true

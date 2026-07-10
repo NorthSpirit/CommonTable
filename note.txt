@@ -20,7 +20,7 @@ Food Item Stuff: DS
     InsertFoodItem DS
     UpdateFoodItem DS
     SetFoodItemAvailability DS
-    DeleteFoodItem DS (soft delete)
+    DeleteFoodItem (soft delete) DS
     RestoreFoodItem DS
 
 Food Menu Stuff: DS
@@ -43,16 +43,16 @@ Ingredient-Item Relationship Stuff: DS
     ListIngredientsForItem DS
     ListItemsUsingIngredient DS
 
-Restaurant-Ingredient Relationship Stuff: D
-    LinkRestaurantIngredient D
-    UpdateRestaurantIngredientShared D
-    UnlinkRestaurantIngredient D
-    ListIngredientsForRestaurant D
+Restaurant-Ingredient Relationship Stuff: DS
+    LinkRestaurantIngredient DS
+    UpdateRestaurantIngredientShared DS
+    UnlinkRestaurantIngredient DS
+    ListIngredientsForRestaurant DS
 
-Restaurant-Allergen Relationship Stuff: D
-    LinkRestaurantAllergen D
-    UnlinkRestaurantAllergen D
-    ListAllergensForRestaurant D
+Restaurant-Allergen Relationship Stuff: DS
+    LinkRestaurantAllergen DS
+    UnlinkRestaurantAllergen DS
+    ListAllergensForRestaurant DS
 
 FoodItem-Allergen Relationship Stuff: DS
     ListAllergensForItem DS
@@ -60,28 +60,28 @@ FoodItem-Allergen Relationship Stuff: DS
     AddAllergenToItem DS
     RemoveAllergenFromItem DS
 
-Restaurant Stuff: D
-    GetRestaurant D
-    ListRestaurants D
-    InsertRestaurant D
-    UpdateRestaurant D
-    DeleteRestaurant D
+Restaurant Stuff: DS
+    GetRestaurant DS
+    ListRestaurants DS
+    InsertRestaurant DS
+    UpdateRestaurant DS
+    DeleteRestaurant DS
 
-Employee Stuff: D
-    GetEmployeeByID D
-    ListEmployeesByRestaurant D
-    InsertEmployee D
-    UpdateEmployee D
-    SetEmployeeActive D
-    UpdateEmployeePinHash D
-    DeleteEmployee D
+Employee Stuff: DS
+    GetEmployeeByID DS
+    ListEmployeesByRestaurant DS
+    InsertEmployee DS
+    UpdateEmployee DS
+    SetEmployeeActive DS
+    UpdateEmployeePinHash DS
+    DeleteEmployee DS
 
-Table Stuff: D
-    GetTableByID D
-    ListTables D
-    InsertTable D
-    UpdateTableStatus D
-    DeleteTable D
+Table Stuff: DS
+    GetTableByID DS
+    ListTables DS
+    InsertTable DS
+    UpdateTableStatus DS
+    DeleteTable DS
 
 Food Order Stuff: DS
     GetFoodOrderByID DS
@@ -94,23 +94,23 @@ Food Order Stuff: DS
     DeleteFoodOrder DS
 
 Item-Order Relationship Stuff: DS
-    AddItemToOrder DS (with name/description snapshot)
+    AddItemToOrder (with name/description snapshot) DS
     UpdateItemOrderQuantity DS
     RemoveItemFromOrder DS
     ListItemsForOrder DS
 
-Payment Stuff: D
-    GetPaymentByID D
-    ListPaymentsByOrder D
-    InsertPayment D
-    UpdatePaymentStatus D
-    DeletePayment D
+Payment Stuff: DS
+    GetPaymentByID DS
+    ListPaymentsByOrder DS
+    InsertPayment DS
+    UpdatePaymentStatus DS
+    DeletePayment DS
 
-Chat Message Stuff: D
-    GetChatMessageByID D
-    ListMessagesByRestaurant D
-    InsertChatMessage D
-    DeleteChatMessage D
+Chat Message Stuff: DS
+    GetChatMessageByID DS
+    ListMessagesByRestaurant DS
+    InsertChatMessage DS
+    DeleteChatMessage DS
 
 
 S = Service is done

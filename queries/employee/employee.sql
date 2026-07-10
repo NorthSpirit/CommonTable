@@ -40,3 +40,7 @@ WHERE id = $1;
 -- name: DeleteEmployee :exec
 DELETE FROM employee
 WHERE id = $1;
+
+-- name: GetEmployeeByRestaurantAndName :one
+SELECT * FROM employee
+WHERE restaurant_id = $1 AND name = $2 AND is_active = true;

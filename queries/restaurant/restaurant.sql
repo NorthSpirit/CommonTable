@@ -7,8 +7,8 @@ SELECT * FROM restaurant
 ORDER BY name;
 
 -- name: CreateRestaurant :one
-INSERT INTO restaurant (name, address, phone, email)
-VALUES ($1, $2, $3, $4)
+INSERT INTO restaurant (name, address, phone, email, password_hash)
+VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
 -- name: UpdateRestaurant :exec
@@ -18,4 +18,13 @@ WHERE id = $1;
 
 -- name: DeleteRestaurant :exec
 DELETE FROM restaurant
+WHERE id = $1;
+
+-- name: GetRestaurantByName :one
+SELECT * FROM restaurant
+WHERE name = $1;
+
+-- name: UpdateRestaurantPasswordHash :exec
+UPDATE restaurant
+SET password_hash = $2
 WHERE id = $1;

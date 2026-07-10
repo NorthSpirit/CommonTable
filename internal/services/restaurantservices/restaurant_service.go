@@ -1,0 +1,106 @@
+package restaurantservices
+
+import (
+	"context"
+	"fmt"
+
+	"CommonTable/internal/helpers"
+	"CommonTable/internal/repository"
+)
+
+type RestaurantService struct {
+	queries *repository.Queries
+}
+
+func NewRestaurantService(queries *repository.Queries) *RestaurantService {
+	return &RestaurantService{queries: queries}
+}
+
+func (f *RestaurantService) GetRestaurantByID(ctx context.Context, id int32) (repository.Restaurant, error) {
+	restaurant, err := f.queries.GetRestaurant(ctx, id)
+	if err != nil {
+		return repository.Restaurant{}, fmt.Errorf("get restaurant: %w", err)
+	}
+
+	return restaurant, nil
+}
+
+func (f *RestaurantService) GetRestaurantList(ctx context.Context) ([]repository.Restaurant, error) {
+	restaurants, err := f.queries.ListRestaurants(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list restaurants: %w", err)
+	}
+
+	return restaurants, nil
+}
+
+// InsertRestaurant expects passwordHash to already be hashed by the caller —
+// this service never handles a raw password.
+func (f *RestaurantService) InsertRestaurant(
+	ctx context.Context,
+	name string,
+	address *string,
+	phone *string,
+	email *string,
+	passwordHash string,
+) (repository.Restaurant, error) {
+
+	restaurant, err := f.queries.CreateRestaurant(ctx, repository.CreateRestaurantParams{
+		Name:         name,
+		Address:      helpers.TextFromString(address),
+		Phone:        helpers.TextFromString(phone),
+		Email:        helpers.TextFromString(email),
+		PasswordHash: helpers.TextFromString(&passwordHash),
+	})
+	if err != nil {
+		return repository.Restaurant{}, fmt.Errorf("create restaurant: %w", err)
+	}
+
+	return restaurant, nil
+}
+
+func (f *RestaurantService) UpdateRestaurant(
+	ctx context.Context,
+	id int32,
+	name string,
+	address *string,
+	phone *string,
+	email *string,
+) error {
+
+	err := f.queries.UpdateRestaurant(ctx, repository.UpdateRestaurantParams{
+		ID:      id,
+		Name:    name,
+		Address: helpers.TextFromString(address),
+		Phone:   helpers.TextFromString(phone),
+		Email:   helpers.TextFromString(email),
+	})
+	if err != nil {
+		return fmt.Errorf("update restaurant: %w", err)
+	}
+
+	return nil
+}
+
+// UpdateRestaurantPasswordHash expects passwordHash to already be hashed
+// by the caller.
+func (f *RestaurantService) UpdateRestaurantPasswordHash(ctx context.Context, id int32, passwordHash string) error {
+	err := f.queries.UpdateRestaurantPasswordHash(ctx, repository.UpdateRestaurantPasswordHashParams{
+		ID:           id,
+		PasswordHash: helpers.TextFromString(&passwordHash),
+	})
+	if err != nil {
+		return fmt.Errorf("update restaurant password hash: %w", err)
+	}
+
+	return nil
+}
+
+func (f *RestaurantService) DeleteRestaurant(ctx context.Context, id int32) error {
+	err := f.queries.DeleteRestaurant(ctx, id)
+	if err != nil {
+		return fmt.Errorf("delete restaurant: %w", err)
+	}
+
+	return nil
+}
