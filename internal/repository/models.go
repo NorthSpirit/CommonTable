@@ -342,6 +342,7 @@ type Restaurant struct {
 	Phone        pgtype.Text `json:"phone"`
 	Email        pgtype.Text `json:"email"`
 	PasswordHash pgtype.Text `json:"password_hash"`
+	LogoUrl      pgtype.Text `json:"logo_url"`
 }
 
 type RestaurantAllergen struct {

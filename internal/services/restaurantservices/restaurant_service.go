@@ -52,6 +52,7 @@ func (f *RestaurantService) InsertRestaurant(
 	phone *string,
 	email *string,
 	passwordHash string,
+	logoURL *string,
 ) (repository.Restaurant, error) {
 
 	restaurant, err := f.queries.CreateRestaurant(ctx, repository.CreateRestaurantParams{
@@ -60,6 +61,7 @@ func (f *RestaurantService) InsertRestaurant(
 		Phone:        helpers.TextFromString(phone),
 		Email:        helpers.TextFromString(email),
 		PasswordHash: helpers.TextFromString(&passwordHash),
+		LogoUrl:      helpers.TextFromString(logoURL),
 	})
 	if err != nil {
 		return repository.Restaurant{}, fmt.Errorf("create restaurant: %w", err)
@@ -75,6 +77,7 @@ func (f *RestaurantService) UpdateRestaurant(
 	address *string,
 	phone *string,
 	email *string,
+	logoURL *string,
 ) error {
 
 	err := f.queries.UpdateRestaurant(ctx, repository.UpdateRestaurantParams{
@@ -83,6 +86,7 @@ func (f *RestaurantService) UpdateRestaurant(
 		Address: helpers.TextFromString(address),
 		Phone:   helpers.TextFromString(phone),
 		Email:   helpers.TextFromString(email),
+		LogoUrl: helpers.TextFromString(logoURL),
 	})
 	if err != nil {
 		return fmt.Errorf("update restaurant: %w", err)

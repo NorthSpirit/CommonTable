@@ -12,9 +12,9 @@ import (
 )
 
 const createRestaurant = `-- name: CreateRestaurant :one
-INSERT INTO restaurant (name, address, phone, email, password_hash)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING id, name, address, phone, email, password_hash
+INSERT INTO restaurant (name, address, phone, email, password_hash, logo_url)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, name, address, phone, email, password_hash, logo_url
 `
 
 type CreateRestaurantParams struct {
@@ -23,6 +23,7 @@ type CreateRestaurantParams struct {
 	Phone        pgtype.Text `json:"phone"`
 	Email        pgtype.Text `json:"email"`
 	PasswordHash pgtype.Text `json:"password_hash"`
+	LogoUrl      pgtype.Text `json:"logo_url"`
 }
 
 func (q *Queries) CreateRestaurant(ctx context.Context, arg CreateRestaurantParams) (Restaurant, error) {
@@ -32,6 +33,7 @@ func (q *Queries) CreateRestaurant(ctx context.Context, arg CreateRestaurantPara
 		arg.Phone,
 		arg.Email,
 		arg.PasswordHash,
+		arg.LogoUrl,
 	)
 	var i Restaurant
 	err := row.Scan(
@@ -41,6 +43,7 @@ func (q *Queries) CreateRestaurant(ctx context.Context, arg CreateRestaurantPara
 		&i.Phone,
 		&i.Email,
 		&i.PasswordHash,
+		&i.LogoUrl,
 	)
 	return i, err
 }
@@ -56,7 +59,7 @@ func (q *Queries) DeleteRestaurant(ctx context.Context, id int32) error {
 }
 
 const getRestaurant = `-- name: GetRestaurant :one
-SELECT id, name, address, phone, email, password_hash FROM restaurant
+SELECT id, name, address, phone, email, password_hash, logo_url FROM restaurant
 WHERE id = $1
 `
 
@@ -70,12 +73,13 @@ func (q *Queries) GetRestaurant(ctx context.Context, id int32) (Restaurant, erro
 		&i.Phone,
 		&i.Email,
 		&i.PasswordHash,
+		&i.LogoUrl,
 	)
 	return i, err
 }
 
 const getRestaurantByName = `-- name: GetRestaurantByName :one
-SELECT id, name, address, phone, email, password_hash FROM restaurant
+SELECT id, name, address, phone, email, password_hash, logo_url FROM restaurant
 WHERE name = $1
 `
 
@@ -89,12 +93,13 @@ func (q *Queries) GetRestaurantByName(ctx context.Context, name string) (Restaur
 		&i.Phone,
 		&i.Email,
 		&i.PasswordHash,
+		&i.LogoUrl,
 	)
 	return i, err
 }
 
 const listRestaurants = `-- name: ListRestaurants :many
-SELECT id, name, address, phone, email, password_hash FROM restaurant
+SELECT id, name, address, phone, email, password_hash, logo_url FROM restaurant
 ORDER BY name
 `
 
@@ -114,6 +119,7 @@ func (q *Queries) ListRestaurants(ctx context.Context) ([]Restaurant, error) {
 			&i.Phone,
 			&i.Email,
 			&i.PasswordHash,
+			&i.LogoUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -127,7 +133,7 @@ func (q *Queries) ListRestaurants(ctx context.Context) ([]Restaurant, error) {
 
 const updateRestaurant = `-- name: UpdateRestaurant :exec
 UPDATE restaurant
-SET name = $2, address = $3, phone = $4, email = $5
+SET name = $2, address = $3, phone = $4, email = $5, logo_url = $6
 WHERE id = $1
 `
 
@@ -137,6 +143,7 @@ type UpdateRestaurantParams struct {
 	Address pgtype.Text `json:"address"`
 	Phone   pgtype.Text `json:"phone"`
 	Email   pgtype.Text `json:"email"`
+	LogoUrl pgtype.Text `json:"logo_url"`
 }
 
 func (q *Queries) UpdateRestaurant(ctx context.Context, arg UpdateRestaurantParams) error {
@@ -146,6 +153,7 @@ func (q *Queries) UpdateRestaurant(ctx context.Context, arg UpdateRestaurantPara
 		arg.Address,
 		arg.Phone,
 		arg.Email,
+		arg.LogoUrl,
 	)
 	return err
 }
