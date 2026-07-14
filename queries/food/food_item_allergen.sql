@@ -13,6 +13,16 @@ FROM allergen a
 WHERE fia.item_id = $1
 ORDER BY a.name;
 
+-- name: ListAllergensForItemDisplay :many
+SELECT
+    a.id,
+    CASE WHEN $2 = 'alt' THEN COALESCE(a.name_alt, a.name) ELSE a.name END AS name,
+    a.code
+FROM allergen a
+         JOIN food_item_allergen fia ON fia.allergen_id = a.id
+WHERE fia.item_id = $1
+ORDER BY a.name;
+
 -- name: ListItemsWithAllergen :many
 SELECT fi.id, fi.restaurant_id, fi.name, fi.description, fi.is_available, fi.image_url, fi.prep_time_mins, fi.instructions
 FROM food_items fi

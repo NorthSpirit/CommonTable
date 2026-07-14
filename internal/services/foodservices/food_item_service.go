@@ -16,10 +16,24 @@ func NewFoodItemService(queries *repository.Queries) *FoodItemService {
 	return &FoodItemService{queries: queries}
 }
 
+// GetFoodItemByID returns raw item data in both languages — for admin editing.
 func (f *FoodItemService) GetFoodItemByID(ctx context.Context, id int32) (repository.GetFoodItemRow, error) {
 	item, err := f.queries.GetFoodItem(ctx, id)
 	if err != nil {
 		return repository.GetFoodItemRow{}, fmt.Errorf("get food item: %w", err)
+	}
+
+	return item, nil
+}
+
+// GetFoodItemForDisplay returns locale-resolved item data — for customer-facing pages.
+func (f *FoodItemService) GetFoodItemForDisplay(ctx context.Context, id int32, locale string) (repository.GetFoodItemForDisplayRow, error) {
+	item, err := f.queries.GetFoodItemForDisplay(ctx, repository.GetFoodItemForDisplayParams{
+		ID:      id,
+		Column2: locale,
+	})
+	if err != nil {
+		return repository.GetFoodItemForDisplayRow{}, fmt.Errorf("get food item for display: %w", err)
 	}
 
 	return item, nil
@@ -43,10 +57,13 @@ func (f *FoodItemService) ListAvailableFoodItemsByRestaurant(ctx context.Context
 	return items, nil
 }
 
-// ListMenuItemsForDisplay returns available items on a given menu, including
-// price, for public-facing menu display (no authentication required).
-func (f *FoodItemService) ListMenuItemsForDisplay(ctx context.Context, menuID int32) ([]repository.ListMenuItemsForDisplayRow, error) {
-	items, err := f.queries.ListMenuItemsForDisplay(ctx, menuID)
+// ListMenuItemsForDisplay returns available items on a menu, locale-resolved,
+// for public-facing menu display.
+func (f *FoodItemService) ListMenuItemsForDisplay(ctx context.Context, menuID int32, locale string) ([]repository.ListMenuItemsForDisplayRow, error) {
+	items, err := f.queries.ListMenuItemsForDisplay(ctx, repository.ListMenuItemsForDisplayParams{
+		MenuID:  menuID,
+		Column2: locale,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("list menu items for display: %w", err)
 	}
@@ -58,21 +75,27 @@ func (f *FoodItemService) InsertFoodItem(
 	ctx context.Context,
 	restaurantID int32,
 	name string,
+	nameAlt *string,
 	description *string,
+	descriptionAlt *string,
 	isAvailable bool,
 	imageURL *string,
 	prepTimeMins *int32,
 	instructions *string,
+	instructionsAlt *string,
 ) (repository.CreateFoodItemRow, error) {
 
 	item, err := f.queries.CreateFoodItem(ctx, repository.CreateFoodItemParams{
-		RestaurantID: restaurantID,
-		Name:         name,
-		Description:  helpers.TextFromString(description),
-		IsAvailable:  isAvailable,
-		ImageUrl:     helpers.TextFromString(imageURL),
-		PrepTimeMins: helpers.Int4FromInt32(prepTimeMins),
-		Instructions: helpers.TextFromString(instructions),
+		RestaurantID:    restaurantID,
+		Name:            name,
+		NameAlt:         helpers.TextFromString(nameAlt),
+		Description:     helpers.TextFromString(description),
+		DescriptionAlt:  helpers.TextFromString(descriptionAlt),
+		IsAvailable:     isAvailable,
+		ImageUrl:        helpers.TextFromString(imageURL),
+		PrepTimeMins:    helpers.Int4FromInt32(prepTimeMins),
+		Instructions:    helpers.TextFromString(instructions),
+		InstructionsAlt: helpers.TextFromString(instructionsAlt),
 	})
 	if err != nil {
 		return repository.CreateFoodItemRow{}, fmt.Errorf("create food item: %w", err)
@@ -85,21 +108,27 @@ func (f *FoodItemService) UpdateFoodItem(
 	ctx context.Context,
 	id int32,
 	name string,
+	nameAlt *string,
 	description *string,
+	descriptionAlt *string,
 	isAvailable bool,
 	imageURL *string,
 	prepTimeMins *int32,
 	instructions *string,
+	instructionsAlt *string,
 ) error {
 
 	err := f.queries.UpdateFoodItem(ctx, repository.UpdateFoodItemParams{
-		ID:           id,
-		Name:         name,
-		Description:  helpers.TextFromString(description),
-		IsAvailable:  isAvailable,
-		ImageUrl:     helpers.TextFromString(imageURL),
-		PrepTimeMins: helpers.Int4FromInt32(prepTimeMins),
-		Instructions: helpers.TextFromString(instructions),
+		ID:              id,
+		Name:            name,
+		NameAlt:         helpers.TextFromString(nameAlt),
+		Description:     helpers.TextFromString(description),
+		DescriptionAlt:  helpers.TextFromString(descriptionAlt),
+		IsAvailable:     isAvailable,
+		ImageUrl:        helpers.TextFromString(imageURL),
+		PrepTimeMins:    helpers.Int4FromInt32(prepTimeMins),
+		Instructions:    helpers.TextFromString(instructions),
+		InstructionsAlt: helpers.TextFromString(instructionsAlt),
 	})
 	if err != nil {
 		return fmt.Errorf("update food item: %w", err)

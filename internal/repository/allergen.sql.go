@@ -12,25 +12,35 @@ import (
 )
 
 const createAllergen = `-- name: CreateAllergen :one
-INSERT INTO allergen (name, description, code)
-VALUES ($1, $2, $3)
-    RETURNING id, name, description, code
+INSERT INTO allergen (name, name_alt, description, description_alt, code)
+VALUES ($1, $2, $3, $4, $5)
+    RETURNING id, name, description, code, name_alt, description_alt
 `
 
 type CreateAllergenParams struct {
-	Name        string      `json:"name"`
-	Description pgtype.Text `json:"description"`
-	Code        string      `json:"code"`
+	Name           string      `json:"name"`
+	NameAlt        pgtype.Text `json:"name_alt"`
+	Description    pgtype.Text `json:"description"`
+	DescriptionAlt pgtype.Text `json:"description_alt"`
+	Code           string      `json:"code"`
 }
 
 func (q *Queries) CreateAllergen(ctx context.Context, arg CreateAllergenParams) (Allergen, error) {
-	row := q.db.QueryRow(ctx, createAllergen, arg.Name, arg.Description, arg.Code)
+	row := q.db.QueryRow(ctx, createAllergen,
+		arg.Name,
+		arg.NameAlt,
+		arg.Description,
+		arg.DescriptionAlt,
+		arg.Code,
+	)
 	var i Allergen
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Description,
 		&i.Code,
+		&i.NameAlt,
+		&i.DescriptionAlt,
 	)
 	return i, err
 }
@@ -46,7 +56,7 @@ func (q *Queries) DeleteAllergen(ctx context.Context, id int32) error {
 }
 
 const getAllergen = `-- name: GetAllergen :one
-SELECT id, name, description, code FROM allergen
+SELECT id, name, description, code, name_alt, description_alt FROM allergen
 WHERE id = $1
 `
 
@@ -58,12 +68,14 @@ func (q *Queries) GetAllergen(ctx context.Context, id int32) (Allergen, error) {
 		&i.Name,
 		&i.Description,
 		&i.Code,
+		&i.NameAlt,
+		&i.DescriptionAlt,
 	)
 	return i, err
 }
 
 const getAllergenByCode = `-- name: GetAllergenByCode :one
-SELECT id, name, description, code FROM allergen
+SELECT id, name, description, code, name_alt, description_alt FROM allergen
 WHERE code = $1
 `
 
@@ -75,12 +87,14 @@ func (q *Queries) GetAllergenByCode(ctx context.Context, code string) (Allergen,
 		&i.Name,
 		&i.Description,
 		&i.Code,
+		&i.NameAlt,
+		&i.DescriptionAlt,
 	)
 	return i, err
 }
 
 const listAllergens = `-- name: ListAllergens :many
-SELECT id, name, description, code FROM allergen
+SELECT id, name, description, code, name_alt, description_alt FROM allergen
 ORDER BY name
 `
 
@@ -98,6 +112,8 @@ func (q *Queries) ListAllergens(ctx context.Context) ([]Allergen, error) {
 			&i.Name,
 			&i.Description,
 			&i.Code,
+			&i.NameAlt,
+			&i.DescriptionAlt,
 		); err != nil {
 			return nil, err
 		}
@@ -111,22 +127,26 @@ func (q *Queries) ListAllergens(ctx context.Context) ([]Allergen, error) {
 
 const updateAllergen = `-- name: UpdateAllergen :exec
 UPDATE allergen
-SET name = $2, description = $3, code = $4
+SET name = $2, name_alt = $3, description = $4, description_alt = $5, code = $6
 WHERE id = $1
 `
 
 type UpdateAllergenParams struct {
-	ID          int32       `json:"id"`
-	Name        string      `json:"name"`
-	Description pgtype.Text `json:"description"`
-	Code        string      `json:"code"`
+	ID             int32       `json:"id"`
+	Name           string      `json:"name"`
+	NameAlt        pgtype.Text `json:"name_alt"`
+	Description    pgtype.Text `json:"description"`
+	DescriptionAlt pgtype.Text `json:"description_alt"`
+	Code           string      `json:"code"`
 }
 
 func (q *Queries) UpdateAllergen(ctx context.Context, arg UpdateAllergenParams) error {
 	_, err := q.db.Exec(ctx, updateAllergen,
 		arg.ID,
 		arg.Name,
+		arg.NameAlt,
 		arg.Description,
+		arg.DescriptionAlt,
 		arg.Code,
 	)
 	return err

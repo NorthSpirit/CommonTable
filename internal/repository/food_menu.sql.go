@@ -12,23 +12,27 @@ import (
 )
 
 const createFoodMenu = `-- name: CreateFoodMenu :one
-INSERT INTO food_menu (restaurant_id, name, description, image_url)
-VALUES ($1, $2, $3, $4)
-RETURNING id, restaurant_id, name, description, image_url
+INSERT INTO food_menu (restaurant_id, name, name_alt, description, description_alt, image_url)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, restaurant_id, name, description, image_url, name_alt, description_alt
 `
 
 type CreateFoodMenuParams struct {
-	RestaurantID int32       `json:"restaurant_id"`
-	Name         string      `json:"name"`
-	Description  pgtype.Text `json:"description"`
-	ImageUrl     pgtype.Text `json:"image_url"`
+	RestaurantID   int32       `json:"restaurant_id"`
+	Name           string      `json:"name"`
+	NameAlt        pgtype.Text `json:"name_alt"`
+	Description    pgtype.Text `json:"description"`
+	DescriptionAlt pgtype.Text `json:"description_alt"`
+	ImageUrl       pgtype.Text `json:"image_url"`
 }
 
 func (q *Queries) CreateFoodMenu(ctx context.Context, arg CreateFoodMenuParams) (FoodMenu, error) {
 	row := q.db.QueryRow(ctx, createFoodMenu,
 		arg.RestaurantID,
 		arg.Name,
+		arg.NameAlt,
 		arg.Description,
+		arg.DescriptionAlt,
 		arg.ImageUrl,
 	)
 	var i FoodMenu
@@ -38,6 +42,8 @@ func (q *Queries) CreateFoodMenu(ctx context.Context, arg CreateFoodMenuParams) 
 		&i.Name,
 		&i.Description,
 		&i.ImageUrl,
+		&i.NameAlt,
+		&i.DescriptionAlt,
 	)
 	return i, err
 }
@@ -53,7 +59,7 @@ func (q *Queries) DeleteFoodMenu(ctx context.Context, id int32) error {
 }
 
 const getFoodMenu = `-- name: GetFoodMenu :one
-SELECT id, restaurant_id, name, description, image_url FROM food_menu
+SELECT id, restaurant_id, name, description, image_url, name_alt, description_alt FROM food_menu
 WHERE id = $1
 `
 
@@ -66,12 +72,51 @@ func (q *Queries) GetFoodMenu(ctx context.Context, id int32) (FoodMenu, error) {
 		&i.Name,
 		&i.Description,
 		&i.ImageUrl,
+		&i.NameAlt,
+		&i.DescriptionAlt,
+	)
+	return i, err
+}
+
+const getFoodMenuForDisplay = `-- name: GetFoodMenuForDisplay :one
+SELECT
+    id,
+    restaurant_id,
+    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
+    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    image_url
+FROM food_menu
+WHERE id = $1
+`
+
+type GetFoodMenuForDisplayParams struct {
+	ID      int32       `json:"id"`
+	Column2 interface{} `json:"column_2"`
+}
+
+type GetFoodMenuForDisplayRow struct {
+	ID           int32       `json:"id"`
+	RestaurantID int32       `json:"restaurant_id"`
+	Name         interface{} `json:"name"`
+	Description  interface{} `json:"description"`
+	ImageUrl     pgtype.Text `json:"image_url"`
+}
+
+func (q *Queries) GetFoodMenuForDisplay(ctx context.Context, arg GetFoodMenuForDisplayParams) (GetFoodMenuForDisplayRow, error) {
+	row := q.db.QueryRow(ctx, getFoodMenuForDisplay, arg.ID, arg.Column2)
+	var i GetFoodMenuForDisplayRow
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.Name,
+		&i.Description,
+		&i.ImageUrl,
 	)
 	return i, err
 }
 
 const listFoodMenusByRestaurant = `-- name: ListFoodMenusByRestaurant :many
-SELECT id, restaurant_id, name, description, image_url FROM food_menu
+SELECT id, restaurant_id, name, description, image_url, name_alt, description_alt FROM food_menu
 WHERE restaurant_id = $1
 ORDER BY name
 `
@@ -91,6 +136,59 @@ func (q *Queries) ListFoodMenusByRestaurant(ctx context.Context, restaurantID in
 			&i.Name,
 			&i.Description,
 			&i.ImageUrl,
+			&i.NameAlt,
+			&i.DescriptionAlt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listFoodMenusByRestaurantForDisplay = `-- name: ListFoodMenusByRestaurantForDisplay :many
+SELECT
+    id,
+    restaurant_id,
+    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
+    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    image_url
+FROM food_menu
+WHERE restaurant_id = $1
+ORDER BY name
+`
+
+type ListFoodMenusByRestaurantForDisplayParams struct {
+	RestaurantID int32       `json:"restaurant_id"`
+	Column2      interface{} `json:"column_2"`
+}
+
+type ListFoodMenusByRestaurantForDisplayRow struct {
+	ID           int32       `json:"id"`
+	RestaurantID int32       `json:"restaurant_id"`
+	Name         interface{} `json:"name"`
+	Description  interface{} `json:"description"`
+	ImageUrl     pgtype.Text `json:"image_url"`
+}
+
+func (q *Queries) ListFoodMenusByRestaurantForDisplay(ctx context.Context, arg ListFoodMenusByRestaurantForDisplayParams) ([]ListFoodMenusByRestaurantForDisplayRow, error) {
+	rows, err := q.db.Query(ctx, listFoodMenusByRestaurantForDisplay, arg.RestaurantID, arg.Column2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListFoodMenusByRestaurantForDisplayRow
+	for rows.Next() {
+		var i ListFoodMenusByRestaurantForDisplayRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.RestaurantID,
+			&i.Name,
+			&i.Description,
+			&i.ImageUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -104,22 +202,26 @@ func (q *Queries) ListFoodMenusByRestaurant(ctx context.Context, restaurantID in
 
 const updateFoodMenu = `-- name: UpdateFoodMenu :exec
 UPDATE food_menu
-SET name = $2, description = $3, image_url = $4
+SET name = $2, name_alt = $3, description = $4, description_alt = $5, image_url = $6
 WHERE id = $1
 `
 
 type UpdateFoodMenuParams struct {
-	ID          int32       `json:"id"`
-	Name        string      `json:"name"`
-	Description pgtype.Text `json:"description"`
-	ImageUrl    pgtype.Text `json:"image_url"`
+	ID             int32       `json:"id"`
+	Name           string      `json:"name"`
+	NameAlt        pgtype.Text `json:"name_alt"`
+	Description    pgtype.Text `json:"description"`
+	DescriptionAlt pgtype.Text `json:"description_alt"`
+	ImageUrl       pgtype.Text `json:"image_url"`
 }
 
 func (q *Queries) UpdateFoodMenu(ctx context.Context, arg UpdateFoodMenuParams) error {
 	_, err := q.db.Exec(ctx, updateFoodMenu,
 		arg.ID,
 		arg.Name,
+		arg.NameAlt,
 		arg.Description,
+		arg.DescriptionAlt,
 		arg.ImageUrl,
 	)
 	return err

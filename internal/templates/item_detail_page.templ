@@ -1,0 +1,38 @@
+package templates
+
+templ ItemDetailPage(item ItemDetailView) {
+	@Layout(item.Name, itemDetailPageContent(item))
+}
+
+templ itemDetailPageContent(item ItemDetailView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto">
+		if item.ImageURL != "" {
+			<img src={ item.ImageURL } alt={ item.Name } class="w-full max-h-80 object-cover rounded-lg border gms-border-medium mb-4"/>
+		}
+		<h2 class="text-3xl font-bold mb-2 gms-main-text">{ item.Name }</h2>
+		if item.Description != "" {
+			<p class="gms-main-text mb-4">{ item.Description }</p>
+		}
+		if item.Instructions != "" {
+			<div class="mb-4">
+				<h3 class="text-lg font-semibold mb-1 gms-main-text">Preparation Notes</h3>
+				<p class="gms-main-text">{ item.Instructions }</p>
+			</div>
+		}
+		<div class="mb-4">
+			<h3 class="text-lg font-semibold mb-1 gms-main-text">Allergens</h3>
+			if len(item.Allergens) == 0 {
+				<p class="gms-main-text italic">No known allergens listed.</p>
+			} else {
+				<ul class="list-disc pl-5 gms-main-text">
+					for _, allergen := range item.Allergens {
+						<li>{ allergen }</li>
+					}
+				</ul>
+			}
+		</div>
+		<a href="javascript:history.back()" class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium">
+			Back
+		</a>
+	</main>
+}

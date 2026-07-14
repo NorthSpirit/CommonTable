@@ -1,0 +1,18 @@
+package templates
+
+templ HomePage() {
+	@Layout("Welcome", homePageContent())
+}
+
+templ homePageContent() {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center justify-center text-center">
+		<h2 class="text-3xl font-bold mb-4 gms-main-text">Welcome to CommonTable</h2>
+		<p class="gms-main-text mb-6 max-w-xl">
+			Browse restaurants in our food hall, explore their menus, and check
+			what's in each dish before you order.
+		</p>
+		<a href="/restaurants" class="px-6 py-3 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+			View Restaurants
+		</a>
+	</main>
+}

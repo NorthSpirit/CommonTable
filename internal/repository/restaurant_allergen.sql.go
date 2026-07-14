@@ -25,7 +25,7 @@ func (q *Queries) LinkRestaurantAllergen(ctx context.Context, arg LinkRestaurant
 }
 
 const listAllergensForRestaurant = `-- name: ListAllergensForRestaurant :many
-SELECT a.id, a.name, a.description, a.code
+SELECT a.id, a.name, a.description, a.code, a.name_alt, a.description_alt
 FROM allergen a
          JOIN restaurant_allergen ra ON ra.allergen_id = a.id
 WHERE ra.restaurant_id = $1
@@ -46,6 +46,8 @@ func (q *Queries) ListAllergensForRestaurant(ctx context.Context, restaurantID i
 			&i.Name,
 			&i.Description,
 			&i.Code,
+			&i.NameAlt,
+			&i.DescriptionAlt,
 		); err != nil {
 			return nil, err
 		}

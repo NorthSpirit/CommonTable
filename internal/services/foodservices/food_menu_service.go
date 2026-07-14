@@ -1,10 +1,10 @@
 package foodservices
 
 import (
-	"CommonTable/internal/helpers"
 	"context"
 	"fmt"
 
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/repository"
 )
 
@@ -25,6 +25,18 @@ func (f *FoodMenuService) GetFoodMenuByID(ctx context.Context, id int32) (reposi
 	return menu, nil
 }
 
+func (f *FoodMenuService) GetFoodMenuForDisplay(ctx context.Context, id int32, locale string) (repository.GetFoodMenuForDisplayRow, error) {
+	menu, err := f.queries.GetFoodMenuForDisplay(ctx, repository.GetFoodMenuForDisplayParams{
+		ID:      id,
+		Column2: locale,
+	})
+	if err != nil {
+		return repository.GetFoodMenuForDisplayRow{}, fmt.Errorf("get food menu for display: %w", err)
+	}
+
+	return menu, nil
+}
+
 func (f *FoodMenuService) ListFoodMenusByRestaurant(ctx context.Context, restaurantID int32) ([]repository.FoodMenu, error) {
 	menus, err := f.queries.ListFoodMenusByRestaurant(ctx, restaurantID)
 	if err != nil {
@@ -34,19 +46,35 @@ func (f *FoodMenuService) ListFoodMenusByRestaurant(ctx context.Context, restaur
 	return menus, nil
 }
 
+func (f *FoodMenuService) ListFoodMenusByRestaurantForDisplay(ctx context.Context, restaurantID int32, locale string) ([]repository.ListFoodMenusByRestaurantForDisplayRow, error) {
+	menus, err := f.queries.ListFoodMenusByRestaurantForDisplay(ctx, repository.ListFoodMenusByRestaurantForDisplayParams{
+		RestaurantID: restaurantID,
+		Column2:      locale,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("list food menus by restaurant for display: %w", err)
+	}
+
+	return menus, nil
+}
+
 func (f *FoodMenuService) InsertFoodMenu(
 	ctx context.Context,
 	restaurantID int32,
 	name string,
+	nameAlt *string,
 	description *string,
+	descriptionAlt *string,
 	imageURL *string,
 ) (repository.FoodMenu, error) {
 
 	menu, err := f.queries.CreateFoodMenu(ctx, repository.CreateFoodMenuParams{
-		RestaurantID: restaurantID,
-		Name:         name,
-		Description:  helpers.TextFromString(description),
-		ImageUrl:     helpers.TextFromString(imageURL),
+		RestaurantID:   restaurantID,
+		Name:           name,
+		NameAlt:        helpers.TextFromString(nameAlt),
+		Description:    helpers.TextFromString(description),
+		DescriptionAlt: helpers.TextFromString(descriptionAlt),
+		ImageUrl:       helpers.TextFromString(imageURL),
 	})
 	if err != nil {
 		return repository.FoodMenu{}, fmt.Errorf("create food menu: %w", err)
@@ -59,15 +87,19 @@ func (f *FoodMenuService) UpdateFoodMenu(
 	ctx context.Context,
 	id int32,
 	name string,
+	nameAlt *string,
 	description *string,
+	descriptionAlt *string,
 	imageURL *string,
 ) error {
 
 	err := f.queries.UpdateFoodMenu(ctx, repository.UpdateFoodMenuParams{
-		ID:          id,
-		Name:        name,
-		Description: helpers.TextFromString(description),
-		ImageUrl:    helpers.TextFromString(imageURL),
+		ID:             id,
+		Name:           name,
+		NameAlt:        helpers.TextFromString(nameAlt),
+		Description:    helpers.TextFromString(description),
+		DescriptionAlt: helpers.TextFromString(descriptionAlt),
+		ImageUrl:       helpers.TextFromString(imageURL),
 	})
 	if err != nil {
 		return fmt.Errorf("update food menu: %w", err)

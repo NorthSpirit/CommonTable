@@ -46,14 +46,18 @@ func (f *FoodAllergenService) GetFoodAllergenByCode(ctx context.Context, code st
 func (f *FoodAllergenService) InsertFoodAllergen(
 	ctx context.Context,
 	name string,
+	nameAlt *string,
 	description *string,
+	descriptionAlt *string,
 	code string,
 ) (repository.Allergen, error) {
 
 	allergen, err := f.queries.CreateAllergen(ctx, repository.CreateAllergenParams{
-		Name:        name,
-		Description: helpers.TextFromString(description),
-		Code:        code,
+		Name:           name,
+		NameAlt:        helpers.TextFromString(nameAlt),
+		Description:    helpers.TextFromString(description),
+		DescriptionAlt: helpers.TextFromString(descriptionAlt),
+		Code:           code,
 	})
 	if err != nil {
 		return repository.Allergen{}, fmt.Errorf("create food allergen: %w", err)
@@ -66,15 +70,19 @@ func (f *FoodAllergenService) UpdateFoodAllergen(
 	ctx context.Context,
 	id int32,
 	name string,
+	nameAlt *string,
 	description *string,
+	descriptionAlt *string,
 	code string,
 ) error {
 
 	err := f.queries.UpdateAllergen(ctx, repository.UpdateAllergenParams{
-		ID:          id,
-		Name:        name,
-		Description: helpers.TextFromString(description),
-		Code:        code,
+		ID:             id,
+		Name:           name,
+		NameAlt:        helpers.TextFromString(nameAlt),
+		Description:    helpers.TextFromString(description),
+		DescriptionAlt: helpers.TextFromString(descriptionAlt),
+		Code:           code,
 	})
 	if err != nil {
 		return fmt.Errorf("update food allergen: %w", err)

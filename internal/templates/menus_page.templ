@@ -1,0 +1,21 @@
+package templates
+
+templ MenusPage(restaurantName string, menus []MenuView) {
+	@Layout(restaurantName + " - Menus", menusPageContent(restaurantName, menus))
+}
+
+templ menusPageContent(restaurantName string, menus []MenuView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+			{ restaurantName } - Menus
+		</h2>
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+			for _, menu := range menus {
+				@MenuCard(menu)
+			}
+			if len(menus) == 0 {
+				<p class="text-center italic gms-main-text col-span-full">No menus found for this restaurant.</p>
+			}
+		</div>
+	</main>
+}

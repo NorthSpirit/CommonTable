@@ -230,10 +230,12 @@ func (ns NullTableStatus) Value() (driver.Value, error) {
 }
 
 type Allergen struct {
-	ID          int32       `json:"id"`
-	Name        string      `json:"name"`
-	Description pgtype.Text `json:"description"`
-	Code        string      `json:"code"`
+	ID             int32       `json:"id"`
+	Name           string      `json:"name"`
+	Description    pgtype.Text `json:"description"`
+	Code           string      `json:"code"`
+	NameAlt        pgtype.Text `json:"name_alt"`
+	DescriptionAlt pgtype.Text `json:"description_alt"`
 }
 
 type ChatMessage struct {
@@ -264,17 +266,20 @@ type FoodIngredient struct {
 }
 
 type FoodItem struct {
-	ID           int32            `json:"id"`
-	RestaurantID int32            `json:"restaurant_id"`
-	Name         string           `json:"name"`
-	Description  pgtype.Text      `json:"description"`
-	Price        pgtype.Numeric   `json:"price"`
-	Vat          pgtype.Numeric   `json:"vat"`
-	IsAvailable  bool             `json:"is_available"`
-	ImageUrl     pgtype.Text      `json:"image_url"`
-	PrepTimeMins pgtype.Int4      `json:"prep_time_mins"`
-	Instructions pgtype.Text      `json:"instructions"`
-	DeletedAt    pgtype.Timestamp `json:"deleted_at"`
+	ID              int32            `json:"id"`
+	RestaurantID    int32            `json:"restaurant_id"`
+	Name            string           `json:"name"`
+	Description     pgtype.Text      `json:"description"`
+	Price           pgtype.Numeric   `json:"price"`
+	Vat             pgtype.Numeric   `json:"vat"`
+	IsAvailable     bool             `json:"is_available"`
+	ImageUrl        pgtype.Text      `json:"image_url"`
+	PrepTimeMins    pgtype.Int4      `json:"prep_time_mins"`
+	Instructions    pgtype.Text      `json:"instructions"`
+	DeletedAt       pgtype.Timestamp `json:"deleted_at"`
+	NameAlt         pgtype.Text      `json:"name_alt"`
+	DescriptionAlt  pgtype.Text      `json:"description_alt"`
+	InstructionsAlt pgtype.Text      `json:"instructions_alt"`
 }
 
 type FoodItemAllergen struct {
@@ -288,11 +293,13 @@ type FoodItemToMenu struct {
 }
 
 type FoodMenu struct {
-	ID           int32       `json:"id"`
-	RestaurantID int32       `json:"restaurant_id"`
-	Name         string      `json:"name"`
-	Description  pgtype.Text `json:"description"`
-	ImageUrl     pgtype.Text `json:"image_url"`
+	ID             int32       `json:"id"`
+	RestaurantID   int32       `json:"restaurant_id"`
+	Name           string      `json:"name"`
+	Description    pgtype.Text `json:"description"`
+	ImageUrl       pgtype.Text `json:"image_url"`
+	NameAlt        pgtype.Text `json:"name_alt"`
+	DescriptionAlt pgtype.Text `json:"description_alt"`
 }
 
 type FoodOrder struct {

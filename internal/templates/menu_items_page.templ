@@ -1,0 +1,21 @@
+package templates
+
+templ MenuItemsPage(menuName string, items []MenuItemView) {
+	@Layout(menuName, menuItemsPageContent(menuName, items))
+}
+
+templ menuItemsPageContent(menuName string, items []MenuItemView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+			{ menuName }
+		</h2>
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+			for _, item := range items {
+				@FoodItemCard(item)
+			}
+			if len(items) == 0 {
+				<p class="text-center italic gms-main-text col-span-full">No items on this menu.</p>
+			}
+		</div>
+	</main>
+}

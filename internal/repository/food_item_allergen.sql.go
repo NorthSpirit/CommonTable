@@ -27,7 +27,7 @@ func (q *Queries) AddAllergenToItem(ctx context.Context, arg AddAllergenToItemPa
 }
 
 const listAllergensForItem = `-- name: ListAllergensForItem :many
-SELECT a.id, a.name, a.description, a.code
+SELECT a.id, a.name, a.description, a.code, a.name_alt, a.description_alt
 FROM allergen a
          JOIN food_item_allergen fia ON fia.allergen_id = a.id
 WHERE fia.item_id = $1
@@ -48,7 +48,51 @@ func (q *Queries) ListAllergensForItem(ctx context.Context, itemID int32) ([]All
 			&i.Name,
 			&i.Description,
 			&i.Code,
+			&i.NameAlt,
+			&i.DescriptionAlt,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAllergensForItemDisplay = `-- name: ListAllergensForItemDisplay :many
+SELECT
+    a.id,
+    CASE WHEN $2 = 'alt' THEN COALESCE(a.name_alt, a.name) ELSE a.name END AS name,
+    a.code
+FROM allergen a
+         JOIN food_item_allergen fia ON fia.allergen_id = a.id
+WHERE fia.item_id = $1
+ORDER BY a.name
+`
+
+type ListAllergensForItemDisplayParams struct {
+	ItemID  int32       `json:"item_id"`
+	Column2 interface{} `json:"column_2"`
+}
+
+type ListAllergensForItemDisplayRow struct {
+	ID   int32       `json:"id"`
+	Name interface{} `json:"name"`
+	Code string      `json:"code"`
+}
+
+func (q *Queries) ListAllergensForItemDisplay(ctx context.Context, arg ListAllergensForItemDisplayParams) ([]ListAllergensForItemDisplayRow, error) {
+	rows, err := q.db.Query(ctx, listAllergensForItemDisplay, arg.ItemID, arg.Column2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListAllergensForItemDisplayRow
+	for rows.Next() {
+		var i ListAllergensForItemDisplayRow
+		if err := rows.Scan(&i.ID, &i.Name, &i.Code); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

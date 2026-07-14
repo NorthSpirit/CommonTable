@@ -1,0 +1,33 @@
+package templates
+
+type RestaurantView struct {
+	ID      int32
+	Name    string
+	Address string
+	LogoURL string
+}
+
+type MenuView struct {
+	ID          int32
+	Name        string
+	Description string
+}
+
+type MenuItemView struct {
+	ID           int32
+	Name         string
+	Description  string
+	Price        float64
+	ImageURL     string
+	PrepTimeMins int32
+	HasPrepTime  bool
+}
+
+type ItemDetailView struct {
+	ID           int32
+	Name         string
+	Description  string
+	Instructions string
+	ImageURL     string
+	Allergens    []string
+}

@@ -73,7 +73,7 @@ func (q *Queries) ListItemsInMenu(ctx context.Context, menuID int32) ([]ListItem
 }
 
 const listMenusForItem = `-- name: ListMenusForItem :many
-SELECT fm.id, fm.restaurant_id, fm.name, fm.description, fm.image_url
+SELECT fm.id, fm.restaurant_id, fm.name, fm.description, fm.image_url, fm.name_alt, fm.description_alt
 FROM food_menu fm
          JOIN food_item_to_menu fitm ON fitm.menu_id = fm.id
 WHERE fitm.item_id = $1
@@ -95,6 +95,8 @@ func (q *Queries) ListMenusForItem(ctx context.Context, itemID int32) ([]FoodMen
 			&i.Name,
 			&i.Description,
 			&i.ImageUrl,
+			&i.NameAlt,
+			&i.DescriptionAlt,
 		); err != nil {
 			return nil, err
 		}

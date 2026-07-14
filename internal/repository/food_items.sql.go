@@ -12,76 +12,140 @@ import (
 )
 
 const createFoodItem = `-- name: CreateFoodItem :one
-INSERT INTO food_items (restaurant_id, name, description, is_available, image_url, prep_time_mins, instructions)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, restaurant_id, name, description, is_available, image_url, prep_time_mins, instructions
+INSERT INTO food_items (restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+RETURNING id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt
 `
 
 type CreateFoodItemParams struct {
-	RestaurantID int32       `json:"restaurant_id"`
-	Name         string      `json:"name"`
-	Description  pgtype.Text `json:"description"`
-	IsAvailable  bool        `json:"is_available"`
-	ImageUrl     pgtype.Text `json:"image_url"`
-	PrepTimeMins pgtype.Int4 `json:"prep_time_mins"`
-	Instructions pgtype.Text `json:"instructions"`
+	RestaurantID    int32       `json:"restaurant_id"`
+	Name            string      `json:"name"`
+	NameAlt         pgtype.Text `json:"name_alt"`
+	Description     pgtype.Text `json:"description"`
+	DescriptionAlt  pgtype.Text `json:"description_alt"`
+	IsAvailable     bool        `json:"is_available"`
+	ImageUrl        pgtype.Text `json:"image_url"`
+	PrepTimeMins    pgtype.Int4 `json:"prep_time_mins"`
+	Instructions    pgtype.Text `json:"instructions"`
+	InstructionsAlt pgtype.Text `json:"instructions_alt"`
 }
 
 type CreateFoodItemRow struct {
-	ID           int32       `json:"id"`
-	RestaurantID int32       `json:"restaurant_id"`
-	Name         string      `json:"name"`
-	Description  pgtype.Text `json:"description"`
-	IsAvailable  bool        `json:"is_available"`
-	ImageUrl     pgtype.Text `json:"image_url"`
-	PrepTimeMins pgtype.Int4 `json:"prep_time_mins"`
-	Instructions pgtype.Text `json:"instructions"`
+	ID              int32       `json:"id"`
+	RestaurantID    int32       `json:"restaurant_id"`
+	Name            string      `json:"name"`
+	NameAlt         pgtype.Text `json:"name_alt"`
+	Description     pgtype.Text `json:"description"`
+	DescriptionAlt  pgtype.Text `json:"description_alt"`
+	IsAvailable     bool        `json:"is_available"`
+	ImageUrl        pgtype.Text `json:"image_url"`
+	PrepTimeMins    pgtype.Int4 `json:"prep_time_mins"`
+	Instructions    pgtype.Text `json:"instructions"`
+	InstructionsAlt pgtype.Text `json:"instructions_alt"`
 }
 
 func (q *Queries) CreateFoodItem(ctx context.Context, arg CreateFoodItemParams) (CreateFoodItemRow, error) {
 	row := q.db.QueryRow(ctx, createFoodItem,
 		arg.RestaurantID,
 		arg.Name,
+		arg.NameAlt,
 		arg.Description,
+		arg.DescriptionAlt,
 		arg.IsAvailable,
 		arg.ImageUrl,
 		arg.PrepTimeMins,
 		arg.Instructions,
+		arg.InstructionsAlt,
 	)
 	var i CreateFoodItemRow
 	err := row.Scan(
 		&i.ID,
 		&i.RestaurantID,
 		&i.Name,
+		&i.NameAlt,
 		&i.Description,
+		&i.DescriptionAlt,
 		&i.IsAvailable,
 		&i.ImageUrl,
 		&i.PrepTimeMins,
 		&i.Instructions,
+		&i.InstructionsAlt,
 	)
 	return i, err
 }
 
 const getFoodItem = `-- name: GetFoodItem :one
-SELECT id, restaurant_id, name, description, is_available, image_url, prep_time_mins, instructions
+SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt
 FROM food_items
 WHERE id = $1 AND deleted_at IS NULL
 `
 
 type GetFoodItemRow struct {
-	ID           int32       `json:"id"`
-	RestaurantID int32       `json:"restaurant_id"`
-	Name         string      `json:"name"`
-	Description  pgtype.Text `json:"description"`
-	IsAvailable  bool        `json:"is_available"`
-	ImageUrl     pgtype.Text `json:"image_url"`
-	PrepTimeMins pgtype.Int4 `json:"prep_time_mins"`
-	Instructions pgtype.Text `json:"instructions"`
+	ID              int32       `json:"id"`
+	RestaurantID    int32       `json:"restaurant_id"`
+	Name            string      `json:"name"`
+	NameAlt         pgtype.Text `json:"name_alt"`
+	Description     pgtype.Text `json:"description"`
+	DescriptionAlt  pgtype.Text `json:"description_alt"`
+	IsAvailable     bool        `json:"is_available"`
+	ImageUrl        pgtype.Text `json:"image_url"`
+	PrepTimeMins    pgtype.Int4 `json:"prep_time_mins"`
+	Instructions    pgtype.Text `json:"instructions"`
+	InstructionsAlt pgtype.Text `json:"instructions_alt"`
 }
 
 func (q *Queries) GetFoodItem(ctx context.Context, id int32) (GetFoodItemRow, error) {
 	row := q.db.QueryRow(ctx, getFoodItem, id)
 	var i GetFoodItemRow
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.Name,
+		&i.NameAlt,
+		&i.Description,
+		&i.DescriptionAlt,
+		&i.IsAvailable,
+		&i.ImageUrl,
+		&i.PrepTimeMins,
+		&i.Instructions,
+		&i.InstructionsAlt,
+	)
+	return i, err
+}
+
+const getFoodItemForDisplay = `-- name: GetFoodItemForDisplay :one
+SELECT
+    id,
+    restaurant_id,
+    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
+    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    is_available,
+    image_url,
+    prep_time_mins,
+    CASE WHEN $2 = 'alt' THEN COALESCE(instructions_alt, instructions) ELSE instructions END AS instructions
+FROM food_items
+WHERE id = $1 AND deleted_at IS NULL
+`
+
+type GetFoodItemForDisplayParams struct {
+	ID      int32       `json:"id"`
+	Column2 interface{} `json:"column_2"`
+}
+
+type GetFoodItemForDisplayRow struct {
+	ID           int32       `json:"id"`
+	RestaurantID int32       `json:"restaurant_id"`
+	Name         interface{} `json:"name"`
+	Description  interface{} `json:"description"`
+	IsAvailable  bool        `json:"is_available"`
+	ImageUrl     pgtype.Text `json:"image_url"`
+	PrepTimeMins pgtype.Int4 `json:"prep_time_mins"`
+	Instructions interface{} `json:"instructions"`
+}
+
+func (q *Queries) GetFoodItemForDisplay(ctx context.Context, arg GetFoodItemForDisplayParams) (GetFoodItemForDisplayRow, error) {
+	row := q.db.QueryRow(ctx, getFoodItemForDisplay, arg.ID, arg.Column2)
+	var i GetFoodItemForDisplayRow
 	err := row.Scan(
 		&i.ID,
 		&i.RestaurantID,
@@ -96,21 +160,24 @@ func (q *Queries) GetFoodItem(ctx context.Context, id int32) (GetFoodItemRow, er
 }
 
 const listAvailableFoodItemsByRestaurant = `-- name: ListAvailableFoodItemsByRestaurant :many
-SELECT id, restaurant_id, name, description, is_available, image_url, prep_time_mins, instructions
+SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt
 FROM food_items
 WHERE restaurant_id = $1 AND is_available = true AND deleted_at IS NULL
 ORDER BY name
 `
 
 type ListAvailableFoodItemsByRestaurantRow struct {
-	ID           int32       `json:"id"`
-	RestaurantID int32       `json:"restaurant_id"`
-	Name         string      `json:"name"`
-	Description  pgtype.Text `json:"description"`
-	IsAvailable  bool        `json:"is_available"`
-	ImageUrl     pgtype.Text `json:"image_url"`
-	PrepTimeMins pgtype.Int4 `json:"prep_time_mins"`
-	Instructions pgtype.Text `json:"instructions"`
+	ID              int32       `json:"id"`
+	RestaurantID    int32       `json:"restaurant_id"`
+	Name            string      `json:"name"`
+	NameAlt         pgtype.Text `json:"name_alt"`
+	Description     pgtype.Text `json:"description"`
+	DescriptionAlt  pgtype.Text `json:"description_alt"`
+	IsAvailable     bool        `json:"is_available"`
+	ImageUrl        pgtype.Text `json:"image_url"`
+	PrepTimeMins    pgtype.Int4 `json:"prep_time_mins"`
+	Instructions    pgtype.Text `json:"instructions"`
+	InstructionsAlt pgtype.Text `json:"instructions_alt"`
 }
 
 func (q *Queries) ListAvailableFoodItemsByRestaurant(ctx context.Context, restaurantID int32) ([]ListAvailableFoodItemsByRestaurantRow, error) {
@@ -126,11 +193,14 @@ func (q *Queries) ListAvailableFoodItemsByRestaurant(ctx context.Context, restau
 			&i.ID,
 			&i.RestaurantID,
 			&i.Name,
+			&i.NameAlt,
 			&i.Description,
+			&i.DescriptionAlt,
 			&i.IsAvailable,
 			&i.ImageUrl,
 			&i.PrepTimeMins,
 			&i.Instructions,
+			&i.InstructionsAlt,
 		); err != nil {
 			return nil, err
 		}
@@ -143,21 +213,24 @@ func (q *Queries) ListAvailableFoodItemsByRestaurant(ctx context.Context, restau
 }
 
 const listFoodItemsByRestaurant = `-- name: ListFoodItemsByRestaurant :many
-SELECT id, restaurant_id, name, description, is_available, image_url, prep_time_mins, instructions
+SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt
 FROM food_items
 WHERE restaurant_id = $1 AND deleted_at IS NULL
 ORDER BY name
 `
 
 type ListFoodItemsByRestaurantRow struct {
-	ID           int32       `json:"id"`
-	RestaurantID int32       `json:"restaurant_id"`
-	Name         string      `json:"name"`
-	Description  pgtype.Text `json:"description"`
-	IsAvailable  bool        `json:"is_available"`
-	ImageUrl     pgtype.Text `json:"image_url"`
-	PrepTimeMins pgtype.Int4 `json:"prep_time_mins"`
-	Instructions pgtype.Text `json:"instructions"`
+	ID              int32       `json:"id"`
+	RestaurantID    int32       `json:"restaurant_id"`
+	Name            string      `json:"name"`
+	NameAlt         pgtype.Text `json:"name_alt"`
+	Description     pgtype.Text `json:"description"`
+	DescriptionAlt  pgtype.Text `json:"description_alt"`
+	IsAvailable     bool        `json:"is_available"`
+	ImageUrl        pgtype.Text `json:"image_url"`
+	PrepTimeMins    pgtype.Int4 `json:"prep_time_mins"`
+	Instructions    pgtype.Text `json:"instructions"`
+	InstructionsAlt pgtype.Text `json:"instructions_alt"`
 }
 
 func (q *Queries) ListFoodItemsByRestaurant(ctx context.Context, restaurantID int32) ([]ListFoodItemsByRestaurantRow, error) {
@@ -173,11 +246,14 @@ func (q *Queries) ListFoodItemsByRestaurant(ctx context.Context, restaurantID in
 			&i.ID,
 			&i.RestaurantID,
 			&i.Name,
+			&i.NameAlt,
 			&i.Description,
+			&i.DescriptionAlt,
 			&i.IsAvailable,
 			&i.ImageUrl,
 			&i.PrepTimeMins,
 			&i.Instructions,
+			&i.InstructionsAlt,
 		); err != nil {
 			return nil, err
 		}
@@ -190,25 +266,37 @@ func (q *Queries) ListFoodItemsByRestaurant(ctx context.Context, restaurantID in
 }
 
 const listMenuItemsForDisplay = `-- name: ListMenuItemsForDisplay :many
-SELECT fi.id, fi.name, fi.description, fi.price, fi.image_url, fi.prep_time_mins, fi.instructions
+SELECT
+    fi.id,
+    CASE WHEN $2 = 'alt' THEN COALESCE(fi.name_alt, fi.name) ELSE fi.name END AS name,
+    CASE WHEN $2 = 'alt' THEN COALESCE(fi.description_alt, fi.description) ELSE fi.description END AS description,
+    fi.price,
+    fi.image_url,
+    fi.prep_time_mins,
+    CASE WHEN $2 = 'alt' THEN COALESCE(fi.instructions_alt, fi.instructions) ELSE fi.instructions END AS instructions
 FROM food_items fi
          JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
 WHERE fitm.menu_id = $1 AND fi.is_available = true AND fi.deleted_at IS NULL
 ORDER BY fi.name
 `
 
+type ListMenuItemsForDisplayParams struct {
+	MenuID  int32       `json:"menu_id"`
+	Column2 interface{} `json:"column_2"`
+}
+
 type ListMenuItemsForDisplayRow struct {
 	ID           int32          `json:"id"`
-	Name         string         `json:"name"`
-	Description  pgtype.Text    `json:"description"`
+	Name         interface{}    `json:"name"`
+	Description  interface{}    `json:"description"`
 	Price        pgtype.Numeric `json:"price"`
 	ImageUrl     pgtype.Text    `json:"image_url"`
 	PrepTimeMins pgtype.Int4    `json:"prep_time_mins"`
-	Instructions pgtype.Text    `json:"instructions"`
+	Instructions interface{}    `json:"instructions"`
 }
 
-func (q *Queries) ListMenuItemsForDisplay(ctx context.Context, menuID int32) ([]ListMenuItemsForDisplayRow, error) {
-	rows, err := q.db.Query(ctx, listMenuItemsForDisplay, menuID)
+func (q *Queries) ListMenuItemsForDisplay(ctx context.Context, arg ListMenuItemsForDisplayParams) ([]ListMenuItemsForDisplayRow, error) {
+	rows, err := q.db.Query(ctx, listMenuItemsForDisplay, arg.MenuID, arg.Column2)
 	if err != nil {
 		return nil, err
 	}
@@ -275,29 +363,35 @@ func (q *Queries) SoftDeleteFoodItem(ctx context.Context, id int32) error {
 
 const updateFoodItem = `-- name: UpdateFoodItem :exec
 UPDATE food_items
-SET name = $2, description = $3, is_available = $4, image_url = $5, prep_time_mins = $6, instructions = $7
+SET name = $2, name_alt = $3, description = $4, description_alt = $5, is_available = $6, image_url = $7, prep_time_mins = $8, instructions = $9, instructions_alt = $10
 WHERE id = $1 AND deleted_at IS NULL
 `
 
 type UpdateFoodItemParams struct {
-	ID           int32       `json:"id"`
-	Name         string      `json:"name"`
-	Description  pgtype.Text `json:"description"`
-	IsAvailable  bool        `json:"is_available"`
-	ImageUrl     pgtype.Text `json:"image_url"`
-	PrepTimeMins pgtype.Int4 `json:"prep_time_mins"`
-	Instructions pgtype.Text `json:"instructions"`
+	ID              int32       `json:"id"`
+	Name            string      `json:"name"`
+	NameAlt         pgtype.Text `json:"name_alt"`
+	Description     pgtype.Text `json:"description"`
+	DescriptionAlt  pgtype.Text `json:"description_alt"`
+	IsAvailable     bool        `json:"is_available"`
+	ImageUrl        pgtype.Text `json:"image_url"`
+	PrepTimeMins    pgtype.Int4 `json:"prep_time_mins"`
+	Instructions    pgtype.Text `json:"instructions"`
+	InstructionsAlt pgtype.Text `json:"instructions_alt"`
 }
 
 func (q *Queries) UpdateFoodItem(ctx context.Context, arg UpdateFoodItemParams) error {
 	_, err := q.db.Exec(ctx, updateFoodItem,
 		arg.ID,
 		arg.Name,
+		arg.NameAlt,
 		arg.Description,
+		arg.DescriptionAlt,
 		arg.IsAvailable,
 		arg.ImageUrl,
 		arg.PrepTimeMins,
 		arg.Instructions,
+		arg.InstructionsAlt,
 	)
 	return err
 }
