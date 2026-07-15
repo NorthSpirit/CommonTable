@@ -9,6 +9,7 @@ sql:
       - "./queries/food_orders"
       - "./queries/payments"
       - "./queries/chat_messages"
+      - "./queries/homepage"
     schema: "./migrations"
     gen:
       go:

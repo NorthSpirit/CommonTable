@@ -1,16 +1,25 @@
 package templates
 
-templ HomePage() {
-	@Layout("Welcome", nil, homePageContent())
+templ HomePage(content HomepageView) {
+	@Layout("Welcome", nil, homePageContent(content))
 }
 
-templ homePageContent() {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center justify-center text-center">
+templ homePageContent(content HomepageView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center text-center">
 		<h2 class="text-3xl font-bold mb-4 gms-main-text">Welcome to CommonTable</h2>
-		<p class="gms-main-text mb-6 max-w-xl">
-			Browse restaurants in our food hall, explore their menus, and check
-			what's in each dish before you order.
-		</p>
+		<p class="gms-main-text mb-6 max-w-xl">{ content.WelcomeText }</p>
+
+		if content.ImageOneURL != "" || content.ImageTwoURL != "" {
+			<div class="flex flex-col sm:flex-row gap-4 mb-6 max-w-3xl">
+				if content.ImageOneURL != "" {
+					<img src={ content.ImageOneURL } alt="CommonTable" class="w-full sm:w-1/2 h-48 object-cover rounded-lg border gms-border-medium"/>
+				}
+				if content.ImageTwoURL != "" {
+					<img src={ content.ImageTwoURL } alt="CommonTable" class="w-full sm:w-1/2 h-48 object-cover rounded-lg border gms-border-medium"/>
+				}
+			</div>
+		}
+
 		<a href="/restaurants" class="px-6 py-3 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 			View Restaurants
 		</a>

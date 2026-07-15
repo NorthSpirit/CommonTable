@@ -16,15 +16,18 @@ import (
 type RestaurantHandler struct {
 	restaurantService *restaurantservices.RestaurantService
 	foodMenuService   *foodservices.FoodMenuService
+	foodItemService   *foodservices.FoodItemService
 }
 
 func NewRestaurantHandler(
 	restaurantService *restaurantservices.RestaurantService,
 	foodMenuService *foodservices.FoodMenuService,
+	foodItemService *foodservices.FoodItemService,
 ) *RestaurantHandler {
 	return &RestaurantHandler{
 		restaurantService: restaurantService,
 		foodMenuService:   foodMenuService,
+		foodItemService:   foodItemService,
 	}
 }
 
@@ -72,14 +75,25 @@ func (h *RestaurantHandler) Menus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	views := make([]templates.MenuView, 0, len(menus))
+	menuViews := make([]templates.MenuView, 0, len(menus))
 	for _, menu := range menus {
-		views = append(views, toMenuView(menu))
+		menuViews = append(menuViews, toMenuView(menu))
+	}
+
+	popularItems, err := h.foodItemService.ListMostOrderedItemsByRestaurant(r.Context(), int32(id), locale, 8)
+	if err != nil {
+		http.Error(w, "failed to load popular items", http.StatusInternalServerError)
+		return
+	}
+
+	quickNavViews := make([]templates.QuickNavItemView, 0, len(popularItems))
+	for _, item := range popularItems {
+		quickNavViews = append(quickNavViews, toQuickNavItemView(item))
 	}
 
 	branding := toBrandingView(restaurant)
 
-	if err := templates.MenusPage(branding, views).Render(r.Context(), w); err != nil {
+	if err := templates.MenusPage(branding, quickNavViews, menuViews).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }

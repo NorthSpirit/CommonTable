@@ -11,6 +11,7 @@ type MenuView struct {
 	ID          int32
 	Name        string
 	Description string
+	ImageURL    string
 }
 
 type MenuItemView struct {
@@ -35,4 +36,16 @@ type ItemDetailView struct {
 type BrandingView struct {
 	Name    string
 	LogoURL string
+}
+
+type HomepageView struct {
+	WelcomeText string
+	ImageOneURL string
+	ImageTwoURL string
+}
+
+type QuickNavItemView struct {
+	ID       int32
+	Name     string
+	ImageURL string
 }

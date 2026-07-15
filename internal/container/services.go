@@ -1,14 +1,15 @@
 package container
 
 import (
+	"time"
+
 	"CommonTable/internal/repository"
 	"CommonTable/internal/services/adminservices"
 	"CommonTable/internal/services/authservices"
 	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
+	"CommonTable/internal/services/homepageservices"
 	"CommonTable/internal/services/restaurantservices"
-
-	"time"
 )
 
 // Services holds every service the application needs, constructed once
@@ -20,7 +21,9 @@ type Services struct {
 	Restaurant   *restaurantservices.RestaurantService
 	FoodMenu     *foodservices.FoodMenuService
 	FoodItem     *foodservices.FoodItemService
+	FoodAllergen *foodservices.FoodAllergenService
 	ItemAllergen *foodrelationshipservices.ItemAllergenService
+	Homepage     *homepageservices.HomepageService
 
 	// add more here as new domains get built —
 	// Employee, Table, FoodOrder, Payment, ChatMessage, etc.
@@ -48,6 +51,8 @@ func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
 		Restaurant:   restaurantservices.NewRestaurantService(queries),
 		FoodMenu:     foodservices.NewFoodMenuService(queries),
 		FoodItem:     foodservices.NewFoodItemService(queries),
+		FoodAllergen: foodservices.NewFoodAllergenService(queries),
 		ItemAllergen: foodrelationshipservices.NewItemAllergenService(queries),
+		Homepage:     homepageservices.NewHomepageService(queries),
 	}
 }

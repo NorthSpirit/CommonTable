@@ -1,10 +1,19 @@
 package templates
 
 templ MenuCard(menu MenuView) {
-	<a href={ templ.URL("/menus/" + itoa(menu.ID)) } class="block gms-hover-bg-light border gms-border-medium rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] p-4">
-		<h3 class="text-xl font-bold mb-1 gms-main-text">{ menu.Name }</h3>
-		if menu.Description != "" {
-			<p class="gms-main-text text-sm mt-2">{ menu.Description }</p>
-		}
+	<a href={ templ.URL("/menus/" + itoa(menu.ID)) } class="block gms-hover-bg-light border gms-border-medium rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+		<div class="h-32 w-full bg-gray-200 flex items-center justify-center relative">
+			if menu.ImageURL != "" {
+				<img src={ menu.ImageURL } alt={ menu.Name } class="h-full w-full object-cover"/>
+			} else {
+				<div class="text-gray-500 italic">No Image Available</div>
+			}
+		</div>
+		<div class="p-4">
+			<h3 class="text-xl font-bold mb-1 gms-main-text">{ menu.Name }</h3>
+			if menu.Description != "" {
+				<p class="gms-main-text text-sm mt-2">{ menu.Description }</p>
+			}
+		</div>
 	</a>
 }

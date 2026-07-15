@@ -166,3 +166,18 @@ func (f *FoodItemService) RestoreFoodItem(ctx context.Context, id int32) error {
 
 	return nil
 }
+
+// ListMostOrderedItemsByRestaurant returns the top N most-ordered available
+// items for a restaurant, locale-resolved — used for the quick-nav.
+func (f *FoodItemService) ListMostOrderedItemsByRestaurant(ctx context.Context, restaurantID int32, locale string, limit int32) ([]repository.ListMostOrderedItemsByRestaurantRow, error) {
+	items, err := f.queries.ListMostOrderedItemsByRestaurant(ctx, repository.ListMostOrderedItemsByRestaurantParams{
+		Locale:       locale,
+		RestaurantID: restaurantID,
+		ItemLimit:    limit,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("list most ordered items by restaurant: %w", err)
+	}
+
+	return items, nil
+}

@@ -323,6 +323,60 @@ func (q *Queries) ListMenuItemsForDisplay(ctx context.Context, arg ListMenuItems
 	return items, nil
 }
 
+const listMostOrderedItemsByRestaurant = `-- name: ListMostOrderedItemsByRestaurant :many
+SELECT
+    fi.id,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(fi.name_alt, fi.name) ELSE fi.name END::varchar AS name,
+    fi.image_url,
+    COUNT(io.id) AS order_count
+FROM food_items fi
+         JOIN item_orders io ON io.item_id = fi.id
+WHERE fi.restaurant_id = $2::integer
+  AND fi.is_available = true
+  AND fi.deleted_at IS NULL
+GROUP BY fi.id, fi.name, fi.name_alt, fi.image_url
+ORDER BY order_count DESC
+LIMIT $3::integer
+`
+
+type ListMostOrderedItemsByRestaurantParams struct {
+	Locale       string `json:"locale"`
+	RestaurantID int32  `json:"restaurant_id"`
+	ItemLimit    int32  `json:"item_limit"`
+}
+
+type ListMostOrderedItemsByRestaurantRow struct {
+	ID         int32       `json:"id"`
+	Name       string      `json:"name"`
+	ImageUrl   pgtype.Text `json:"image_url"`
+	OrderCount int64       `json:"order_count"`
+}
+
+func (q *Queries) ListMostOrderedItemsByRestaurant(ctx context.Context, arg ListMostOrderedItemsByRestaurantParams) ([]ListMostOrderedItemsByRestaurantRow, error) {
+	rows, err := q.db.Query(ctx, listMostOrderedItemsByRestaurant, arg.Locale, arg.RestaurantID, arg.ItemLimit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListMostOrderedItemsByRestaurantRow
+	for rows.Next() {
+		var i ListMostOrderedItemsByRestaurantRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ImageUrl,
+			&i.OrderCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const restoreFoodItem = `-- name: RestoreFoodItem :exec
 UPDATE food_items
 SET deleted_at = NULL

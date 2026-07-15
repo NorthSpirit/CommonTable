@@ -1,6 +1,7 @@
 package main
 
 import (
+	"CommonTable/internal/templates"
 	"context"
 	"log"
 	"net/http"
@@ -20,7 +21,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("load config: %v", err)
 	}
-
+	templates.SetAltLanguageLabel(cfg.AltLanguageLabel)
 	pool, err := pgxpool.New(context.Background(), cfg.DBString)
 	if err != nil {
 		log.Fatalf("connect to db: %v", err)

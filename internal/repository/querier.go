@@ -44,6 +44,8 @@ type Querier interface {
 	GetFoodMenu(ctx context.Context, id int32) (FoodMenu, error)
 	GetFoodMenuForDisplay(ctx context.Context, arg GetFoodMenuForDisplayParams) (GetFoodMenuForDisplayRow, error)
 	GetFoodOrder(ctx context.Context, id int32) (FoodOrder, error)
+	GetHomepageContent(ctx context.Context) (HomepageContent, error)
+	GetHomepageContentForDisplay(ctx context.Context, locale string) (GetHomepageContentForDisplayRow, error)
 	GetItemOrder(ctx context.Context, id int32) (ItemOrder, error)
 	GetPayment(ctx context.Context, id int32) (Payment, error)
 	GetRestaurant(ctx context.Context, id int32) (Restaurant, error)
@@ -72,6 +74,7 @@ type Querier interface {
 	ListMenusForItem(ctx context.Context, itemID int32) ([]FoodMenu, error)
 	ListMessagesByEmployee(ctx context.Context, employeeID int32) ([]ChatMessage, error)
 	ListMessagesByRestaurant(ctx context.Context, restaurantID int32) ([]ChatMessage, error)
+	ListMostOrderedItemsByRestaurant(ctx context.Context, arg ListMostOrderedItemsByRestaurantParams) ([]ListMostOrderedItemsByRestaurantRow, error)
 	ListOrdersByRestaurant(ctx context.Context, restaurantID int32) ([]FoodOrder, error)
 	ListOrdersByStatus(ctx context.Context, arg ListOrdersByStatusParams) ([]FoodOrder, error)
 	ListOrdersByTable(ctx context.Context, tableID int32) ([]FoodOrder, error)
@@ -99,6 +102,7 @@ type Querier interface {
 	UpdateFoodItem(ctx context.Context, arg UpdateFoodItemParams) error
 	UpdateFoodMenu(ctx context.Context, arg UpdateFoodMenuParams) error
 	UpdateFoodOrderNotes(ctx context.Context, arg UpdateFoodOrderNotesParams) error
+	UpdateHomepageContent(ctx context.Context, arg UpdateHomepageContentParams) error
 	UpdateIngredientInItem(ctx context.Context, arg UpdateIngredientInItemParams) error
 	UpdateItemOrderNotes(ctx context.Context, arg UpdateItemOrderNotesParams) error
 	UpdateItemOrderQuantity(ctx context.Context, arg UpdateItemOrderQuantityParams) error

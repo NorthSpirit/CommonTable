@@ -66,3 +66,18 @@ FROM food_items fi
          JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
 WHERE fitm.menu_id = sqlc.arg(menu_id)::integer AND fi.is_available = true AND fi.deleted_at IS NULL
 ORDER BY fi.name;
+
+-- name: ListMostOrderedItemsByRestaurant :many
+SELECT
+    fi.id,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(fi.name_alt, fi.name) ELSE fi.name END::varchar AS name,
+    fi.image_url,
+    COUNT(io.id) AS order_count
+FROM food_items fi
+         JOIN item_orders io ON io.item_id = fi.id
+WHERE fi.restaurant_id = sqlc.arg(restaurant_id)::integer
+  AND fi.is_available = true
+  AND fi.deleted_at IS NULL
+GROUP BY fi.id, fi.name, fi.name_alt, fi.image_url
+ORDER BY order_count DESC
+LIMIT sqlc.arg(item_limit)::integer;

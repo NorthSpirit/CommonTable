@@ -26,6 +26,9 @@ func toMenuView(m repository.ListFoodMenusByRestaurantForDisplayRow) templates.M
 		Name:        m.Name,
 		Description: m.Description,
 	}
+	if m.ImageUrl.Valid {
+		view.ImageURL = m.ImageUrl.String
+	}
 	return view
 }
 
@@ -70,6 +73,17 @@ func toBrandingView(r repository.Restaurant) templates.BrandingView {
 	}
 	if r.LogoUrl.Valid {
 		view.LogoURL = r.LogoUrl.String
+	}
+	return view
+}
+
+func toQuickNavItemView(item repository.ListMostOrderedItemsByRestaurantRow) templates.QuickNavItemView {
+	view := templates.QuickNavItemView{
+		ID:   item.ID,
+		Name: item.Name,
+	}
+	if item.ImageUrl.Valid {
+		view.ImageURL = item.ImageUrl.String
 	}
 	return view
 }

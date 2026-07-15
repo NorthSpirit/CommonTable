@@ -17,6 +17,8 @@ type Config struct {
 
 	JWTSecret   []byte
 	JWTTokenTTL time.Duration
+
+	AltLanguageLabel string
 }
 
 func Load() (*Config, error) {
@@ -53,11 +55,17 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("parse JWT_TOKEN_TTL_HOURS: %w", err)
 	}
 
+	altLanguageLabel := os.Getenv("ALT_LANGUAGE_LABEL")
+	if altLanguageLabel == "" {
+		altLanguageLabel = "ALT" // sensible fallback if not configured
+	}
+
 	return &Config{
 		DBString:          dbString,
 		AdminUsername:     adminUsername,
 		AdminPasswordHash: adminPasswordHash,
 		JWTSecret:         []byte(jwtSecretRaw),
 		JWTTokenTTL:       time.Duration(ttlHours) * time.Hour,
+		AltLanguageLabel:  altLanguageLabel,
 	}, nil
 }

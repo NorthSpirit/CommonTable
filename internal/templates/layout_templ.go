@@ -115,7 +115,20 @@ func Layout(title string, branding *BrandingView, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p></div></header><nav id=\"menu\" class=\"border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg\"><div class=\"md:hidden w-full\"><button id=\"menu-toggle\" class=\"px-4 py-1 w-full flex items-center justify-between gms-main-text gms-hover-bg-light rounded\"><div class=\"flex items-center space-x-2\"><svg class=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg> <span class=\"text-base font-bold tracking-wider\">Menu</span></div></button></div><ul id=\"menu-items\" class=\"hidden md:flex list-none m-0 w-full flex-col md:flex-row md:justify-center md:items-stretch text-center\"><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Home</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/restaurants\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Restaurants</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"#\" id=\"MColour\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Palette Swap</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"?lang=en\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">EN</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"?lang=alt\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">ALT</a></li></ul></nav><div class=\"flex flex-col flex-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p></div></header><nav id=\"menu\" class=\"border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg\"><div class=\"md:hidden w-full\"><button id=\"menu-toggle\" class=\"px-4 py-1 w-full flex items-center justify-between gms-main-text gms-hover-bg-light rounded\"><div class=\"flex items-center space-x-2\"><svg class=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg> <span class=\"text-base font-bold tracking-wider\">Menu</span></div></button></div><ul id=\"menu-items\" class=\"hidden md:flex list-none m-0 w-full flex-col md:flex-row md:justify-center md:items-stretch text-center\"><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Home</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/restaurants\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Restaurants</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"#\" id=\"MColour\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Palette Swap</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"?lang=en\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">EN</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"?lang=alt\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(altLanguageLabel)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout.templ`, Line: 66, Col: 145}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</a></li></ul></nav><div class=\"flex flex-col flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -123,7 +136,7 @@ func Layout(title string, branding *BrandingView, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><footer class=\"gms-dark-bg gms-light-text p-4 text-center gms-accent-text\"><p>&copy; 2026 CommonTable</p></footer></div><script src=\"/assets/jsscripts/hamburger.js\"></script><script src=\"/assets/jsscripts/colour_swap.js\"></script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><footer class=\"gms-dark-bg gms-light-text p-4 text-center gms-accent-text\"><p>&copy; 2026 CommonTable</p></footer></div><script src=\"/assets/jsscripts/hamburger.js\"></script><script src=\"/assets/jsscripts/colour_swap.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
