@@ -27,8 +27,8 @@ func (f *FoodMenuService) GetFoodMenuByID(ctx context.Context, id int32) (reposi
 
 func (f *FoodMenuService) GetFoodMenuForDisplay(ctx context.Context, id int32, locale string) (repository.GetFoodMenuForDisplayRow, error) {
 	menu, err := f.queries.GetFoodMenuForDisplay(ctx, repository.GetFoodMenuForDisplayParams{
-		ID:      id,
-		Column2: locale,
+		Locale: locale,
+		ID:     id,
 	})
 	if err != nil {
 		return repository.GetFoodMenuForDisplayRow{}, fmt.Errorf("get food menu for display: %w", err)
@@ -48,8 +48,8 @@ func (f *FoodMenuService) ListFoodMenusByRestaurant(ctx context.Context, restaur
 
 func (f *FoodMenuService) ListFoodMenusByRestaurantForDisplay(ctx context.Context, restaurantID int32, locale string) ([]repository.ListFoodMenusByRestaurantForDisplayRow, error) {
 	menus, err := f.queries.ListFoodMenusByRestaurantForDisplay(ctx, repository.ListFoodMenusByRestaurantForDisplayParams{
+		Locale:       locale,
 		RestaurantID: restaurantID,
-		Column2:      locale,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("list food menus by restaurant for display: %w", err)

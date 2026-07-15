@@ -313,6 +313,15 @@ type FoodOrder struct {
 	Notes             pgtype.Text      `json:"notes"`
 }
 
+type HomepageContent struct {
+	ID             int32            `json:"id"`
+	WelcomeText    string           `json:"welcome_text"`
+	WelcomeTextAlt pgtype.Text      `json:"welcome_text_alt"`
+	ImageOneUrl    pgtype.Text      `json:"image_one_url"`
+	ImageTwoUrl    pgtype.Text      `json:"image_two_url"`
+	UpdatedAt      pgtype.Timestamp `json:"updated_at"`
+}
+
 type IngredientInItem struct {
 	IngredientID int32         `json:"ingredient_id"`
 	ItemID       int32         `json:"item_id"`

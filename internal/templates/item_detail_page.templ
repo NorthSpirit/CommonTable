@@ -1,7 +1,7 @@
 package templates
 
-templ ItemDetailPage(item ItemDetailView) {
-	@Layout(item.Name, itemDetailPageContent(item))
+templ ItemDetailPage(branding BrandingView, item ItemDetailView) {
+	@Layout(item.Name, &branding, itemDetailPageContent(item))
 }
 
 templ itemDetailPageContent(item ItemDetailView) {

@@ -6,11 +6,11 @@ WHERE id = $1;
 SELECT
     id,
     restaurant_id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
-    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(name_alt, name) ELSE name END::varchar AS name,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(description_alt, description) ELSE description END::text AS description,
     image_url
 FROM food_menu
-WHERE id = $1;
+WHERE id = sqlc.arg(id)::integer;
 
 -- name: ListFoodMenusByRestaurant :many
 SELECT * FROM food_menu
@@ -21,11 +21,11 @@ ORDER BY name;
 SELECT
     id,
     restaurant_id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
-    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(name_alt, name) ELSE name END::varchar AS name,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(description_alt, description) ELSE description END::text AS description,
     image_url
 FROM food_menu
-WHERE restaurant_id = $1
+WHERE restaurant_id = sqlc.arg(restaurant_id)::integer
 ORDER BY name;
 
 -- name: CreateFoodMenu :one

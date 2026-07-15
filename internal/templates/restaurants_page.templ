@@ -1,7 +1,7 @@
 package templates
 
 templ RestaurantsPage(restaurants []RestaurantView) {
-	@Layout("Restaurants", restaurantsPageContent(restaurants))
+	@Layout("Restaurants", nil, restaurantsPageContent(restaurants))
 }
 
 templ restaurantsPageContent(restaurants []RestaurantView) {

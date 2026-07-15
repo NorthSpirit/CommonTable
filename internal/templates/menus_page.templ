@@ -1,7 +1,7 @@
 package templates
 
-templ MenusPage(restaurantName string, menus []MenuView) {
-	@Layout(restaurantName + " - Menus", menusPageContent(restaurantName, menus))
+templ MenusPage(branding BrandingView, menus []MenuView) {
+	@Layout(branding.Name + " - Menus", &branding, menusPageContent(branding.Name, menus))
 }
 
 templ menusPageContent(restaurantName string, menus []MenuView) {

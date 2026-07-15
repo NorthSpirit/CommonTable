@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"CommonTable/internal/services/foodservices"
+	"CommonTable/internal/services/restaurantservices"
 	"CommonTable/internal/templates"
 
 	"github.com/go-chi/chi/v5"
@@ -13,17 +14,20 @@ import (
 )
 
 type MenuHandler struct {
-	foodMenuService *foodservices.FoodMenuService
-	foodItemService *foodservices.FoodItemService
+	foodMenuService   *foodservices.FoodMenuService
+	foodItemService   *foodservices.FoodItemService
+	restaurantService *restaurantservices.RestaurantService
 }
 
 func NewMenuHandler(
 	foodMenuService *foodservices.FoodMenuService,
 	foodItemService *foodservices.FoodItemService,
+	restaurantService *restaurantservices.RestaurantService,
 ) *MenuHandler {
 	return &MenuHandler{
-		foodMenuService: foodMenuService,
-		foodItemService: foodItemService,
+		foodMenuService:   foodMenuService,
+		foodItemService:   foodItemService,
+		restaurantService: restaurantService,
 	}
 }
 
@@ -35,7 +39,9 @@ func (h *MenuHandler) Items(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	menu, err := h.foodMenuService.GetFoodMenuByID(r.Context(), int32(id))
+	locale := getLocale(r)
+
+	menu, err := h.foodMenuService.GetFoodMenuForDisplay(r.Context(), int32(id), locale)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			http.NotFound(w, r)
@@ -45,7 +51,13 @@ func (h *MenuHandler) Items(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	items, err := h.foodItemService.ListMenuItemsForDisplay(r.Context(), int32(id))
+	restaurant, err := h.restaurantService.GetRestaurantByID(r.Context(), menu.RestaurantID)
+	if err != nil {
+		http.Error(w, "failed to load restaurant", http.StatusInternalServerError)
+		return
+	}
+
+	items, err := h.foodItemService.ListMenuItemsForDisplay(r.Context(), int32(id), locale)
 	if err != nil {
 		http.Error(w, "failed to load menu items", http.StatusInternalServerError)
 		return
@@ -56,7 +68,9 @@ func (h *MenuHandler) Items(w http.ResponseWriter, r *http.Request) {
 		views = append(views, toMenuItemView(item))
 	}
 
-	if err := templates.MenuItemsPage(menu.Name, views).Render(r.Context(), w); err != nil {
+	branding := toBrandingView(restaurant)
+
+	if err := templates.MenuItemsPage(branding, menu.Name, views).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }

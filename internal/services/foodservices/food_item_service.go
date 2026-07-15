@@ -29,8 +29,8 @@ func (f *FoodItemService) GetFoodItemByID(ctx context.Context, id int32) (reposi
 // GetFoodItemForDisplay returns locale-resolved item data — for customer-facing pages.
 func (f *FoodItemService) GetFoodItemForDisplay(ctx context.Context, id int32, locale string) (repository.GetFoodItemForDisplayRow, error) {
 	item, err := f.queries.GetFoodItemForDisplay(ctx, repository.GetFoodItemForDisplayParams{
-		ID:      id,
-		Column2: locale,
+		Locale: locale,
+		ID:     id,
 	})
 	if err != nil {
 		return repository.GetFoodItemForDisplayRow{}, fmt.Errorf("get food item for display: %w", err)
@@ -61,8 +61,8 @@ func (f *FoodItemService) ListAvailableFoodItemsByRestaurant(ctx context.Context
 // for public-facing menu display.
 func (f *FoodItemService) ListMenuItemsForDisplay(ctx context.Context, menuID int32, locale string) ([]repository.ListMenuItemsForDisplayRow, error) {
 	items, err := f.queries.ListMenuItemsForDisplay(ctx, repository.ListMenuItemsForDisplayParams{
-		MenuID:  menuID,
-		Column2: locale,
+		Locale: locale,
+		MenuID: menuID,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("list menu items for display: %w", err)

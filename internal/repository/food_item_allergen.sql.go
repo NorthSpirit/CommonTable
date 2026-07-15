@@ -64,27 +64,27 @@ func (q *Queries) ListAllergensForItem(ctx context.Context, itemID int32) ([]All
 const listAllergensForItemDisplay = `-- name: ListAllergensForItemDisplay :many
 SELECT
     a.id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(a.name_alt, a.name) ELSE a.name END AS name,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(a.name_alt, a.name) ELSE a.name END::varchar AS name,
     a.code
 FROM allergen a
          JOIN food_item_allergen fia ON fia.allergen_id = a.id
-WHERE fia.item_id = $1
+WHERE fia.item_id = $2::integer
 ORDER BY a.name
 `
 
 type ListAllergensForItemDisplayParams struct {
-	ItemID  int32       `json:"item_id"`
-	Column2 interface{} `json:"column_2"`
+	Locale string `json:"locale"`
+	ItemID int32  `json:"item_id"`
 }
 
 type ListAllergensForItemDisplayRow struct {
-	ID   int32       `json:"id"`
-	Name interface{} `json:"name"`
-	Code string      `json:"code"`
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
+	Code string `json:"code"`
 }
 
 func (q *Queries) ListAllergensForItemDisplay(ctx context.Context, arg ListAllergensForItemDisplayParams) ([]ListAllergensForItemDisplayRow, error) {
-	rows, err := q.db.Query(ctx, listAllergensForItemDisplay, arg.ItemID, arg.Column2)
+	rows, err := q.db.Query(ctx, listAllergensForItemDisplay, arg.Locale, arg.ItemID)
 	if err != nil {
 		return nil, err
 	}

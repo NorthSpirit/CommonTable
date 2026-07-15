@@ -1,7 +1,7 @@
 package templates
 
-templ MenuItemsPage(menuName string, items []MenuItemView) {
-	@Layout(menuName, menuItemsPageContent(menuName, items))
+templ MenuItemsPage(branding BrandingView, menuName string, items []MenuItemView) {
+	@Layout(menuName, &branding, menuItemsPageContent(menuName, items))
 }
 
 templ menuItemsPageContent(menuName string, items []MenuItemView) {

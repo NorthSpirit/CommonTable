@@ -82,28 +82,28 @@ const getFoodMenuForDisplay = `-- name: GetFoodMenuForDisplay :one
 SELECT
     id,
     restaurant_id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
-    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(name_alt, name) ELSE name END::varchar AS name,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(description_alt, description) ELSE description END::text AS description,
     image_url
 FROM food_menu
-WHERE id = $1
+WHERE id = $2::integer
 `
 
 type GetFoodMenuForDisplayParams struct {
-	ID      int32       `json:"id"`
-	Column2 interface{} `json:"column_2"`
+	Locale string `json:"locale"`
+	ID     int32  `json:"id"`
 }
 
 type GetFoodMenuForDisplayRow struct {
 	ID           int32       `json:"id"`
 	RestaurantID int32       `json:"restaurant_id"`
-	Name         interface{} `json:"name"`
-	Description  interface{} `json:"description"`
+	Name         string      `json:"name"`
+	Description  string      `json:"description"`
 	ImageUrl     pgtype.Text `json:"image_url"`
 }
 
 func (q *Queries) GetFoodMenuForDisplay(ctx context.Context, arg GetFoodMenuForDisplayParams) (GetFoodMenuForDisplayRow, error) {
-	row := q.db.QueryRow(ctx, getFoodMenuForDisplay, arg.ID, arg.Column2)
+	row := q.db.QueryRow(ctx, getFoodMenuForDisplay, arg.Locale, arg.ID)
 	var i GetFoodMenuForDisplayRow
 	err := row.Scan(
 		&i.ID,
@@ -153,29 +153,29 @@ const listFoodMenusByRestaurantForDisplay = `-- name: ListFoodMenusByRestaurantF
 SELECT
     id,
     restaurant_id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
-    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(name_alt, name) ELSE name END::varchar AS name,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(description_alt, description) ELSE description END::text AS description,
     image_url
 FROM food_menu
-WHERE restaurant_id = $1
+WHERE restaurant_id = $2::integer
 ORDER BY name
 `
 
 type ListFoodMenusByRestaurantForDisplayParams struct {
-	RestaurantID int32       `json:"restaurant_id"`
-	Column2      interface{} `json:"column_2"`
+	Locale       string `json:"locale"`
+	RestaurantID int32  `json:"restaurant_id"`
 }
 
 type ListFoodMenusByRestaurantForDisplayRow struct {
 	ID           int32       `json:"id"`
 	RestaurantID int32       `json:"restaurant_id"`
-	Name         interface{} `json:"name"`
-	Description  interface{} `json:"description"`
+	Name         string      `json:"name"`
+	Description  string      `json:"description"`
 	ImageUrl     pgtype.Text `json:"image_url"`
 }
 
 func (q *Queries) ListFoodMenusByRestaurantForDisplay(ctx context.Context, arg ListFoodMenusByRestaurantForDisplayParams) ([]ListFoodMenusByRestaurantForDisplayRow, error) {
-	rows, err := q.db.Query(ctx, listFoodMenusByRestaurantForDisplay, arg.RestaurantID, arg.Column2)
+	rows, err := q.db.Query(ctx, listFoodMenusByRestaurantForDisplay, arg.Locale, arg.RestaurantID)
 	if err != nil {
 		return nil, err
 	}

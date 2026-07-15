@@ -117,34 +117,34 @@ const getFoodItemForDisplay = `-- name: GetFoodItemForDisplay :one
 SELECT
     id,
     restaurant_id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
-    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(name_alt, name) ELSE name END::varchar AS name,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(description_alt, description) ELSE description END::text AS description,
     is_available,
     image_url,
     prep_time_mins,
-    CASE WHEN $2 = 'alt' THEN COALESCE(instructions_alt, instructions) ELSE instructions END AS instructions
+    CASE WHEN $1::text = 'alt' THEN COALESCE(instructions_alt, instructions) ELSE instructions END::text AS instructions
 FROM food_items
-WHERE id = $1 AND deleted_at IS NULL
+WHERE id = $2::integer AND deleted_at IS NULL
 `
 
 type GetFoodItemForDisplayParams struct {
-	ID      int32       `json:"id"`
-	Column2 interface{} `json:"column_2"`
+	Locale string `json:"locale"`
+	ID     int32  `json:"id"`
 }
 
 type GetFoodItemForDisplayRow struct {
 	ID           int32       `json:"id"`
 	RestaurantID int32       `json:"restaurant_id"`
-	Name         interface{} `json:"name"`
-	Description  interface{} `json:"description"`
+	Name         string      `json:"name"`
+	Description  string      `json:"description"`
 	IsAvailable  bool        `json:"is_available"`
 	ImageUrl     pgtype.Text `json:"image_url"`
 	PrepTimeMins pgtype.Int4 `json:"prep_time_mins"`
-	Instructions interface{} `json:"instructions"`
+	Instructions string      `json:"instructions"`
 }
 
 func (q *Queries) GetFoodItemForDisplay(ctx context.Context, arg GetFoodItemForDisplayParams) (GetFoodItemForDisplayRow, error) {
-	row := q.db.QueryRow(ctx, getFoodItemForDisplay, arg.ID, arg.Column2)
+	row := q.db.QueryRow(ctx, getFoodItemForDisplay, arg.Locale, arg.ID)
 	var i GetFoodItemForDisplayRow
 	err := row.Scan(
 		&i.ID,
@@ -268,35 +268,35 @@ func (q *Queries) ListFoodItemsByRestaurant(ctx context.Context, restaurantID in
 const listMenuItemsForDisplay = `-- name: ListMenuItemsForDisplay :many
 SELECT
     fi.id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(fi.name_alt, fi.name) ELSE fi.name END AS name,
-    CASE WHEN $2 = 'alt' THEN COALESCE(fi.description_alt, fi.description) ELSE fi.description END AS description,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(fi.name_alt, fi.name) ELSE fi.name END::varchar AS name,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(fi.description_alt, fi.description) ELSE fi.description END::text AS description,
     fi.price,
     fi.image_url,
     fi.prep_time_mins,
-    CASE WHEN $2 = 'alt' THEN COALESCE(fi.instructions_alt, fi.instructions) ELSE fi.instructions END AS instructions
+    CASE WHEN $1::text = 'alt' THEN COALESCE(fi.instructions_alt, fi.instructions) ELSE fi.instructions END::text AS instructions
 FROM food_items fi
          JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
-WHERE fitm.menu_id = $1 AND fi.is_available = true AND fi.deleted_at IS NULL
+WHERE fitm.menu_id = $2::integer AND fi.is_available = true AND fi.deleted_at IS NULL
 ORDER BY fi.name
 `
 
 type ListMenuItemsForDisplayParams struct {
-	MenuID  int32       `json:"menu_id"`
-	Column2 interface{} `json:"column_2"`
+	Locale string `json:"locale"`
+	MenuID int32  `json:"menu_id"`
 }
 
 type ListMenuItemsForDisplayRow struct {
 	ID           int32          `json:"id"`
-	Name         interface{}    `json:"name"`
-	Description  interface{}    `json:"description"`
+	Name         string         `json:"name"`
+	Description  string         `json:"description"`
 	Price        pgtype.Numeric `json:"price"`
 	ImageUrl     pgtype.Text    `json:"image_url"`
 	PrepTimeMins pgtype.Int4    `json:"prep_time_mins"`
-	Instructions interface{}    `json:"instructions"`
+	Instructions string         `json:"instructions"`
 }
 
 func (q *Queries) ListMenuItemsForDisplay(ctx context.Context, arg ListMenuItemsForDisplayParams) ([]ListMenuItemsForDisplayRow, error) {
-	rows, err := q.db.Query(ctx, listMenuItemsForDisplay, arg.MenuID, arg.Column2)
+	rows, err := q.db.Query(ctx, listMenuItemsForDisplay, arg.Locale, arg.MenuID)
 	if err != nil {
 		return nil, err
 	}

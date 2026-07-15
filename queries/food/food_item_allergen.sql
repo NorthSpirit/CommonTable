@@ -16,11 +16,11 @@ ORDER BY a.name;
 -- name: ListAllergensForItemDisplay :many
 SELECT
     a.id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(a.name_alt, a.name) ELSE a.name END AS name,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(a.name_alt, a.name) ELSE a.name END::varchar AS name,
     a.code
 FROM allergen a
          JOIN food_item_allergen fia ON fia.allergen_id = a.id
-WHERE fia.item_id = $1
+WHERE fia.item_id = sqlc.arg(item_id)::integer
 ORDER BY a.name;
 
 -- name: ListItemsWithAllergen :many

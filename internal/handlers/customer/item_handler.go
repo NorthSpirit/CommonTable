@@ -7,6 +7,7 @@ import (
 
 	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
+	"CommonTable/internal/services/restaurantservices"
 	"CommonTable/internal/templates"
 
 	"github.com/go-chi/chi/v5"
@@ -16,15 +17,18 @@ import (
 type ItemHandler struct {
 	foodItemService     *foodservices.FoodItemService
 	itemAllergenService *foodrelationshipservices.ItemAllergenService
+	restaurantService   *restaurantservices.RestaurantService
 }
 
 func NewItemHandler(
 	foodItemService *foodservices.FoodItemService,
 	itemAllergenService *foodrelationshipservices.ItemAllergenService,
+	restaurantService *restaurantservices.RestaurantService,
 ) *ItemHandler {
 	return &ItemHandler{
 		foodItemService:     foodItemService,
 		itemAllergenService: itemAllergenService,
+		restaurantService:   restaurantService,
 	}
 }
 
@@ -36,7 +40,9 @@ func (h *ItemHandler) Detail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	item, err := h.foodItemService.GetFoodItemByID(r.Context(), int32(id))
+	locale := getLocale(r)
+
+	item, err := h.foodItemService.GetFoodItemForDisplay(r.Context(), int32(id), locale)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			http.NotFound(w, r)
@@ -46,15 +52,22 @@ func (h *ItemHandler) Detail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	allergens, err := h.itemAllergenService.ListAllergensForItem(r.Context(), int32(id))
+	restaurant, err := h.restaurantService.GetRestaurantByID(r.Context(), item.RestaurantID)
+	if err != nil {
+		http.Error(w, "failed to load restaurant", http.StatusInternalServerError)
+		return
+	}
+
+	allergens, err := h.itemAllergenService.ListAllergensForItemDisplay(r.Context(), int32(id), locale)
 	if err != nil {
 		http.Error(w, "failed to load allergens", http.StatusInternalServerError)
 		return
 	}
 
 	view := toItemDetailView(item, allergens)
+	branding := toBrandingView(restaurant)
 
-	if err := templates.ItemDetailPage(view).Render(r.Context(), w); err != nil {
+	if err := templates.ItemDetailPage(branding, view).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }

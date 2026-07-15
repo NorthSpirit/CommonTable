@@ -54,6 +54,8 @@ func (h *RestaurantHandler) Menus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	locale := getLocale(r)
+
 	restaurant, err := h.restaurantService.GetRestaurantByID(r.Context(), int32(id))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -64,7 +66,7 @@ func (h *RestaurantHandler) Menus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	menus, err := h.foodMenuService.ListFoodMenusByRestaurant(r.Context(), int32(id))
+	menus, err := h.foodMenuService.ListFoodMenusByRestaurantForDisplay(r.Context(), int32(id), locale)
 	if err != nil {
 		http.Error(w, "failed to load menus", http.StatusInternalServerError)
 		return
@@ -75,7 +77,9 @@ func (h *RestaurantHandler) Menus(w http.ResponseWriter, r *http.Request) {
 		views = append(views, toMenuView(menu))
 	}
 
-	if err := templates.MenusPage(restaurant.Name, views).Render(r.Context(), w); err != nil {
+	branding := toBrandingView(restaurant)
+
+	if err := templates.MenusPage(branding, views).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }

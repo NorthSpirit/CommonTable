@@ -1,6 +1,6 @@
 package templates
 
-templ Layout(title string, content templ.Component) {
+templ Layout(title string, branding *BrandingView, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -20,9 +20,19 @@ templ Layout(title string, content templ.Component) {
 			<div id="top" class="min-h-screen flex flex-col gms-dark-bg">
 				<header class="gms-dark-bg gms-light-text p-2 shadow-md">
 					<div class="container mx-auto text-center">
-						<h1 class="gms-title-text lg:text-4xl sm:text-3xl font-bold mb-1">
-							CommonTable
-						</h1>
+						if branding != nil {
+							<h1 class="gms-title-text lg:text-4xl sm:text-3xl font-bold mb-1 flex items-center justify-center gap-3">
+								if branding.LogoURL != "" {
+									<img src={ branding.LogoURL } alt={ branding.Name } class="h-10 w-10 rounded-full object-cover"/>
+								}
+								{ branding.Name }
+							</h1>
+							<p class="text-xs gms-demo-accent-text">Powered by CommonTable</p>
+						} else {
+							<h1 class="gms-title-text lg:text-4xl sm:text-3xl font-bold mb-1">
+								CommonTable
+							</h1>
+						}
 						<p class="text-sm gms-demo-accent-text">{ title }</p>
 					</div>
 				</header>
@@ -48,6 +58,12 @@ templ Layout(title string, content templ.Component) {
 						</li>
 						<li class="border gms-border-medium w-full md:flex-1">
 							<a href="#" id="MColour" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Palette Swap</a>
+						</li>
+						<li class="border gms-border-medium w-full md:flex-1">
+							<a href="?lang=en" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">EN</a>
+						</li>
+						<li class="border gms-border-medium w-full md:flex-1">
+							<a href="?lang=alt" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">ALT</a>
 						</li>
 					</ul>
 				</nav>

@@ -31,3 +31,8 @@ type ItemDetailView struct {
 	ImageURL     string
 	Allergens    []string
 }
+
+type BrandingView struct {
+	Name    string
+	LogoURL string
+}

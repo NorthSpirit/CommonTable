@@ -7,14 +7,14 @@ WHERE id = $1 AND deleted_at IS NULL;
 SELECT
     id,
     restaurant_id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(name_alt, name) ELSE name END AS name,
-    CASE WHEN $2 = 'alt' THEN COALESCE(description_alt, description) ELSE description END AS description,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(name_alt, name) ELSE name END::varchar AS name,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(description_alt, description) ELSE description END::text AS description,
     is_available,
     image_url,
     prep_time_mins,
-    CASE WHEN $2 = 'alt' THEN COALESCE(instructions_alt, instructions) ELSE instructions END AS instructions
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(instructions_alt, instructions) ELSE instructions END::text AS instructions
 FROM food_items
-WHERE id = $1 AND deleted_at IS NULL;
+WHERE id = sqlc.arg(id)::integer AND deleted_at IS NULL;
 
 -- name: ListFoodItemsByRestaurant :many
 SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt
@@ -56,13 +56,13 @@ WHERE id = $1;
 -- name: ListMenuItemsForDisplay :many
 SELECT
     fi.id,
-    CASE WHEN $2 = 'alt' THEN COALESCE(fi.name_alt, fi.name) ELSE fi.name END AS name,
-    CASE WHEN $2 = 'alt' THEN COALESCE(fi.description_alt, fi.description) ELSE fi.description END AS description,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(fi.name_alt, fi.name) ELSE fi.name END::varchar AS name,
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(fi.description_alt, fi.description) ELSE fi.description END::text AS description,
     fi.price,
     fi.image_url,
     fi.prep_time_mins,
-    CASE WHEN $2 = 'alt' THEN COALESCE(fi.instructions_alt, fi.instructions) ELSE fi.instructions END AS instructions
+    CASE WHEN sqlc.arg(locale)::text = 'alt' THEN COALESCE(fi.instructions_alt, fi.instructions) ELSE fi.instructions END::text AS instructions
 FROM food_items fi
          JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
-WHERE fitm.menu_id = $1 AND fi.is_available = true AND fi.deleted_at IS NULL
+WHERE fitm.menu_id = sqlc.arg(menu_id)::integer AND fi.is_available = true AND fi.deleted_at IS NULL
 ORDER BY fi.name;

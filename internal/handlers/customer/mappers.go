@@ -20,24 +20,20 @@ func toRestaurantView(r repository.Restaurant) templates.RestaurantView {
 	return view
 }
 
-func toMenuView(m repository.FoodMenu) templates.MenuView {
+func toMenuView(m repository.ListFoodMenusByRestaurantForDisplayRow) templates.MenuView {
 	view := templates.MenuView{
-		ID:   m.ID,
-		Name: m.Name,
-	}
-	if m.Description.Valid {
-		view.Description = m.Description.String
+		ID:          m.ID,
+		Name:        m.Name,
+		Description: m.Description,
 	}
 	return view
 }
 
 func toMenuItemView(item repository.ListMenuItemsForDisplayRow) templates.MenuItemView {
 	view := templates.MenuItemView{
-		ID:   item.ID,
-		Name: item.Name,
-	}
-	if item.Description.Valid {
-		view.Description = item.Description.String
+		ID:          item.ID,
+		Name:        item.Name,
+		Description: item.Description,
 	}
 	if item.ImageUrl.Valid {
 		view.ImageURL = item.ImageUrl.String
@@ -52,22 +48,28 @@ func toMenuItemView(item repository.ListMenuItemsForDisplayRow) templates.MenuIt
 	return view
 }
 
-func toItemDetailView(item repository.GetFoodItemRow, allergens []repository.Allergen) templates.ItemDetailView {
+func toItemDetailView(item repository.GetFoodItemForDisplayRow, allergens []repository.ListAllergensForItemDisplayRow) templates.ItemDetailView {
 	view := templates.ItemDetailView{
-		ID:   item.ID,
-		Name: item.Name,
-	}
-	if item.Description.Valid {
-		view.Description = item.Description.String
-	}
-	if item.Instructions.Valid {
-		view.Instructions = item.Instructions.String
+		ID:           item.ID,
+		Name:         item.Name,
+		Description:  item.Description,
+		Instructions: item.Instructions,
 	}
 	if item.ImageUrl.Valid {
 		view.ImageURL = item.ImageUrl.String
 	}
 	for _, a := range allergens {
 		view.Allergens = append(view.Allergens, a.Name)
+	}
+	return view
+}
+
+func toBrandingView(r repository.Restaurant) templates.BrandingView {
+	view := templates.BrandingView{
+		Name: r.Name,
+	}
+	if r.LogoUrl.Valid {
+		view.LogoURL = r.LogoUrl.String
 	}
 	return view
 }

@@ -24,12 +24,10 @@ func (f *ItemAllergenService) ListAllergensForItem(ctx context.Context, itemID i
 	return allergens, nil
 }
 
-// ListAllergensForItemDisplay returns locale-resolved allergen names for
-// public-facing item detail pages.
 func (f *ItemAllergenService) ListAllergensForItemDisplay(ctx context.Context, itemID int32, locale string) ([]repository.ListAllergensForItemDisplayRow, error) {
 	allergens, err := f.queries.ListAllergensForItemDisplay(ctx, repository.ListAllergensForItemDisplayParams{
-		ItemID:  itemID,
-		Column2: locale,
+		Locale: locale,
+		ItemID: itemID,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("list allergens for item display: %w", err)
