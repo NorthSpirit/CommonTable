@@ -1,4 +1,9 @@
-package templates
+package shared
+
+type BrandingView struct {
+	Name    string
+	LogoURL string
+}
 
 type RestaurantView struct {
 	ID      int32
@@ -31,11 +36,6 @@ type ItemDetailView struct {
 	Instructions string
 	ImageURL     string
 	Allergens    []string
-}
-
-type BrandingView struct {
-	Name    string
-	LogoURL string
 }
 
 type HomepageView struct {

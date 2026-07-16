@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"CommonTable/internal/services/homepageservices"
-	"CommonTable/internal/templates"
+	"CommonTable/internal/templates/client"
+	"CommonTable/internal/templates/shared"
 )
 
 type HomeHandler struct {
@@ -16,15 +17,15 @@ func NewHomeHandler(homepageService *homepageservices.HomepageService) *HomeHand
 }
 
 func (h *HomeHandler) Home(w http.ResponseWriter, r *http.Request) {
-	locale := getLocale(r)
+	locale := GetLocale(r)
 
 	content, err := h.homepageService.GetContentForDisplay(r.Context(), locale)
 	if err != nil {
-		http.Error(w, "failed to load homepage content", http.StatusInternalServerError)
+		renderServerError(w, r)
 		return
 	}
 
-	view := templates.HomepageView{
+	view := shared.HomepageView{
 		WelcomeText: content.WelcomeText,
 	}
 	if content.ImageOneUrl.Valid {
@@ -34,7 +35,7 @@ func (h *HomeHandler) Home(w http.ResponseWriter, r *http.Request) {
 		view.ImageTwoURL = content.ImageTwoUrl.String
 	}
 
-	if err := templates.HomePage(view).Render(r.Context(), w); err != nil {
-		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	if err := client.HomePage(locale, view).Render(r.Context(), w); err != nil {
+		renderServerError(w, r)
 	}
 }

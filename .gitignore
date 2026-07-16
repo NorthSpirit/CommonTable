@@ -24,3 +24,6 @@ Thumbs.db
 # Go workspace files (only if you're not intentionally committing these)
 go.work
 go.work.sum
+
+uploads/*
+!uploads/*/.gitkeep

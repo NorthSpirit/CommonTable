@@ -1,0 +1,19 @@
+{
+  "nav_home": "Home",
+  "nav_restaurants": "Restaurants",
+  "nav_palette_swap": "Palette Swap",
+  "nav_menu_toggle": "Menu",
+  "powered_by": "Powered by CommonTable",
+  "home_title": "Welcome",
+  "home_heading": "Welcome to CommonTable",
+  "view_restaurants": "View Restaurants",
+  "restaurants_title": "Restaurants",
+  "menus_suffix": "Menus",
+  "not_found_title": "Page Not Found",
+  "not_found_heading": "We couldn't find that page",
+  "not_found_text": "The page you're looking for doesn't exist or may have been moved.",
+  "error_title": "Something Went Wrong",
+  "error_heading": "Something went wrong on our end",
+  "error_text": "Please try again in a moment.",
+  "back_home": "Back to Home"
+}

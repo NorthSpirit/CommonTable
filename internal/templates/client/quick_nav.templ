@@ -1,12 +1,17 @@
-package templates
+package client
 
-templ QuickNav(items []QuickNavItemView) {
+import (
+	"CommonTable/internal/templates/helpers"
+	"CommonTable/internal/templates/shared"
+)
+
+templ QuickNav(items []shared.QuickNavItemView, locale string) {
 	if len(items) > 0 {
 		<div class="mb-6">
 			<h3 class="text-lg font-semibold mb-2 gms-main-text">Popular Items</h3>
 			<div class="flex flex-row flex-nowrap gap-3 overflow-x-auto pb-2">
 				for _, item := range items {
-					<a href={ templ.URL("/items/" + itoa(item.ID)) } class="shrink-0 w-32 block gms-hover-bg-light border gms-border-medium rounded-lg shadow overflow-hidden">
+					<a href={ templ.URL(helpers.WithLang("/items/"+helpers.Itoa(item.ID), locale)) } class="shrink-0 w-32 block gms-hover-bg-light border gms-border-medium rounded-lg shadow overflow-hidden">
 						<div class="h-20 w-full bg-gray-200 flex items-center justify-center">
 							if item.ImageURL != "" {
 								<img src={ item.ImageURL } alt={ item.Name } class="h-full w-full object-cover"/>

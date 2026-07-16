@@ -1,0 +1,33 @@
+package client
+
+import (
+	"CommonTable/internal/templates/layout"
+	"CommonTable/internal/templates/shared"
+	"CommonTable/internal/templates/helpers"
+)
+
+templ HomePage(locale string, content shared.HomepageView) {
+	@layout.Layout(shared.T(locale, "home_title"), nil, locale, homePageContent(locale, content))
+}
+
+templ homePageContent(locale string, content shared.HomepageView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center text-center">
+		<h2 class="text-3xl font-bold mb-4 gms-main-text">{ shared.T(locale, "home_heading") }</h2>
+		<p class="gms-main-text mb-6 max-w-xl">{ content.WelcomeText }</p>
+
+		if content.ImageOneURL != "" || content.ImageTwoURL != "" {
+			<div class="flex flex-col sm:flex-row gap-4 mb-6 max-w-3xl">
+				if content.ImageOneURL != "" {
+					<img src={ content.ImageOneURL } alt="CommonTable" class="w-full sm:w-1/2 h-48 object-cover rounded-lg border gms-border-medium"/>
+				}
+				if content.ImageTwoURL != "" {
+					<img src={ content.ImageTwoURL } alt="CommonTable" class="w-full sm:w-1/2 h-48 object-cover rounded-lg border gms-border-medium"/>
+				}
+			</div>
+		}
+
+		<a href={ templ.URL(helpers.WithLang("/restaurants", locale)) } class="px-6 py-3 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+        	{ shared.T(locale, "view_restaurants") }
+        </a>
+	</main>
+}

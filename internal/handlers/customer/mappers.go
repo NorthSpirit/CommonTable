@@ -3,11 +3,11 @@ package customer
 import (
 	"CommonTable/internal/helpers"
 	"CommonTable/internal/repository"
-	"CommonTable/internal/templates"
+	"CommonTable/internal/templates/shared"
 )
 
-func toRestaurantView(r repository.Restaurant) templates.RestaurantView {
-	view := templates.RestaurantView{
+func toRestaurantView(r repository.Restaurant) shared.RestaurantView {
+	view := shared.RestaurantView{
 		ID:   r.ID,
 		Name: r.Name,
 	}
@@ -20,8 +20,8 @@ func toRestaurantView(r repository.Restaurant) templates.RestaurantView {
 	return view
 }
 
-func toMenuView(m repository.ListFoodMenusByRestaurantForDisplayRow) templates.MenuView {
-	view := templates.MenuView{
+func toMenuView(m repository.ListFoodMenusByRestaurantForDisplayRow) shared.MenuView {
+	view := shared.MenuView{
 		ID:          m.ID,
 		Name:        m.Name,
 		Description: m.Description,
@@ -32,8 +32,8 @@ func toMenuView(m repository.ListFoodMenusByRestaurantForDisplayRow) templates.M
 	return view
 }
 
-func toMenuItemView(item repository.ListMenuItemsForDisplayRow) templates.MenuItemView {
-	view := templates.MenuItemView{
+func toMenuItemView(item repository.ListMenuItemsForDisplayRow) shared.MenuItemView {
+	view := shared.MenuItemView{
 		ID:          item.ID,
 		Name:        item.Name,
 		Description: item.Description,
@@ -51,8 +51,8 @@ func toMenuItemView(item repository.ListMenuItemsForDisplayRow) templates.MenuIt
 	return view
 }
 
-func toItemDetailView(item repository.GetFoodItemForDisplayRow, allergens []repository.ListAllergensForItemDisplayRow) templates.ItemDetailView {
-	view := templates.ItemDetailView{
+func toItemDetailView(item repository.GetFoodItemForDisplayRow, allergens []repository.ListAllergensForItemDisplayRow) shared.ItemDetailView {
+	view := shared.ItemDetailView{
 		ID:           item.ID,
 		Name:         item.Name,
 		Description:  item.Description,
@@ -67,8 +67,8 @@ func toItemDetailView(item repository.GetFoodItemForDisplayRow, allergens []repo
 	return view
 }
 
-func toBrandingView(r repository.Restaurant) templates.BrandingView {
-	view := templates.BrandingView{
+func toBrandingView(r repository.Restaurant) shared.BrandingView {
+	view := shared.BrandingView{
 		Name: r.Name,
 	}
 	if r.LogoUrl.Valid {
@@ -77,8 +77,8 @@ func toBrandingView(r repository.Restaurant) templates.BrandingView {
 	return view
 }
 
-func toQuickNavItemView(item repository.ListMostOrderedItemsByRestaurantRow) templates.QuickNavItemView {
-	view := templates.QuickNavItemView{
+func toQuickNavItemView(item repository.ListMostOrderedItemsByRestaurantRow) shared.QuickNavItemView {
+	view := shared.QuickNavItemView{
 		ID:   item.ID,
 		Name: item.Name,
 	}

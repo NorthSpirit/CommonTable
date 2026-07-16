@@ -7,7 +7,8 @@ import (
 
 	"CommonTable/internal/services/foodservices"
 	"CommonTable/internal/services/restaurantservices"
-	"CommonTable/internal/templates"
+	"CommonTable/internal/templates/client"
+	"CommonTable/internal/templates/shared"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -33,19 +34,21 @@ func NewRestaurantHandler(
 
 // List handles GET /restaurants
 func (h *RestaurantHandler) List(w http.ResponseWriter, r *http.Request) {
+	locale := GetLocale(r)
+
 	restaurants, err := h.restaurantService.GetRestaurantList(r.Context())
 	if err != nil {
-		http.Error(w, "failed to load restaurants", http.StatusInternalServerError)
+		renderServerError(w, r)
 		return
 	}
 
-	views := make([]templates.RestaurantView, 0, len(restaurants))
+	views := make([]shared.RestaurantView, 0, len(restaurants))
 	for _, restaurant := range restaurants {
 		views = append(views, toRestaurantView(restaurant))
 	}
 
-	if err := templates.RestaurantsPage(views).Render(r.Context(), w); err != nil {
-		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	if err := client.RestaurantsPage(locale, views).Render(r.Context(), w); err != nil {
+		renderServerError(w, r)
 	}
 }
 
@@ -53,47 +56,47 @@ func (h *RestaurantHandler) List(w http.ResponseWriter, r *http.Request) {
 func (h *RestaurantHandler) Menus(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, "invalid restaurant id", http.StatusBadRequest)
+		renderNotFound(w, r)
 		return
 	}
 
-	locale := getLocale(r)
+	locale := GetLocale(r)
 
 	restaurant, err := h.restaurantService.GetRestaurantByID(r.Context(), int32(id))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			http.NotFound(w, r)
+			renderNotFound(w, r)
 			return
 		}
-		http.Error(w, "failed to load restaurant", http.StatusInternalServerError)
+		renderServerError(w, r)
 		return
 	}
 
 	menus, err := h.foodMenuService.ListFoodMenusByRestaurantForDisplay(r.Context(), int32(id), locale)
 	if err != nil {
-		http.Error(w, "failed to load menus", http.StatusInternalServerError)
+		renderServerError(w, r)
 		return
 	}
 
-	menuViews := make([]templates.MenuView, 0, len(menus))
+	menuViews := make([]shared.MenuView, 0, len(menus))
 	for _, menu := range menus {
 		menuViews = append(menuViews, toMenuView(menu))
 	}
 
 	popularItems, err := h.foodItemService.ListMostOrderedItemsByRestaurant(r.Context(), int32(id), locale, 8)
 	if err != nil {
-		http.Error(w, "failed to load popular items", http.StatusInternalServerError)
+		renderServerError(w, r)
 		return
 	}
 
-	quickNavViews := make([]templates.QuickNavItemView, 0, len(popularItems))
+	quickNavViews := make([]shared.QuickNavItemView, 0, len(popularItems))
 	for _, item := range popularItems {
 		quickNavViews = append(quickNavViews, toQuickNavItemView(item))
 	}
 
 	branding := toBrandingView(restaurant)
 
-	if err := templates.MenusPage(branding, quickNavViews, menuViews).Render(r.Context(), w); err != nil {
-		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	if err := client.MenusPage(locale, branding, quickNavViews, menuViews).Render(r.Context(), w); err != nil {
+		renderServerError(w, r)
 	}
 }

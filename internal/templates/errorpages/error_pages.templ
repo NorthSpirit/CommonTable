@@ -1,0 +1,34 @@
+package errorpages
+
+import (
+	"CommonTable/internal/templates/layout"
+	"CommonTable/internal/templates/shared"
+)
+
+templ NotFoundPage(locale string) {
+	@layout.Layout(shared.T(locale, "not_found_title"), nil, locale, notFoundContent(locale))
+}
+
+templ notFoundContent(locale string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center justify-center text-center">
+		<h2 class="text-3xl font-bold mb-4 gms-main-text">{ shared.T(locale, "not_found_heading") }</h2>
+		<p class="gms-main-text mb-6 max-w-xl">{ shared.T(locale, "not_found_text") }</p>
+		<a href="/" class="px-6 py-3 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+			{ shared.T(locale, "back_home") }
+		</a>
+	</main>
+}
+
+templ ErrorPage(locale string) {
+	@layout.Layout(shared.T(locale, "error_title"), nil, locale, errorContent(locale))
+}
+
+templ errorContent(locale string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center justify-center text-center">
+		<h2 class="text-3xl font-bold mb-4 gms-main-text">{ shared.T(locale, "error_heading") }</h2>
+		<p class="gms-main-text mb-6 max-w-xl">{ shared.T(locale, "error_text") }</p>
+		<a href="/" class="px-6 py-3 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+			{ shared.T(locale, "back_home") }
+		</a>
+	</main>
+}

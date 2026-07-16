@@ -8,7 +8,7 @@ import (
 	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
 	"CommonTable/internal/services/restaurantservices"
-	"CommonTable/internal/templates"
+	"CommonTable/internal/templates/client"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -36,38 +36,38 @@ func NewItemHandler(
 func (h *ItemHandler) Detail(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
-		http.Error(w, "invalid item id", http.StatusBadRequest)
+		renderNotFound(w, r)
 		return
 	}
 
-	locale := getLocale(r)
+	locale := GetLocale(r)
 
 	item, err := h.foodItemService.GetFoodItemForDisplay(r.Context(), int32(id), locale)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			http.NotFound(w, r)
+			renderNotFound(w, r)
 			return
 		}
-		http.Error(w, "failed to load item", http.StatusInternalServerError)
+		renderServerError(w, r)
 		return
 	}
 
 	restaurant, err := h.restaurantService.GetRestaurantByID(r.Context(), item.RestaurantID)
 	if err != nil {
-		http.Error(w, "failed to load restaurant", http.StatusInternalServerError)
+		renderServerError(w, r)
 		return
 	}
 
 	allergens, err := h.itemAllergenService.ListAllergensForItemDisplay(r.Context(), int32(id), locale)
 	if err != nil {
-		http.Error(w, "failed to load allergens", http.StatusInternalServerError)
+		renderServerError(w, r)
 		return
 	}
 
 	view := toItemDetailView(item, allergens)
 	branding := toBrandingView(restaurant)
 
-	if err := templates.ItemDetailPage(branding, view).Render(r.Context(), w); err != nil {
-		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	if err := client.ItemDetailPage(locale, branding, view).Render(r.Context(), w); err != nil {
+		renderServerError(w, r)
 	}
 }

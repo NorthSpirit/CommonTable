@@ -1,7 +1,7 @@
 package main
 
 import (
-	"CommonTable/internal/templates"
+	"CommonTable/internal/templates/shared"
 	"context"
 	"log"
 	"net/http"
@@ -21,7 +21,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("load config: %v", err)
 	}
-	templates.SetAltLanguageLabel(cfg.AltLanguageLabel)
+	shared.SetAltLanguageLabel(cfg.AltLanguageLabel)
+
+	if err := shared.LoadTranslations(cfg.TranslationsDir); err != nil {
+		log.Fatalf("load translations: %v", err)
+	}
+
 	pool, err := pgxpool.New(context.Background(), cfg.DBString)
 	if err != nil {
 		log.Fatalf("connect to db: %v", err)
@@ -44,6 +49,7 @@ func main() {
 
 	httpserver.RegisterCustomerRoutes(r, customerHandlers)
 	r.Handle("/assets/*", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
+	r.Handle("/uploads/*", http.StripPrefix("/uploads", http.FileServer(http.Dir(cfg.UploadsDir))))
 
 	log.Println("listening on :41241")
 	if err := http.ListenAndServe(":41241", r); err != nil {

@@ -19,6 +19,8 @@ type Config struct {
 	JWTTokenTTL time.Duration
 
 	AltLanguageLabel string
+	TranslationsDir  string
+	UploadsDir       string
 }
 
 func Load() (*Config, error) {
@@ -60,6 +62,16 @@ func Load() (*Config, error) {
 		altLanguageLabel = "ALT" // sensible fallback if not configured
 	}
 
+	translationsDir := os.Getenv("TRANSLATIONS_DIR")
+	if translationsDir == "" {
+		translationsDir = "./locales"
+	}
+
+	uploadsDir := os.Getenv("UPLOADS_DIR")
+	if uploadsDir == "" {
+		uploadsDir = "./uploads"
+	}
+
 	return &Config{
 		DBString:          dbString,
 		AdminUsername:     adminUsername,
@@ -67,5 +79,7 @@ func Load() (*Config, error) {
 		JWTSecret:         []byte(jwtSecretRaw),
 		JWTTokenTTL:       time.Duration(ttlHours) * time.Hour,
 		AltLanguageLabel:  altLanguageLabel,
+		TranslationsDir:   translationsDir,
+		UploadsDir:        uploadsDir,
 	}, nil
 }

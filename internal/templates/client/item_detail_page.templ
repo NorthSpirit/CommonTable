@@ -1,10 +1,15 @@
-package templates
+package client
 
-templ ItemDetailPage(branding BrandingView, item ItemDetailView) {
-	@Layout(item.Name, &branding, itemDetailPageContent(item))
+import (
+	"CommonTable/internal/templates/layout"
+	"CommonTable/internal/templates/shared"
+)
+
+templ ItemDetailPage(locale string, branding shared.BrandingView, item shared.ItemDetailView) {
+	@layout.Layout(item.Name, &branding, locale, itemDetailPageContent(item))
 }
 
-templ itemDetailPageContent(item ItemDetailView) {
+templ itemDetailPageContent(item shared.ItemDetailView) {
 	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto">
 		if item.ImageURL != "" {
 			<img src={ item.ImageURL } alt={ item.Name } class="w-full max-h-80 object-cover rounded-lg border gms-border-medium mb-4"/>

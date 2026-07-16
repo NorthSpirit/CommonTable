@@ -1,7 +1,12 @@
-package templates
+package client
 
-templ MenuCard(menu MenuView) {
-	<a href={ templ.URL("/menus/" + itoa(menu.ID)) } class="block gms-hover-bg-light border gms-border-medium rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+import (
+	"CommonTable/internal/templates/helpers"
+	"CommonTable/internal/templates/shared"
+)
+
+templ MenuCard(menu shared.MenuView, locale string) {
+	<a href={ templ.URL(helpers.WithLang("/menus/"+helpers.Itoa(menu.ID), locale)) } class="block gms-hover-bg-light border gms-border-medium rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
 		<div class="h-32 w-full bg-gray-200 flex items-center justify-center relative">
 			if menu.ImageURL != "" {
 				<img src={ menu.ImageURL } alt={ menu.Name } class="h-full w-full object-cover"/>

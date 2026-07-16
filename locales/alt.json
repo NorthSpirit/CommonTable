@@ -1,0 +1,19 @@
+{
+  "nav_home": "Pradžia",
+  "nav_restaurants": "Restoranai",
+  "nav_palette_swap": "Keisti spalvas",
+  "nav_menu_toggle": "Meniu",
+  "powered_by": "Sukurta su CommonTable",
+  "home_title": "Sveiki",
+  "home_heading": "Sveiki atvykę į CommonTable",
+  "view_restaurants": "Žiūrėti restoranus",
+  "restaurants_title": "Restoranai",
+  "menus_suffix": "Meniu",
+  "not_found_title": "Puslapis nerastas",
+  "not_found_heading": "Nepavyko rasti šio puslapio",
+  "not_found_text": "Ieškomas puslapis neegzistuoja arba buvo perkeltas.",
+  "error_title": "Įvyko klaida",
+  "error_heading": "Įvyko klaida mūsų pusėje",
+  "error_text": "Prašome bandyti dar kartą po akimirkos.",
+  "back_home": "Grįžti į pradžią"
+}
