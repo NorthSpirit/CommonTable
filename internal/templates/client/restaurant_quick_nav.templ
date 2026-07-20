@@ -1,0 +1,28 @@
+package client
+
+import (
+	"CommonTable/internal/templates/helpers"
+	"CommonTable/internal/templates/shared"
+)
+
+templ RestaurantQuickNav(restaurants []shared.RestaurantView, locale string) {
+	if len(restaurants) > 0 {
+		<div class="mb-6">
+			<h3 class="text-lg font-semibold mb-2 gms-main-text">Restaurants</h3>
+			<div class="flex flex-row flex-nowrap gap-3 overflow-x-auto pb-2">
+				for _, restaurant := range restaurants {
+					<a href={ templ.URL(helpers.WithLang("/restaurants/"+helpers.Itoa(restaurant.ID), locale)) } class="shrink-0 w-32 block gms-hover-bg-light border gms-border-medium rounded-lg shadow overflow-hidden">
+						<div class="h-20 w-full bg-gray-200 flex items-center justify-center">
+							if restaurant.LogoURL != "" {
+								<img src={ restaurant.LogoURL } alt={ restaurant.Name } class="h-full w-full object-cover"/>
+							} else {
+								<div class="text-gray-500 text-xs italic">No Logo</div>
+							}
+						</div>
+						<p class="text-xs text-center gms-main-text p-1 truncate">{ restaurant.Name }</p>
+					</a>
+				}
+			</div>
+		</div>
+	}
+}

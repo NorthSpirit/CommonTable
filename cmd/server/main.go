@@ -40,14 +40,17 @@ func main() {
 		AdminPasswordHash: cfg.AdminPasswordHash,
 		JWTSecret:         cfg.JWTSecret,
 		JWTTokenTTL:       cfg.JWTTokenTTL,
+		UploadsDir:        cfg.UploadsDir,
 	})
 
 	customerHandlers := container.NewCustomerHandlers(services)
+	adminHandlers := container.NewAdminHandlers(services)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
 	httpserver.RegisterCustomerRoutes(r, customerHandlers)
+	httpserver.RegisterAdminRoutes(r, adminHandlers, services.Admin)
 	r.Handle("/assets/*", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
 	r.Handle("/uploads/*", http.StripPrefix("/uploads", http.FileServer(http.Dir(cfg.UploadsDir))))
 

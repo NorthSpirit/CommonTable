@@ -4,16 +4,19 @@ import (
 	"net/http"
 
 	"CommonTable/internal/services/homepageservices"
+	"CommonTable/internal/services/restaurantservices"
 	"CommonTable/internal/templates/client"
 	"CommonTable/internal/templates/shared"
+	"CommonTable/internal/textmarkup"
 )
 
 type HomeHandler struct {
-	homepageService *homepageservices.HomepageService
+	homepageService   *homepageservices.HomepageService
+	restaurantService *restaurantservices.RestaurantService
 }
 
-func NewHomeHandler(homepageService *homepageservices.HomepageService) *HomeHandler {
-	return &HomeHandler{homepageService: homepageService}
+func NewHomeHandler(homepageService *homepageservices.HomepageService, restaurantService *restaurantservices.RestaurantService) *HomeHandler {
+	return &HomeHandler{homepageService: homepageService, restaurantService: restaurantService}
 }
 
 func (h *HomeHandler) Home(w http.ResponseWriter, r *http.Request) {
@@ -25,17 +28,36 @@ func (h *HomeHandler) Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	view := shared.HomepageView{
-		WelcomeText: content.WelcomeText,
-	}
+	imageOneURL := ""
 	if content.ImageOneUrl.Valid {
-		view.ImageOneURL = content.ImageOneUrl.String
+		imageOneURL = content.ImageOneUrl.String
 	}
+	imageTwoURL := ""
 	if content.ImageTwoUrl.Valid {
-		view.ImageTwoURL = content.ImageTwoUrl.String
+		imageTwoURL = content.ImageTwoUrl.String
 	}
 
-	if err := client.HomePage(locale, view).Render(r.Context(), w); err != nil {
+	blocks := textmarkup.Parse(content.WelcomeText)
+	blocks = textmarkup.EnsureImagesPlaced(blocks, imageOneURL != "", imageTwoURL != "")
+
+	view := shared.HomepageView{
+		WelcomeBlocks: blocks,
+		ImageOneURL:   imageOneURL,
+		ImageTwoURL:   imageTwoURL,
+	}
+
+	restaurants, err := h.restaurantService.GetRestaurantList(r.Context())
+	if err != nil {
+		renderServerError(w, r)
+		return
+	}
+
+	restaurantViews := make([]shared.RestaurantView, 0, len(restaurants))
+	for _, restaurant := range restaurants {
+		restaurantViews = append(restaurantViews, toRestaurantView(restaurant))
+	}
+
+	if err := client.HomePage(locale, view, restaurantViews).Render(r.Context(), w); err != nil {
 		renderServerError(w, r)
 	}
 }

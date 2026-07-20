@@ -1,0 +1,85 @@
+package admin
+
+templ HomepagePage(welcomeText string, welcomeTextAlt string, imageOneURL string, imageTwoURL string, successMessage string) {
+	@Layout("Homepage Content", homepagePageContent(welcomeText, welcomeTextAlt, imageOneURL, imageTwoURL, successMessage))
+}
+
+templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL string, imageTwoURL string, successMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Homepage Content</h2>
+
+		if successMessage != "" {
+			<p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm text-center">{ successMessage }</p>
+		}
+
+		<form method="POST" action="/admin/homepage" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Welcome Text</legend>
+
+				<div class="mb-4 p-3 rounded-lg border gms-border-medium text-sm">
+                	<p class="font-semibold mb-1">Formatting guide:</p>
+                	<ul class="list-disc pl-5 space-y-0.5">
+                		<li><code># Heading</code> — large heading</li>
+                		<li><code>## Subheading</code> — smaller heading</li>
+                		<li><code>**bold text**</code> and <code>__underlined text__</code></li>
+                		<li><code>---</code> on its own line — visual spacer</li>
+                		<li><code>{ "{{image1}}" }</code> / <code>{ "{{image2}}" }</code> — places that image at this point (otherwise both are added at the end automatically)</li>
+                	</ul>
+                </div>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">English</span>
+					<textarea name="welcome_text" rows="10" required class="p-2 border gms-border-medium rounded-md w-full">{ welcomeText }</textarea>
+				</label>
+
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">Alt Language (optional — falls back to English if blank)</span>
+					<textarea name="welcome_text_alt" rows="10" class="p-2 border gms-border-medium rounded-md w-full">{ welcomeTextAlt }</textarea>
+				</label>
+			</fieldset>
+
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Images</legend>
+
+				<div class="grid grid-cols-2 gap-4 mb-4">
+					<div>
+						<span class="text-sm font-medium mb-1 block">Image One</span>
+						if imageOneURL != "" {
+							<img src={ imageOneURL } alt="Current image one" class="h-48 w-full object-cover rounded border gms-border-medium"/>
+						} else {
+							<div class="h-48 w-full flex items-center justify-center rounded border gms-border-medium">
+								<p class="text-sm italic opacity-70">No image set.</p>
+							</div>
+						}
+					</div>
+					<div>
+						<span class="text-sm font-medium mb-1 block">Image Two</span>
+						if imageTwoURL != "" {
+							<img src={ imageTwoURL } alt="Current image two" class="h-48 w-full object-cover rounded border gms-border-medium"/>
+						} else {
+							<div class="h-48 w-full flex items-center justify-center rounded border gms-border-medium">
+								<p class="text-sm italic opacity-70">No image set.</p>
+							</div>
+						}
+					</div>
+				</div>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Replace Image One</span>
+					<input type="file" name="image_one" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
+				</label>
+
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">Replace Image Two</span>
+					<input type="file" name="image_two" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
+				</label>
+
+				<span class="text-xs opacity-70 block mt-2">Uploading a new file replaces the corresponding image above.</span>
+			</fieldset>
+
+			<div class="lg:col-span-2 flex justify-end">
+				<input type="submit" value="Save Changes" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+			</div>
+		</form>
+	</main>
+}

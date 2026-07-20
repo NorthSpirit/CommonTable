@@ -379,3 +379,9 @@ type Table struct {
 	Section  pgtype.Text `json:"section"`
 	Status   TableStatus `json:"status"`
 }
+
+type WaiterQuickItem struct {
+	EmployeeID int32 `json:"employee_id"`
+	ItemID     int32 `json:"item_id"`
+	SortOrder  int32 `json:"sort_order"`
+}

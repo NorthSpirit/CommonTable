@@ -25,8 +25,8 @@ type Services struct {
 	ItemAllergen *foodrelationshipservices.ItemAllergenService
 	Homepage     *homepageservices.HomepageService
 
-	// add more here as new domains get built —
-	// Employee, Table, FoodOrder, Payment, ChatMessage, etc.
+	JWTTokenTTL time.Duration
+	UploadsDir  string
 }
 
 type ServicesConfig struct {
@@ -34,6 +34,7 @@ type ServicesConfig struct {
 	AdminPasswordHash string
 	JWTSecret         []byte
 	JWTTokenTTL       time.Duration
+	UploadsDir        string
 }
 
 func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
@@ -54,5 +55,7 @@ func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
 		FoodAllergen: foodservices.NewFoodAllergenService(queries),
 		ItemAllergen: foodrelationshipservices.NewItemAllergenService(queries),
 		Homepage:     homepageservices.NewHomepageService(queries),
+		JWTTokenTTL:  cfg.JWTTokenTTL,
+		UploadsDir:   cfg.UploadsDir,
 	}
 }

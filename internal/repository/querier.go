@@ -13,7 +13,10 @@ type Querier interface {
 	AddFoodItemToMenu(ctx context.Context, arg AddFoodItemToMenuParams) error
 	AddIngredientToItem(ctx context.Context, arg AddIngredientToItemParams) error
 	AddItemToOrder(ctx context.Context, arg AddItemToOrderParams) (ItemOrder, error)
+	AddWaiterQuickItem(ctx context.Context, arg AddWaiterQuickItemParams) error
 	ClearOrderItems(ctx context.Context, orderID int32) error
+	ClearWaiterQuickItems(ctx context.Context, employeeID int32) error
+	CountWaiterQuickItems(ctx context.Context, employeeID int32) (int64, error)
 	CreateAllergen(ctx context.Context, arg CreateAllergenParams) (Allergen, error)
 	CreateChatMessage(ctx context.Context, arg CreateChatMessageParams) (ChatMessage, error)
 	CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (Employee, error)
@@ -82,10 +85,12 @@ type Querier interface {
 	ListRestaurants(ctx context.Context) ([]Restaurant, error)
 	ListTables(ctx context.Context) ([]Table, error)
 	ListTablesByStatus(ctx context.Context, status TableStatus) ([]Table, error)
+	ListWaiterQuickItems(ctx context.Context, employeeID int32) ([]ListWaiterQuickItemsRow, error)
 	RemoveAllergenFromItem(ctx context.Context, arg RemoveAllergenFromItemParams) error
 	RemoveFoodItemFromMenu(ctx context.Context, arg RemoveFoodItemFromMenuParams) error
 	RemoveIngredientFromItem(ctx context.Context, arg RemoveIngredientFromItemParams) error
 	RemoveItemFromOrder(ctx context.Context, id int32) error
+	RemoveWaiterQuickItem(ctx context.Context, arg RemoveWaiterQuickItemParams) error
 	RestoreFoodItem(ctx context.Context, id int32) error
 	SetEmployeeActive(ctx context.Context, arg SetEmployeeActiveParams) error
 	SetFoodItemAvailability(ctx context.Context, arg SetFoodItemAvailabilityParams) error
@@ -112,6 +117,7 @@ type Querier interface {
 	UpdateRestaurantIngredientShared(ctx context.Context, arg UpdateRestaurantIngredientSharedParams) error
 	UpdateRestaurantPasswordHash(ctx context.Context, arg UpdateRestaurantPasswordHashParams) error
 	UpdateTable(ctx context.Context, arg UpdateTableParams) error
+	UpdateWaiterQuickItemSortOrder(ctx context.Context, arg UpdateWaiterQuickItemSortOrderParams) error
 }
 
 var _ Querier = (*Queries)(nil)

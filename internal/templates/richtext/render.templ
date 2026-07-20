@@ -1,0 +1,45 @@
+package richtext
+
+import "CommonTable/internal/textmarkup"
+
+templ RenderBlocks(blocks []textmarkup.Block, imageOneURL string, imageTwoURL string) {
+	for _, block := range blocks {
+		switch block.Kind {
+			case textmarkup.BlockHeading1:
+				<h2 class="text-2xl font-bold mb-4 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+					@renderInlines(block.Inlines)
+				</h2>
+			case textmarkup.BlockHeading2:
+				<h3 class="text-xl font-semibold mt-6 mb-2 gms-main-text">
+					@renderInlines(block.Inlines)
+				</h3>
+			case textmarkup.BlockSpacer:
+				<hr class="my-6 gms-border-medium"/>
+			case textmarkup.BlockImage:
+				if block.ImageSlot == 1 && imageOneURL != "" {
+					<img src={ imageOneURL } alt="Homepage image" class="w-full max-w-md mx-auto h-auto rounded-lg border-2 gms-border-medium block my-4"/>
+				}
+				if block.ImageSlot == 2 && imageTwoURL != "" {
+					<img src={ imageTwoURL } alt="Homepage image" class="w-full max-w-md mx-auto h-auto rounded-lg border-2 gms-border-medium block my-4"/>
+				}
+			default:
+				<p class="gms-main-text mt-4">
+					@renderInlines(block.Inlines)
+				</p>
+		}
+	}
+}
+
+templ renderInlines(inlines []textmarkup.InlineRun) {
+	for _, run := range inlines {
+		if run.Bold && run.Underline {
+			<strong class="underline">{ run.Text }</strong>
+		} else if run.Bold {
+			<strong>{ run.Text }</strong>
+		} else if run.Underline {
+			<span class="underline">{ run.Text }</span>
+		} else {
+			{ run.Text }
+		}
+	}
+}

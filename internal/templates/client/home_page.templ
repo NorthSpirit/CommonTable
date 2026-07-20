@@ -1,33 +1,43 @@
 package client
 
 import (
-	"CommonTable/internal/templates/layout"
-	"CommonTable/internal/templates/shared"
 	"CommonTable/internal/templates/helpers"
+	"CommonTable/internal/templates/layout"
+	"CommonTable/internal/templates/richtext"
+	"CommonTable/internal/templates/shared"
 )
 
-templ HomePage(locale string, content shared.HomepageView) {
-	@layout.Layout(shared.T(locale, "home_title"), nil, locale, homePageContent(locale, content))
+templ HomePage(locale string, content shared.HomepageView, restaurants []shared.RestaurantView) {
+	@layout.Layout(shared.T(locale, "home_title"), nil, locale, homePageContent(locale, content, restaurants))
 }
 
-templ homePageContent(locale string, content shared.HomepageView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center text-center">
-		<h2 class="text-3xl font-bold mb-4 gms-main-text">{ shared.T(locale, "home_heading") }</h2>
-		<p class="gms-main-text mb-6 max-w-xl">{ content.WelcomeText }</p>
-
-		if content.ImageOneURL != "" || content.ImageTwoURL != "" {
-			<div class="flex flex-col sm:flex-row gap-4 mb-6 max-w-3xl">
-				if content.ImageOneURL != "" {
-					<img src={ content.ImageOneURL } alt="CommonTable" class="w-full sm:w-1/2 h-48 object-cover rounded-lg border gms-border-medium"/>
-				}
-				if content.ImageTwoURL != "" {
-					<img src={ content.ImageTwoURL } alt="CommonTable" class="w-full sm:w-1/2 h-48 object-cover rounded-lg border gms-border-medium"/>
-				}
+templ homePageContent(locale string, content shared.HomepageView, restaurants []shared.RestaurantView) {
+	<div class="flex flex-col md:flex-row flex-1">
+		<nav class="order-first w-full md:w-40 lg:w-1/6 gms-dark-bg m-0 md:border-r gms-border-dark sticky top-[35px] self-start z-10 md:h-fit md:m-1">
+			<div>
+				<h3 class="font-semibold text-lg px-2 md:my-1 gms-accent-text hidden md:block">Quick Navigation</h3>
+				<ul class="flex flex-row flex-nowrap space-x-4 overflow-x-scroll border gms-border-medium pb-2 rounded-md md:border-none md:flex-col md:space-x-0 md:space-y-1 sm:items-start">
+					<li class="shrink-0"><a href="#top" class="block px-2 py-0 rounded gms-hover-bg-light gms-accent-hover-text">Back to top</a></li>
+					<li class="shrink-0"><a href="#welcome" class="block px-2 py-0 rounded gms-hover-bg-light gms-accent-hover-text">Welcome</a></li>
+					for _, restaurant := range restaurants {
+						<li class="shrink-0">
+							<a href={ templ.URL(helpers.WithLang("/restaurants/"+helpers.Itoa(restaurant.ID), locale)) } class="block px-2 py-0 rounded gms-hover-bg-light gms-accent-hover-text whitespace-nowrap">
+								{ restaurant.Name }
+							</a>
+						</li>
+					}
+				</ul>
 			</div>
-		}
+		</nav>
 
-		<a href={ templ.URL(helpers.WithLang("/restaurants", locale)) } class="px-6 py-3 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
-        	{ shared.T(locale, "view_restaurants") }
-        </a>
-	</main>
+		<main class="flex-1 lg:w-4/6 p-6 gms-content-bg gms-main-text">
+			<div id="restaurants">
+				@RestaurantQuickNav(restaurants, locale)
+			</div>
+
+			<div id="welcome">
+				@richtext.RenderBlocks(content.WelcomeBlocks, content.ImageOneURL, content.ImageTwoURL)
+			</div>
+		</main>
+	</div>
 }
