@@ -1,7 +1,9 @@
-package admin
+package homepage
+
+import "CommonTable/internal/templates/admin/adminshared"
 
 templ HomepagePage(welcomeText string, welcomeTextAlt string, imageOneURL string, imageTwoURL string, successMessage string) {
-	@Layout("Homepage Content", homepagePageContent(welcomeText, welcomeTextAlt, imageOneURL, imageTwoURL, successMessage))
+	@adminshared.Layout("Homepage Content", homepagePageContent(welcomeText, welcomeTextAlt, imageOneURL, imageTwoURL, successMessage))
 }
 
 templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL string, imageTwoURL string, successMessage string) {
@@ -17,15 +19,15 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL
 				<legend class="text-lg font-semibold px-2">Welcome Text</legend>
 
 				<div class="mb-4 p-3 rounded-lg border gms-border-medium text-sm">
-                	<p class="font-semibold mb-1">Formatting guide:</p>
-                	<ul class="list-disc pl-5 space-y-0.5">
-                		<li><code># Heading</code> — large heading</li>
-                		<li><code>## Subheading</code> — smaller heading</li>
-                		<li><code>**bold text**</code> and <code>__underlined text__</code></li>
-                		<li><code>---</code> on its own line — visual spacer</li>
-                		<li><code>{ "{{image1}}" }</code> / <code>{ "{{image2}}" }</code> — places that image at this point (otherwise both are added at the end automatically)</li>
-                	</ul>
-                </div>
+					<p class="font-semibold mb-1">Formatting guide:</p>
+					<ul class="list-disc pl-5 space-y-0.5">
+						<li><code># Heading</code> — large heading</li>
+						<li><code>## Subheading</code> — smaller heading</li>
+						<li><code>**bold text**</code> and <code>__underlined text__</code></li>
+						<li><code>---</code> on its own line — visual spacer</li>
+						<li><code>{ "{{image1}}" }</code> / <code>{ "{{image2}}" }</code> — places that image at this point (otherwise both are added at the end automatically)</li>
+					</ul>
+				</div>
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">English</span>
@@ -44,34 +46,28 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL
 				<div class="grid grid-cols-2 gap-4 mb-4">
 					<div>
 						<span class="text-sm font-medium mb-1 block">Image One</span>
-						if imageOneURL != "" {
-							<img src={ imageOneURL } alt="Current image one" class="h-48 w-full object-cover rounded border gms-border-medium"/>
-						} else {
-							<div class="h-48 w-full flex items-center justify-center rounded border gms-border-medium">
-								<p class="text-sm italic opacity-70">No image set.</p>
-							</div>
-						}
+						<img id="image-one-preview" src={ imageOneURL } alt="Image one preview" class={ "h-48 w-full object-cover rounded border gms-border-medium", templ.KV("hidden", imageOneURL == "") }/>
+						<div id="image-one-preview-placeholder" class={ "h-48 w-full flex items-center justify-center rounded border gms-border-medium", templ.KV("hidden", imageOneURL != "") }>
+							<p class="text-sm italic opacity-70">No image set.</p>
+						</div>
 					</div>
 					<div>
 						<span class="text-sm font-medium mb-1 block">Image Two</span>
-						if imageTwoURL != "" {
-							<img src={ imageTwoURL } alt="Current image two" class="h-48 w-full object-cover rounded border gms-border-medium"/>
-						} else {
-							<div class="h-48 w-full flex items-center justify-center rounded border gms-border-medium">
-								<p class="text-sm italic opacity-70">No image set.</p>
-							</div>
-						}
+						<img id="image-two-preview" src={ imageTwoURL } alt="Image two preview" class={ "h-48 w-full object-cover rounded border gms-border-medium", templ.KV("hidden", imageTwoURL == "") }/>
+						<div id="image-two-preview-placeholder" class={ "h-48 w-full flex items-center justify-center rounded border gms-border-medium", templ.KV("hidden", imageTwoURL != "") }>
+							<p class="text-sm italic opacity-70">No image set.</p>
+						</div>
 					</div>
 				</div>
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Replace Image One</span>
-					<input type="file" name="image_one" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
+					<input type="file" name="image_one" data-preview-target="image-one-preview" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
 				</label>
 
 				<label class="block">
 					<span class="text-sm font-medium mb-1 block">Replace Image Two</span>
-					<input type="file" name="image_two" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
+					<input type="file" name="image_two" data-preview-target="image-two-preview" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
 				</label>
 
 				<span class="text-xs opacity-70 block mt-2">Uploading a new file replaces the corresponding image above.</span>
@@ -82,4 +78,6 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL
 			</div>
 		</form>
 	</main>
+
+	<script src="/assets/jsscripts/image_preview.js"></script>
 }

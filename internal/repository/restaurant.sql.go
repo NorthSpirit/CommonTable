@@ -12,18 +12,20 @@ import (
 )
 
 const createRestaurant = `-- name: CreateRestaurant :one
-INSERT INTO restaurant (name, address, phone, email, password_hash, logo_url)
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, name, address, phone, email, password_hash, logo_url
+INSERT INTO restaurant (name, address, phone, email, password_hash, logo_url, description, description_alt)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING id, name, address, phone, email, password_hash, logo_url, deleted_at, description, description_alt
 `
 
 type CreateRestaurantParams struct {
-	Name         string      `json:"name"`
-	Address      pgtype.Text `json:"address"`
-	Phone        pgtype.Text `json:"phone"`
-	Email        pgtype.Text `json:"email"`
-	PasswordHash pgtype.Text `json:"password_hash"`
-	LogoUrl      pgtype.Text `json:"logo_url"`
+	Name           string      `json:"name"`
+	Address        pgtype.Text `json:"address"`
+	Phone          pgtype.Text `json:"phone"`
+	Email          pgtype.Text `json:"email"`
+	PasswordHash   pgtype.Text `json:"password_hash"`
+	LogoUrl        pgtype.Text `json:"logo_url"`
+	Description    pgtype.Text `json:"description"`
+	DescriptionAlt pgtype.Text `json:"description_alt"`
 }
 
 func (q *Queries) CreateRestaurant(ctx context.Context, arg CreateRestaurantParams) (Restaurant, error) {
@@ -34,6 +36,8 @@ func (q *Queries) CreateRestaurant(ctx context.Context, arg CreateRestaurantPara
 		arg.Email,
 		arg.PasswordHash,
 		arg.LogoUrl,
+		arg.Description,
+		arg.DescriptionAlt,
 	)
 	var i Restaurant
 	err := row.Scan(
@@ -44,23 +48,16 @@ func (q *Queries) CreateRestaurant(ctx context.Context, arg CreateRestaurantPara
 		&i.Email,
 		&i.PasswordHash,
 		&i.LogoUrl,
+		&i.DeletedAt,
+		&i.Description,
+		&i.DescriptionAlt,
 	)
 	return i, err
 }
 
-const deleteRestaurant = `-- name: DeleteRestaurant :exec
-DELETE FROM restaurant
-WHERE id = $1
-`
-
-func (q *Queries) DeleteRestaurant(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteRestaurant, id)
-	return err
-}
-
 const getRestaurant = `-- name: GetRestaurant :one
-SELECT id, name, address, phone, email, password_hash, logo_url FROM restaurant
-WHERE id = $1
+SELECT id, name, address, phone, email, password_hash, logo_url, deleted_at, description, description_alt FROM restaurant
+WHERE id = $1 AND deleted_at IS NULL
 `
 
 func (q *Queries) GetRestaurant(ctx context.Context, id int32) (Restaurant, error) {
@@ -74,13 +71,16 @@ func (q *Queries) GetRestaurant(ctx context.Context, id int32) (Restaurant, erro
 		&i.Email,
 		&i.PasswordHash,
 		&i.LogoUrl,
+		&i.DeletedAt,
+		&i.Description,
+		&i.DescriptionAlt,
 	)
 	return i, err
 }
 
 const getRestaurantByName = `-- name: GetRestaurantByName :one
-SELECT id, name, address, phone, email, password_hash, logo_url FROM restaurant
-WHERE name = $1
+SELECT id, name, address, phone, email, password_hash, logo_url, deleted_at, description, description_alt FROM restaurant
+WHERE name = $1 AND deleted_at IS NULL
 `
 
 func (q *Queries) GetRestaurantByName(ctx context.Context, name string) (Restaurant, error) {
@@ -94,12 +94,59 @@ func (q *Queries) GetRestaurantByName(ctx context.Context, name string) (Restaur
 		&i.Email,
 		&i.PasswordHash,
 		&i.LogoUrl,
+		&i.DeletedAt,
+		&i.Description,
+		&i.DescriptionAlt,
+	)
+	return i, err
+}
+
+const getRestaurantForDisplay = `-- name: GetRestaurantForDisplay :one
+SELECT
+    id,
+    name,
+    address,
+    phone,
+    email,
+    logo_url,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(description_alt, description) ELSE description END::text AS description
+FROM restaurant
+WHERE id = $2::integer AND deleted_at IS NULL
+`
+
+type GetRestaurantForDisplayParams struct {
+	Locale string `json:"locale"`
+	ID     int32  `json:"id"`
+}
+
+type GetRestaurantForDisplayRow struct {
+	ID          int32       `json:"id"`
+	Name        string      `json:"name"`
+	Address     pgtype.Text `json:"address"`
+	Phone       pgtype.Text `json:"phone"`
+	Email       pgtype.Text `json:"email"`
+	LogoUrl     pgtype.Text `json:"logo_url"`
+	Description string      `json:"description"`
+}
+
+func (q *Queries) GetRestaurantForDisplay(ctx context.Context, arg GetRestaurantForDisplayParams) (GetRestaurantForDisplayRow, error) {
+	row := q.db.QueryRow(ctx, getRestaurantForDisplay, arg.Locale, arg.ID)
+	var i GetRestaurantForDisplayRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Address,
+		&i.Phone,
+		&i.Email,
+		&i.LogoUrl,
+		&i.Description,
 	)
 	return i, err
 }
 
 const listRestaurants = `-- name: ListRestaurants :many
-SELECT id, name, address, phone, email, password_hash, logo_url FROM restaurant
+SELECT id, name, address, phone, email, password_hash, logo_url, deleted_at, description, description_alt FROM restaurant
+WHERE deleted_at IS NULL
 ORDER BY name
 `
 
@@ -120,6 +167,9 @@ func (q *Queries) ListRestaurants(ctx context.Context) ([]Restaurant, error) {
 			&i.Email,
 			&i.PasswordHash,
 			&i.LogoUrl,
+			&i.DeletedAt,
+			&i.Description,
+			&i.DescriptionAlt,
 		); err != nil {
 			return nil, err
 		}
@@ -131,19 +181,131 @@ func (q *Queries) ListRestaurants(ctx context.Context) ([]Restaurant, error) {
 	return items, nil
 }
 
-const updateRestaurant = `-- name: UpdateRestaurant :exec
+const listRestaurantsForAdmin = `-- name: ListRestaurantsForAdmin :many
+SELECT id, name, address, phone, email, password_hash, logo_url, deleted_at, description, description_alt FROM restaurant
+ORDER BY deleted_at IS NULL DESC, name
+`
+
+func (q *Queries) ListRestaurantsForAdmin(ctx context.Context) ([]Restaurant, error) {
+	rows, err := q.db.Query(ctx, listRestaurantsForAdmin)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Restaurant
+	for rows.Next() {
+		var i Restaurant
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Address,
+			&i.Phone,
+			&i.Email,
+			&i.PasswordHash,
+			&i.LogoUrl,
+			&i.DeletedAt,
+			&i.Description,
+			&i.DescriptionAlt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listRestaurantsForDisplay = `-- name: ListRestaurantsForDisplay :many
+SELECT
+    id,
+    name,
+    address,
+    phone,
+    email,
+    logo_url,
+    CASE WHEN $1::text = 'alt' THEN COALESCE(description_alt, description) ELSE description END::text AS description
+FROM restaurant
+WHERE deleted_at IS NULL
+ORDER BY name
+`
+
+type ListRestaurantsForDisplayRow struct {
+	ID          int32       `json:"id"`
+	Name        string      `json:"name"`
+	Address     pgtype.Text `json:"address"`
+	Phone       pgtype.Text `json:"phone"`
+	Email       pgtype.Text `json:"email"`
+	LogoUrl     pgtype.Text `json:"logo_url"`
+	Description string      `json:"description"`
+}
+
+func (q *Queries) ListRestaurantsForDisplay(ctx context.Context, locale string) ([]ListRestaurantsForDisplayRow, error) {
+	rows, err := q.db.Query(ctx, listRestaurantsForDisplay, locale)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListRestaurantsForDisplayRow
+	for rows.Next() {
+		var i ListRestaurantsForDisplayRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Address,
+			&i.Phone,
+			&i.Email,
+			&i.LogoUrl,
+			&i.Description,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const restoreRestaurant = `-- name: RestoreRestaurant :exec
 UPDATE restaurant
-SET name = $2, address = $3, phone = $4, email = $5, logo_url = $6
+SET deleted_at = NULL
 WHERE id = $1
 `
 
+func (q *Queries) RestoreRestaurant(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, restoreRestaurant, id)
+	return err
+}
+
+const softDeleteRestaurant = `-- name: SoftDeleteRestaurant :exec
+UPDATE restaurant
+SET deleted_at = now()
+WHERE id = $1 AND deleted_at IS NULL
+`
+
+func (q *Queries) SoftDeleteRestaurant(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, softDeleteRestaurant, id)
+	return err
+}
+
+const updateRestaurant = `-- name: UpdateRestaurant :exec
+UPDATE restaurant
+SET name = $2, address = $3, phone = $4, email = $5, logo_url = $6, description = $7, description_alt = $8
+WHERE id = $1 AND deleted_at IS NULL
+`
+
 type UpdateRestaurantParams struct {
-	ID      int32       `json:"id"`
-	Name    string      `json:"name"`
-	Address pgtype.Text `json:"address"`
-	Phone   pgtype.Text `json:"phone"`
-	Email   pgtype.Text `json:"email"`
-	LogoUrl pgtype.Text `json:"logo_url"`
+	ID             int32       `json:"id"`
+	Name           string      `json:"name"`
+	Address        pgtype.Text `json:"address"`
+	Phone          pgtype.Text `json:"phone"`
+	Email          pgtype.Text `json:"email"`
+	LogoUrl        pgtype.Text `json:"logo_url"`
+	Description    pgtype.Text `json:"description"`
+	DescriptionAlt pgtype.Text `json:"description_alt"`
 }
 
 func (q *Queries) UpdateRestaurant(ctx context.Context, arg UpdateRestaurantParams) error {
@@ -154,6 +316,8 @@ func (q *Queries) UpdateRestaurant(ctx context.Context, arg UpdateRestaurantPara
 		arg.Phone,
 		arg.Email,
 		arg.LogoUrl,
+		arg.Description,
+		arg.DescriptionAlt,
 	)
 	return err
 }
@@ -161,7 +325,7 @@ func (q *Queries) UpdateRestaurant(ctx context.Context, arg UpdateRestaurantPara
 const updateRestaurantPasswordHash = `-- name: UpdateRestaurantPasswordHash :exec
 UPDATE restaurant
 SET password_hash = $2
-WHERE id = $1
+WHERE id = $1 AND deleted_at IS NULL
 `
 
 type UpdateRestaurantPasswordHashParams struct {

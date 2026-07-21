@@ -1,12 +1,12 @@
 package admin
 
 import (
+	admin "CommonTable/internal/templates/admin/auth"
 	"errors"
 	"net/http"
 	"time"
 
 	"CommonTable/internal/services/adminservices"
-	"CommonTable/internal/templates/admin"
 )
 
 type AuthHandler struct {

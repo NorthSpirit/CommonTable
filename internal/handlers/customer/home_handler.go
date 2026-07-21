@@ -46,7 +46,7 @@ func (h *HomeHandler) Home(w http.ResponseWriter, r *http.Request) {
 		ImageTwoURL:   imageTwoURL,
 	}
 
-	restaurants, err := h.restaurantService.GetRestaurantList(r.Context())
+	restaurants, err := h.restaurantService.ListRestaurantsForDisplay(r.Context(), locale)
 	if err != nil {
 		renderServerError(w, r)
 		return

@@ -8,10 +8,11 @@ type BrandingView struct {
 }
 
 type RestaurantView struct {
-	ID      int32
-	Name    string
-	Address string
-	LogoURL string
+	ID          int32
+	Name        string
+	Address     string
+	Description string
+	LogoURL     string
 }
 
 type MenuView struct {

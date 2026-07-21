@@ -16,7 +16,6 @@ func NewFoodItemService(queries *repository.Queries) *FoodItemService {
 	return &FoodItemService{queries: queries}
 }
 
-// GetFoodItemByID returns raw item data in both languages — for admin editing.
 func (f *FoodItemService) GetFoodItemByID(ctx context.Context, id int32) (repository.GetFoodItemRow, error) {
 	item, err := f.queries.GetFoodItem(ctx, id)
 	if err != nil {
@@ -26,7 +25,6 @@ func (f *FoodItemService) GetFoodItemByID(ctx context.Context, id int32) (reposi
 	return item, nil
 }
 
-// GetFoodItemForDisplay returns locale-resolved item data — for customer-facing pages.
 func (f *FoodItemService) GetFoodItemForDisplay(ctx context.Context, id int32, locale string) (repository.GetFoodItemForDisplayRow, error) {
 	item, err := f.queries.GetFoodItemForDisplay(ctx, repository.GetFoodItemForDisplayParams{
 		Locale: locale,
@@ -48,6 +46,17 @@ func (f *FoodItemService) ListFoodItemsByRestaurant(ctx context.Context, restaur
 	return items, nil
 }
 
+// ListFoodItemsByRestaurantForAdmin includes soft-deleted items, for the
+// admin restaurant detail screen.
+func (f *FoodItemService) ListFoodItemsByRestaurantForAdmin(ctx context.Context, restaurantID int32) ([]repository.ListFoodItemsByRestaurantForAdminRow, error) {
+	items, err := f.queries.ListFoodItemsByRestaurantForAdmin(ctx, restaurantID)
+	if err != nil {
+		return nil, fmt.Errorf("list food items by restaurant for admin: %w", err)
+	}
+
+	return items, nil
+}
+
 func (f *FoodItemService) ListAvailableFoodItemsByRestaurant(ctx context.Context, restaurantID int32) ([]repository.ListAvailableFoodItemsByRestaurantRow, error) {
 	items, err := f.queries.ListAvailableFoodItemsByRestaurant(ctx, restaurantID)
 	if err != nil {
@@ -57,8 +66,6 @@ func (f *FoodItemService) ListAvailableFoodItemsByRestaurant(ctx context.Context
 	return items, nil
 }
 
-// ListMenuItemsForDisplay returns available items on a menu, locale-resolved,
-// for public-facing menu display.
 func (f *FoodItemService) ListMenuItemsForDisplay(ctx context.Context, menuID int32, locale string) ([]repository.ListMenuItemsForDisplayRow, error) {
 	items, err := f.queries.ListMenuItemsForDisplay(ctx, repository.ListMenuItemsForDisplayParams{
 		Locale: locale,
@@ -66,6 +73,19 @@ func (f *FoodItemService) ListMenuItemsForDisplay(ctx context.Context, menuID in
 	})
 	if err != nil {
 		return nil, fmt.Errorf("list menu items for display: %w", err)
+	}
+
+	return items, nil
+}
+
+func (f *FoodItemService) ListMostOrderedItemsByRestaurant(ctx context.Context, restaurantID int32, locale string, limit int32) ([]repository.ListMostOrderedItemsByRestaurantRow, error) {
+	items, err := f.queries.ListMostOrderedItemsByRestaurant(ctx, repository.ListMostOrderedItemsByRestaurantParams{
+		Locale:       locale,
+		RestaurantID: restaurantID,
+		ItemLimit:    limit,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("list most ordered items by restaurant: %w", err)
 	}
 
 	return items, nil
@@ -83,6 +103,7 @@ func (f *FoodItemService) InsertFoodItem(
 	prepTimeMins *int32,
 	instructions *string,
 	instructionsAlt *string,
+	price float64,
 ) (repository.CreateFoodItemRow, error) {
 
 	item, err := f.queries.CreateFoodItem(ctx, repository.CreateFoodItemParams{
@@ -96,6 +117,7 @@ func (f *FoodItemService) InsertFoodItem(
 		PrepTimeMins:    helpers.Int4FromInt32(prepTimeMins),
 		Instructions:    helpers.TextFromString(instructions),
 		InstructionsAlt: helpers.TextFromString(instructionsAlt),
+		Price:           helpers.NumericFromFloat64(price),
 	})
 	if err != nil {
 		return repository.CreateFoodItemRow{}, fmt.Errorf("create food item: %w", err)
@@ -116,6 +138,7 @@ func (f *FoodItemService) UpdateFoodItem(
 	prepTimeMins *int32,
 	instructions *string,
 	instructionsAlt *string,
+	price float64,
 ) error {
 
 	err := f.queries.UpdateFoodItem(ctx, repository.UpdateFoodItemParams{
@@ -129,6 +152,7 @@ func (f *FoodItemService) UpdateFoodItem(
 		PrepTimeMins:    helpers.Int4FromInt32(prepTimeMins),
 		Instructions:    helpers.TextFromString(instructions),
 		InstructionsAlt: helpers.TextFromString(instructionsAlt),
+		Price:           helpers.NumericFromFloat64(price),
 	})
 	if err != nil {
 		return fmt.Errorf("update food item: %w", err)
@@ -165,19 +189,4 @@ func (f *FoodItemService) RestoreFoodItem(ctx context.Context, id int32) error {
 	}
 
 	return nil
-}
-
-// ListMostOrderedItemsByRestaurant returns the top N most-ordered available
-// items for a restaurant, locale-resolved — used for the quick-nav.
-func (f *FoodItemService) ListMostOrderedItemsByRestaurant(ctx context.Context, restaurantID int32, locale string, limit int32) ([]repository.ListMostOrderedItemsByRestaurantRow, error) {
-	items, err := f.queries.ListMostOrderedItemsByRestaurant(ctx, repository.ListMostOrderedItemsByRestaurantParams{
-		Locale:       locale,
-		RestaurantID: restaurantID,
-		ItemLimit:    limit,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("list most ordered items by restaurant: %w", err)
-	}
-
-	return items, nil
 }

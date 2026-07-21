@@ -352,13 +352,16 @@ type Payment struct {
 }
 
 type Restaurant struct {
-	ID           int32       `json:"id"`
-	Name         string      `json:"name"`
-	Address      pgtype.Text `json:"address"`
-	Phone        pgtype.Text `json:"phone"`
-	Email        pgtype.Text `json:"email"`
-	PasswordHash pgtype.Text `json:"password_hash"`
-	LogoUrl      pgtype.Text `json:"logo_url"`
+	ID             int32            `json:"id"`
+	Name           string           `json:"name"`
+	Address        pgtype.Text      `json:"address"`
+	Phone          pgtype.Text      `json:"phone"`
+	Email          pgtype.Text      `json:"email"`
+	PasswordHash   pgtype.Text      `json:"password_hash"`
+	LogoUrl        pgtype.Text      `json:"logo_url"`
+	DeletedAt      pgtype.Timestamp `json:"deleted_at"`
+	Description    pgtype.Text      `json:"description"`
+	DescriptionAlt pgtype.Text      `json:"description_alt"`
 }
 
 type RestaurantAllergen struct {

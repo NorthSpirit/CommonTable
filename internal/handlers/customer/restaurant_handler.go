@@ -36,7 +36,7 @@ func NewRestaurantHandler(
 func (h *RestaurantHandler) List(w http.ResponseWriter, r *http.Request) {
 	locale := GetLocale(r)
 
-	restaurants, err := h.restaurantService.GetRestaurantList(r.Context())
+	restaurants, err := h.restaurantService.ListRestaurantsForDisplay(r.Context(), locale)
 	if err != nil {
 		renderServerError(w, r)
 		return

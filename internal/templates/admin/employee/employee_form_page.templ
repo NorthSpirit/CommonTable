@@ -1,0 +1,80 @@
+package employee
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ EmployeeFormPage(restaurantID int32, isEdit bool, employee adminshared.EmployeeView, errorMessage string) {
+	@adminshared.Layout(employeeFormTitle(isEdit), employeeFormContent(restaurantID, isEdit, employee, errorMessage))
+}
+
+func employeeFormTitle(isEdit bool) string {
+	if isEdit {
+		return "Edit Employee"
+	}
+	return "New Employee"
+}
+
+func employeeFormAction(restaurantID int32, isEdit bool, employeeID int32) templ.SafeURL {
+	base := "/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees"
+	if isEdit {
+		return templ.URL(base + "/" + adminshared.Itoa(employeeID) + "/edit")
+	}
+	return templ.URL(base + "/new")
+}
+
+templ employeeFormContent(restaurantID int32, isEdit bool, employee adminshared.EmployeeView, errorMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+			{ employeeFormTitle(isEdit) }
+		</h2>
+
+		if errorMessage != "" {
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+		}
+
+		<form method="POST" action={ employeeFormAction(restaurantID, isEdit, employee.ID) } class="max-w-xl">
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Details</legend>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Name</span>
+					<input type="text" name="name" value={ employee.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Role</span>
+					<select name="role" required class="p-2 border gms-border-medium rounded-md w-full">
+						<option value="waiter" selected?={ employee.Role == "waiter" }>Waiter</option>
+						<option value="chef" selected?={ employee.Role == "chef" }>Chef</option>
+						<option value="manager" selected?={ employee.Role == "manager" }>Manager</option>
+					</select>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Email</span>
+					<input type="email" name="email" value={ employee.Email } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Phone</span>
+					<input type="text" name="phone_number" value={ employee.PhoneNumber } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				if isEdit {
+					<label class="block">
+						<span class="text-sm font-medium mb-1 block">New PIN/Password (leave blank to keep current)</span>
+						<input type="password" name="pin" class="p-2 border gms-border-medium rounded-md w-full"/>
+					</label>
+				} else {
+					<label class="block">
+						<span class="text-sm font-medium mb-1 block">PIN/Password</span>
+						<input type="password" name="pin" required class="p-2 border gms-border-medium rounded-md w-full"/>
+					</label>
+				}
+			</fieldset>
+
+			<div class="flex justify-end mt-4">
+				<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+			</div>
+		</form>
+	</main>
+}

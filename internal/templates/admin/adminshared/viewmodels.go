@@ -1,0 +1,91 @@
+package adminshared
+
+import "strconv"
+
+type RestaurantView struct {
+	ID             int32
+	Name           string
+	Address        string
+	Phone          string
+	Email          string
+	Description    string
+	DescriptionAlt string
+	LogoURL        string
+	IsDeleted      bool
+}
+
+type FoodItemView struct {
+	ID              int32
+	Name            string
+	NameAlt         string
+	Description     string
+	DescriptionAlt  string
+	Instructions    string
+	InstructionsAlt string
+	Price           float64
+	ImageURL        string
+	PrepTimeMins    int32
+	IsAvailable     bool
+	IsDeleted       bool
+}
+
+type AllergenCheckboxView struct {
+	ID      int32
+	Name    string
+	Checked bool
+}
+
+type MenuView struct {
+	ID             int32
+	Name           string
+	NameAlt        string
+	Description    string
+	DescriptionAlt string
+	ImageURL       string
+}
+
+type MenuCheckboxView struct {
+	ID      int32
+	Name    string
+	Checked bool
+}
+
+type IngredientView struct {
+	ID          int32
+	Name        string
+	Description string
+}
+
+type AllergenAdminView struct {
+	ID             int32
+	Name           string
+	NameAlt        string
+	Description    string
+	DescriptionAlt string
+	Code           string
+}
+
+type EmployeeView struct {
+	ID          int32
+	Name        string
+	Role        string
+	Email       string
+	PhoneNumber string
+	IsActive    bool
+}
+
+type TableView struct {
+	ID       int32
+	Number   int32
+	Capacity int32
+	Section  string
+	Status   string
+}
+
+func Itoa(id int32) string {
+	return strconv.Itoa(int(id))
+}
+
+func FormatPrice(price float64) string {
+	return strconv.FormatFloat(price, 'f', 2, 64)
+}

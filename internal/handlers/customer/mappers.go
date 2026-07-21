@@ -6,10 +6,11 @@ import (
 	"CommonTable/internal/templates/shared"
 )
 
-func toRestaurantView(r repository.Restaurant) shared.RestaurantView {
+func toRestaurantView(r repository.ListRestaurantsForDisplayRow) shared.RestaurantView {
 	view := shared.RestaurantView{
-		ID:   r.ID,
-		Name: r.Name,
+		ID:          r.ID,
+		Name:        r.Name,
+		Description: r.Description,
 	}
 	if r.Address.Valid {
 		view.Address = r.Address.String

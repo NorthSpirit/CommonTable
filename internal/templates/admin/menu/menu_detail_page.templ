@@ -1,0 +1,69 @@
+package menu
+
+import "strconv"
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ MenuDetailPage(restaurantID int32, menu adminshared.MenuView, items []adminshared.FoodItemView) {
+	@adminshared.Layout(menu.Name, menuDetailContent(restaurantID, menu, items))
+}
+
+templ menuDetailContent(restaurantID int32, menu adminshared.MenuView, items []adminshared.FoodItemView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4">
+			<div>
+				<h2 class="text-2xl font-bold gms-main-text">{ menu.Name }</h2>
+				if menu.Description != "" {
+					<p class="gms-main-text text-sm mt-1">{ menu.Description }</p>
+				}
+			</div>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID) + "/items/new") } class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				+ New Item
+			</a>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			for _, item := range items {
+				<div class={ "border gms-border-medium rounded-lg shadow-lg overflow-hidden", templ.KV("opacity-50", item.IsDeleted) }>
+					<div class="h-32 w-full bg-gray-200 flex items-center justify-center relative">
+						if item.ImageURL != "" {
+							<img src={ item.ImageURL } alt={ item.Name } class="h-full w-full object-cover"/>
+						} else {
+							<div class="text-gray-500 italic">No Image</div>
+						}
+						if item.IsDeleted {
+							<div class="absolute top-1 right-1 px-2 py-0.5 text-xs font-bold rounded bg-red-600 text-white">DELETED</div>
+						} else if !item.IsAvailable {
+							<div class="absolute top-1 right-1 px-2 py-0.5 text-xs font-bold rounded bg-yellow-500 text-black">UNAVAILABLE</div>
+						}
+					</div>
+					<div class="p-4">
+						<h4 class="text-lg font-bold gms-main-text">{ item.Name }</h4>
+						<p class="text-sm font-semibold gms-main-text">€{ formatPrice(item.Price) }</p>
+
+						<div class="flex gap-2 mt-3">
+							<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID) + "/items/" + adminshared.Itoa(item.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+								Edit
+							</a>
+							if item.IsDeleted {
+								<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID) + "/items/" + adminshared.Itoa(item.ID) + "/restore") }>
+									<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">Restore</button>
+								</form>
+							} else {
+								<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID) + "/items/" + adminshared.Itoa(item.ID) + "/delete") } onsubmit="return confirm('Delete this item? Order history is preserved.');">
+									<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Delete</button>
+								</form>
+							}
+						</div>
+					</div>
+				</div>
+			}
+			if len(items) == 0 {
+				<p class="text-center italic gms-main-text col-span-full">No items on this menu yet.</p>
+			}
+		</div>
+	</main>
+}
+
+func formatPrice(price float64) string {
+	return strconv.FormatFloat(price, 'f', 2, 64)
+}

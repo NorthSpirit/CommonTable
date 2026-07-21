@@ -19,3 +19,10 @@ FROM food_menu fm
          JOIN food_item_to_menu fitm ON fitm.menu_id = fm.id
 WHERE fitm.item_id = $1
 ORDER BY fm.name;
+
+-- name: ListItemsInMenuForAdmin :many
+SELECT fi.id, fi.name, fi.image_url, fi.price, fi.is_available, fi.deleted_at
+FROM food_items fi
+         JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
+WHERE fitm.menu_id = $1
+ORDER BY fi.name;

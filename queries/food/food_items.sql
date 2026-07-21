@@ -1,7 +1,7 @@
 -- name: GetFoodItem :one
-SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt
+SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt, price, deleted_at
 FROM food_items
-WHERE id = $1 AND deleted_at IS NULL;
+WHERE id = $1;
 
 -- name: GetFoodItemForDisplay :one
 SELECT
@@ -17,25 +17,31 @@ FROM food_items
 WHERE id = sqlc.arg(id)::integer AND deleted_at IS NULL;
 
 -- name: ListFoodItemsByRestaurant :many
-SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt
+SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt, price
 FROM food_items
 WHERE restaurant_id = $1 AND deleted_at IS NULL
 ORDER BY name;
 
+-- name: ListFoodItemsByRestaurantForAdmin :many
+SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt, price, deleted_at
+FROM food_items
+WHERE restaurant_id = $1
+ORDER BY deleted_at IS NULL DESC, name;
+
 -- name: ListAvailableFoodItemsByRestaurant :many
-SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt
+SELECT id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt, price
 FROM food_items
 WHERE restaurant_id = $1 AND is_available = true AND deleted_at IS NULL
 ORDER BY name;
 
 -- name: CreateFoodItem :one
-INSERT INTO food_items (restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-RETURNING id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt;
+INSERT INTO food_items (restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt, price)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+RETURNING id, restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt, price;
 
 -- name: UpdateFoodItem :exec
 UPDATE food_items
-SET name = $2, name_alt = $3, description = $4, description_alt = $5, is_available = $6, image_url = $7, prep_time_mins = $8, instructions = $9, instructions_alt = $10
+SET name = $2, name_alt = $3, description = $4, description_alt = $5, is_available = $6, image_url = $7, prep_time_mins = $8, instructions = $9, instructions_alt = $10, price = $11
 WHERE id = $1 AND deleted_at IS NULL;
 
 -- name: SetFoodItemAvailability :exec

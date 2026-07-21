@@ -1,0 +1,54 @@
+package employee
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ EmployeesPage(restaurantID int32, restaurantName string, employees []adminshared.EmployeeView) {
+	@adminshared.Layout(restaurantName+" - Employees", employeesPageContent(restaurantID, restaurantName, employees))
+}
+
+templ employeesPageContent(restaurantID int32, restaurantName string, employees []adminshared.EmployeeView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
+			<h2 class="text-2xl font-bold gms-main-text">{ restaurantName } - Employees</h2>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees/new") } class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				+ New Employee
+			</a>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+			for _, employee := range employees {
+				<div class={ "border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", !employee.IsActive) }>
+					<div class="flex justify-between items-start">
+						<h3 class="text-lg font-bold gms-main-text">{ employee.Name }</h3>
+						if !employee.IsActive {
+							<span class="px-2 py-0.5 text-xs font-bold rounded bg-gray-500 text-white">INACTIVE</span>
+						}
+					</div>
+					<p class="text-sm gms-main-text capitalize">{ employee.Role }</p>
+					if employee.Email != "" {
+						<p class="text-xs opacity-70 mt-1">{ employee.Email }</p>
+					}
+					if employee.PhoneNumber != "" {
+						<p class="text-xs opacity-70">{ employee.PhoneNumber }</p>
+					}
+
+					<div class="flex gap-2 mt-3">
+						<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees/" + adminshared.Itoa(employee.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+							Edit
+						</a>
+						<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees/" + adminshared.Itoa(employee.ID) + "/toggle-active") }>
+							if employee.IsActive {
+								<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Deactivate</button>
+							} else {
+								<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">Activate</button>
+							}
+						</form>
+					</div>
+				</div>
+			}
+			if len(employees) == 0 {
+				<p class="text-center italic gms-main-text col-span-full">No employees yet.</p>
+			}
+		</div>
+	</main>
+}

@@ -1,9 +1,8 @@
 package admin
 
 import (
+	admin "CommonTable/internal/templates/admin/dashboard"
 	"net/http"
-
-	"CommonTable/internal/templates/admin"
 )
 
 type DashboardHandler struct{}

@@ -1,0 +1,130 @@
+package fooditem
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ FoodItemFormPage(restaurantID int32, isEdit bool, item adminshared.FoodItemView, allergens []adminshared.AllergenCheckboxView, menus []adminshared.MenuCheckboxView, errorMessage string) {
+	@adminshared.Layout(itemFormTitle(isEdit), foodItemFormContent(restaurantID, isEdit, item, allergens, menus, errorMessage))
+}
+
+func itemFormTitle(isEdit bool) string {
+	if isEdit {
+		return "Edit Food Item"
+	}
+	return "New Food Item"
+}
+
+func itemFormAction(restaurantID int32, isEdit bool, itemID int32) templ.SafeURL {
+	base := "/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/items"
+	if isEdit {
+		return templ.URL(base + "/" + adminshared.Itoa(itemID) + "/edit")
+	}
+	return templ.URL(base + "/new")
+}
+
+templ foodItemFormContent(restaurantID int32, isEdit bool, item adminshared.FoodItemView, allergens []adminshared.AllergenCheckboxView, menus []adminshared.MenuCheckboxView, errorMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+			{ itemFormTitle(isEdit) }
+		</h2>
+
+		if errorMessage != "" {
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+		}
+
+		<form method="POST" action={ itemFormAction(restaurantID, isEdit, item.ID) } enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Details</legend>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Name</span>
+					<input type="text" name="name" value={ item.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Name (Alt Language)</span>
+					<input type="text" name="name_alt" value={ item.NameAlt } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Description</span>
+					<textarea name="description" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ item.Description }</textarea>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Description (Alt Language)</span>
+					<textarea name="description_alt" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ item.DescriptionAlt }</textarea>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Instructions / Preparation Notes</span>
+					<textarea name="instructions" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ item.Instructions }</textarea>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Instructions (Alt Language)</span>
+					<textarea name="instructions_alt" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ item.InstructionsAlt }</textarea>
+				</label>
+
+				<div class="grid grid-cols-2 gap-4 mb-4">
+					<label class="block">
+						<span class="text-sm font-medium mb-1 block">Price (€)</span>
+						<input type="number" step="0.01" min="0" name="price" value={ adminshared.FormatPrice(item.Price) } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					</label>
+					<label class="block">
+						<span class="text-sm font-medium mb-1 block">Prep Time (mins)</span>
+						<input type="number" min="0" name="prep_time_mins" value={ adminshared.Itoa(item.PrepTimeMins) } class="p-2 border gms-border-medium rounded-md w-full"/>
+					</label>
+				</div>
+
+				<label class="flex items-center gap-2">
+					<input type="checkbox" name="is_available" checked?={ item.IsAvailable }/>
+					<span class="text-sm font-medium">Available on menu</span>
+				</label>
+			</fieldset>
+
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Image</legend>
+
+				<img id="item-image-preview" src={ item.ImageURL } alt="Item image preview" class={ "h-40 w-full object-cover rounded border gms-border-medium mb-4", templ.KV("hidden", item.ImageURL == "") }/>
+				<div id="item-image-preview-placeholder" class={ "h-40 w-full flex items-center justify-center rounded border gms-border-medium mb-4", templ.KV("hidden", item.ImageURL != "") }>
+					<p class="text-sm italic opacity-70">No image set.</p>
+				</div>
+
+				<label class="block mb-6">
+					<span class="text-sm font-medium mb-1 block">Replace Image</span>
+					<input type="file" name="image" data-preview-target="item-image-preview" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
+				</label>
+
+				<h4 class="text-md font-semibold mb-2">Allergens</h4>
+				<div class="grid grid-cols-2 gap-1 mb-4">
+					for _, allergen := range allergens {
+						<label class="flex items-center gap-2">
+							<input type="checkbox" name="allergens" value={ adminshared.Itoa(allergen.ID) } checked?={ allergen.Checked }/>
+							<span class="text-sm">{ allergen.Name }</span>
+						</label>
+					}
+				</div>
+
+				<h4 class="text-md font-semibold mb-2">Menus</h4>
+				<div class="grid grid-cols-2 gap-1">
+					for _, menu := range menus {
+						<label class="flex items-center gap-2">
+							<input type="checkbox" name="menus" value={ adminshared.Itoa(menu.ID) } checked?={ menu.Checked }/>
+							<span class="text-sm">{ menu.Name }</span>
+						</label>
+					}
+				</div>
+
+				if !isEdit {
+					<p class="text-xs opacity-70 mt-2">Save the item first, then edit it to assign allergens and menus.</p>
+				}
+			</fieldset>
+
+			<div class="lg:col-span-2 flex justify-end">
+				<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+			</div>
+		</form>
+	</main>
+
+	<script src="/assets/jsscripts/image_preview.js"></script>
+}

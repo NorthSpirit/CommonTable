@@ -1,10 +1,10 @@
 package admin
 
 import (
+	admin "CommonTable/internal/templates/admin/homepage"
 	"net/http"
 
 	"CommonTable/internal/services/homepageservices"
-	"CommonTable/internal/templates/admin"
 )
 
 type HomepageHandler struct {

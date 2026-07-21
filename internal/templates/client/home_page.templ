@@ -31,10 +31,6 @@ templ homePageContent(locale string, content shared.HomepageView, restaurants []
 		</nav>
 
 		<main class="flex-1 lg:w-4/6 p-6 gms-content-bg gms-main-text">
-			<div id="restaurants">
-				@RestaurantQuickNav(restaurants, locale)
-			</div>
-
 			<div id="welcome">
 				@richtext.RenderBlocks(content.WelcomeBlocks, content.ImageOneURL, content.ImageTwoURL)
 			</div>

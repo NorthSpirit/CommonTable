@@ -1,6 +1,7 @@
 package container
 
 import (
+	"CommonTable/internal/services/foodorderservices"
 	"time"
 
 	"CommonTable/internal/repository"
@@ -18,12 +19,16 @@ type Services struct {
 	Auth  *authservices.AuthService
 	Admin *adminservices.AdminService
 
-	Restaurant   *restaurantservices.RestaurantService
-	FoodMenu     *foodservices.FoodMenuService
-	FoodItem     *foodservices.FoodItemService
-	FoodAllergen *foodservices.FoodAllergenService
-	ItemAllergen *foodrelationshipservices.ItemAllergenService
-	Homepage     *homepageservices.HomepageService
+	Restaurant     *restaurantservices.RestaurantService
+	FoodMenu       *foodservices.FoodMenuService
+	FoodItem       *foodservices.FoodItemService
+	FoodAllergen   *foodservices.FoodAllergenService
+	ItemAllergen   *foodrelationshipservices.ItemAllergenService
+	ItemMenu       *foodrelationshipservices.ItemMenuService
+	Homepage       *homepageservices.HomepageService
+	FoodIngredient *foodservices.FoodIngredientService
+	Employee       *restaurantservices.EmployeeService
+	Table          *foodorderservices.TableService
 
 	JWTTokenTTL time.Duration
 	UploadsDir  string
@@ -49,13 +54,17 @@ func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
 			cfg.JWTTokenTTL,
 		),
 
-		Restaurant:   restaurantservices.NewRestaurantService(queries),
-		FoodMenu:     foodservices.NewFoodMenuService(queries),
-		FoodItem:     foodservices.NewFoodItemService(queries),
-		FoodAllergen: foodservices.NewFoodAllergenService(queries),
-		ItemAllergen: foodrelationshipservices.NewItemAllergenService(queries),
-		Homepage:     homepageservices.NewHomepageService(queries),
-		JWTTokenTTL:  cfg.JWTTokenTTL,
-		UploadsDir:   cfg.UploadsDir,
+		Restaurant:     restaurantservices.NewRestaurantService(queries),
+		FoodMenu:       foodservices.NewFoodMenuService(queries),
+		FoodItem:       foodservices.NewFoodItemService(queries),
+		FoodAllergen:   foodservices.NewFoodAllergenService(queries),
+		ItemAllergen:   foodrelationshipservices.NewItemAllergenService(queries),
+		Homepage:       homepageservices.NewHomepageService(queries),
+		ItemMenu:       foodrelationshipservices.NewItemMenuService(queries),
+		FoodIngredient: foodservices.NewFoodIngredientService(queries),
+		Employee:       restaurantservices.NewEmployeeService(queries),
+		Table:          foodorderservices.NewTableService(queries),
+		JWTTokenTTL:    cfg.JWTTokenTTL,
+		UploadsDir:     cfg.UploadsDir,
 	}
 }

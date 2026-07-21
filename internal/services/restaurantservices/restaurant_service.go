@@ -25,6 +25,20 @@ func (f *RestaurantService) GetRestaurantByID(ctx context.Context, id int32) (re
 	return restaurant, nil
 }
 
+// GetRestaurantForDisplay returns locale-resolved restaurant data — for
+// customer-facing pages.
+func (f *RestaurantService) GetRestaurantForDisplay(ctx context.Context, id int32, locale string) (repository.GetRestaurantForDisplayRow, error) {
+	restaurant, err := f.queries.GetRestaurantForDisplay(ctx, repository.GetRestaurantForDisplayParams{
+		Locale: locale,
+		ID:     id,
+	})
+	if err != nil {
+		return repository.GetRestaurantForDisplayRow{}, fmt.Errorf("get restaurant for display: %w", err)
+	}
+
+	return restaurant, nil
+}
+
 func (f *RestaurantService) GetRestaurantByName(ctx context.Context, name string) (repository.Restaurant, error) {
 	restaurant, err := f.queries.GetRestaurantByName(ctx, name)
 	if err != nil {
@@ -43,6 +57,28 @@ func (f *RestaurantService) GetRestaurantList(ctx context.Context) ([]repository
 	return restaurants, nil
 }
 
+// ListRestaurantsForDisplay returns locale-resolved restaurant data — for
+// customer-facing pages.
+func (f *RestaurantService) ListRestaurantsForDisplay(ctx context.Context, locale string) ([]repository.ListRestaurantsForDisplayRow, error) {
+	restaurants, err := f.queries.ListRestaurantsForDisplay(ctx, locale)
+	if err != nil {
+		return nil, fmt.Errorf("list restaurants for display: %w", err)
+	}
+
+	return restaurants, nil
+}
+
+// GetRestaurantListForAdmin includes soft-deleted restaurants, for admin
+// screens that need to find and restore them.
+func (f *RestaurantService) GetRestaurantListForAdmin(ctx context.Context) ([]repository.Restaurant, error) {
+	restaurants, err := f.queries.ListRestaurantsForAdmin(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list restaurants for admin: %w", err)
+	}
+
+	return restaurants, nil
+}
+
 // InsertRestaurant expects passwordHash to already be hashed by the caller —
 // this service never handles a raw password.
 func (f *RestaurantService) InsertRestaurant(
@@ -53,15 +89,19 @@ func (f *RestaurantService) InsertRestaurant(
 	email *string,
 	passwordHash string,
 	logoURL *string,
+	description *string,
+	descriptionAlt *string,
 ) (repository.Restaurant, error) {
 
 	restaurant, err := f.queries.CreateRestaurant(ctx, repository.CreateRestaurantParams{
-		Name:         name,
-		Address:      helpers.TextFromString(address),
-		Phone:        helpers.TextFromString(phone),
-		Email:        helpers.TextFromString(email),
-		PasswordHash: helpers.TextFromString(&passwordHash),
-		LogoUrl:      helpers.TextFromString(logoURL),
+		Name:           name,
+		Address:        helpers.TextFromString(address),
+		Phone:          helpers.TextFromString(phone),
+		Email:          helpers.TextFromString(email),
+		PasswordHash:   helpers.TextFromString(&passwordHash),
+		LogoUrl:        helpers.TextFromString(logoURL),
+		Description:    helpers.TextFromString(description),
+		DescriptionAlt: helpers.TextFromString(descriptionAlt),
 	})
 	if err != nil {
 		return repository.Restaurant{}, fmt.Errorf("create restaurant: %w", err)
@@ -78,15 +118,19 @@ func (f *RestaurantService) UpdateRestaurant(
 	phone *string,
 	email *string,
 	logoURL *string,
+	description *string,
+	descriptionAlt *string,
 ) error {
 
 	err := f.queries.UpdateRestaurant(ctx, repository.UpdateRestaurantParams{
-		ID:      id,
-		Name:    name,
-		Address: helpers.TextFromString(address),
-		Phone:   helpers.TextFromString(phone),
-		Email:   helpers.TextFromString(email),
-		LogoUrl: helpers.TextFromString(logoURL),
+		ID:             id,
+		Name:           name,
+		Address:        helpers.TextFromString(address),
+		Phone:          helpers.TextFromString(phone),
+		Email:          helpers.TextFromString(email),
+		LogoUrl:        helpers.TextFromString(logoURL),
+		Description:    helpers.TextFromString(description),
+		DescriptionAlt: helpers.TextFromString(descriptionAlt),
 	})
 	if err != nil {
 		return fmt.Errorf("update restaurant: %w", err)
@@ -110,9 +154,18 @@ func (f *RestaurantService) UpdateRestaurantPasswordHash(ctx context.Context, id
 }
 
 func (f *RestaurantService) DeleteRestaurant(ctx context.Context, id int32) error {
-	err := f.queries.DeleteRestaurant(ctx, id)
+	err := f.queries.SoftDeleteRestaurant(ctx, id)
 	if err != nil {
 		return fmt.Errorf("delete restaurant: %w", err)
+	}
+
+	return nil
+}
+
+func (f *RestaurantService) RestoreRestaurant(ctx context.Context, id int32) error {
+	err := f.queries.RestoreRestaurant(ctx, id)
+	if err != nil {
+		return fmt.Errorf("restore restaurant: %w", err)
 	}
 
 	return nil

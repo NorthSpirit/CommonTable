@@ -1,7 +1,9 @@
 package admin
 
+import "CommonTable/internal/templates/admin/adminshared"
+
 templ LoginPage(errorMessage string) {
-	@Layout("Admin Login", loginPageContent(errorMessage))
+	@adminshared.Layout("Admin Login", loginPageContent(errorMessage))
 }
 
 templ loginPageContent(errorMessage string) {

@@ -34,7 +34,6 @@ type Querier interface {
 	DeleteFoodMenu(ctx context.Context, id int32) error
 	DeleteFoodOrder(ctx context.Context, id int32) error
 	DeletePayment(ctx context.Context, id int32) error
-	DeleteRestaurant(ctx context.Context, id int32) error
 	DeleteTable(ctx context.Context, id int32) error
 	GetAllergen(ctx context.Context, id int32) (Allergen, error)
 	GetAllergenByCode(ctx context.Context, code string) (Allergen, error)
@@ -53,6 +52,7 @@ type Querier interface {
 	GetPayment(ctx context.Context, id int32) (Payment, error)
 	GetRestaurant(ctx context.Context, id int32) (Restaurant, error)
 	GetRestaurantByName(ctx context.Context, name string) (Restaurant, error)
+	GetRestaurantForDisplay(ctx context.Context, arg GetRestaurantForDisplayParams) (GetRestaurantForDisplayRow, error)
 	GetTable(ctx context.Context, id int32) (Table, error)
 	LinkRestaurantAllergen(ctx context.Context, arg LinkRestaurantAllergenParams) error
 	LinkRestaurantIngredient(ctx context.Context, arg LinkRestaurantIngredientParams) error
@@ -65,12 +65,14 @@ type Querier interface {
 	ListEmployeesByRestaurant(ctx context.Context, restaurantID int32) ([]Employee, error)
 	ListFoodIngredients(ctx context.Context) ([]FoodIngredient, error)
 	ListFoodItemsByRestaurant(ctx context.Context, restaurantID int32) ([]ListFoodItemsByRestaurantRow, error)
+	ListFoodItemsByRestaurantForAdmin(ctx context.Context, restaurantID int32) ([]ListFoodItemsByRestaurantForAdminRow, error)
 	ListFoodMenusByRestaurant(ctx context.Context, restaurantID int32) ([]FoodMenu, error)
 	ListFoodMenusByRestaurantForDisplay(ctx context.Context, arg ListFoodMenusByRestaurantForDisplayParams) ([]ListFoodMenusByRestaurantForDisplayRow, error)
 	ListIngredientsForItem(ctx context.Context, itemID int32) ([]ListIngredientsForItemRow, error)
 	ListIngredientsForRestaurant(ctx context.Context, restaurantID int32) ([]ListIngredientsForRestaurantRow, error)
 	ListItemsForOrder(ctx context.Context, orderID int32) ([]ItemOrder, error)
 	ListItemsInMenu(ctx context.Context, menuID int32) ([]ListItemsInMenuRow, error)
+	ListItemsInMenuForAdmin(ctx context.Context, menuID int32) ([]ListItemsInMenuForAdminRow, error)
 	ListItemsUsingIngredient(ctx context.Context, ingredientID int32) ([]ListItemsUsingIngredientRow, error)
 	ListItemsWithAllergen(ctx context.Context, allergenID int32) ([]ListItemsWithAllergenRow, error)
 	ListMenuItemsForDisplay(ctx context.Context, arg ListMenuItemsForDisplayParams) ([]ListMenuItemsForDisplayRow, error)
@@ -83,6 +85,8 @@ type Querier interface {
 	ListOrdersByTable(ctx context.Context, tableID int32) ([]FoodOrder, error)
 	ListPaymentsByOrder(ctx context.Context, orderID int32) ([]Payment, error)
 	ListRestaurants(ctx context.Context) ([]Restaurant, error)
+	ListRestaurantsForAdmin(ctx context.Context) ([]Restaurant, error)
+	ListRestaurantsForDisplay(ctx context.Context, locale string) ([]ListRestaurantsForDisplayRow, error)
 	ListTables(ctx context.Context) ([]Table, error)
 	ListTablesByStatus(ctx context.Context, status TableStatus) ([]Table, error)
 	ListWaiterQuickItems(ctx context.Context, employeeID int32) ([]ListWaiterQuickItemsRow, error)
@@ -92,11 +96,13 @@ type Querier interface {
 	RemoveItemFromOrder(ctx context.Context, id int32) error
 	RemoveWaiterQuickItem(ctx context.Context, arg RemoveWaiterQuickItemParams) error
 	RestoreFoodItem(ctx context.Context, id int32) error
+	RestoreRestaurant(ctx context.Context, id int32) error
 	SetEmployeeActive(ctx context.Context, arg SetEmployeeActiveParams) error
 	SetFoodItemAvailability(ctx context.Context, arg SetFoodItemAvailabilityParams) error
 	SetPaymentTransactionID(ctx context.Context, arg SetPaymentTransactionIDParams) error
 	SetTableStatus(ctx context.Context, arg SetTableStatusParams) error
 	SoftDeleteFoodItem(ctx context.Context, id int32) error
+	SoftDeleteRestaurant(ctx context.Context, id int32) error
 	UnlinkRestaurantAllergen(ctx context.Context, arg UnlinkRestaurantAllergenParams) error
 	UnlinkRestaurantIngredient(ctx context.Context, arg UnlinkRestaurantIngredientParams) error
 	UpdateAllergen(ctx context.Context, arg UpdateAllergenParams) error

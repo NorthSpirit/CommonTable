@@ -56,3 +56,12 @@ func (f *ItemMenuService) RemoveFoodItemFromMenu(ctx context.Context, menuID int
 
 	return nil
 }
+
+func (f *ItemMenuService) ListItemsInMenuForAdmin(ctx context.Context, menuID int32) ([]repository.ListItemsInMenuForAdminRow, error) {
+	items, err := f.queries.ListItemsInMenuForAdmin(ctx, menuID)
+	if err != nil {
+		return nil, fmt.Errorf("list items in menu for admin: %w", err)
+	}
+
+	return items, nil
+}

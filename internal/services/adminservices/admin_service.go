@@ -77,3 +77,10 @@ func (a *AdminService) ValidateAdminToken(tokenString string) (*AdminClaims, err
 
 	return claims, nil
 }
+
+func (a *AdminService) VerifyPassword(password string) error {
+	if !helpers.CheckPasswordHash(password, a.config.PasswordHash) {
+		return ErrInvalidCredentials
+	}
+	return nil
+}

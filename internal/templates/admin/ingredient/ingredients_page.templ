@@ -1,0 +1,40 @@
+package ingredient
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ IngredientsPage(ingredients []adminshared.IngredientView) {
+	@adminshared.Layout("Ingredients", ingredientsPageContent(ingredients))
+}
+
+templ ingredientsPageContent(ingredients []adminshared.IngredientView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
+			<h2 class="text-2xl font-bold gms-main-text">Ingredients</h2>
+			<a href="/admin/ingredients/new" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				+ New Ingredient
+			</a>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+			for _, ingredient := range ingredients {
+				<div class="border gms-border-medium rounded-lg shadow p-4">
+					<h3 class="text-lg font-bold gms-main-text">{ ingredient.Name }</h3>
+					if ingredient.Description != "" {
+						<p class="text-sm gms-main-text mt-1">{ ingredient.Description }</p>
+					}
+					<div class="flex gap-2 mt-3">
+						<a href={ templ.URL("/admin/ingredients/" + adminshared.Itoa(ingredient.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+							Edit
+						</a>
+						<form method="POST" action={ templ.URL("/admin/ingredients/" + adminshared.Itoa(ingredient.ID) + "/delete") } onsubmit="return confirm('Delete this ingredient? This removes it from any items/restaurants currently using it.');">
+							<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Delete</button>
+						</form>
+					</div>
+				</div>
+			}
+			if len(ingredients) == 0 {
+				<p class="text-center italic gms-main-text col-span-full">No ingredients yet.</p>
+			}
+		</div>
+	</main>
+}

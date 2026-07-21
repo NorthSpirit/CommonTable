@@ -1,4 +1,4 @@
-package admin
+package adminshared
 
 templ Layout(title string, content templ.Component) {
 	<!DOCTYPE html>
@@ -42,6 +42,15 @@ templ Layout(title string, content templ.Component) {
 						<li class="border gms-border-medium w-full md:flex-1">
 							<a href="#" id="MColour" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Palette Swap</a>
 						</li>
+						<li class="border gms-border-medium w-full md:flex-1">
+                        	<a href="/admin/ingredients" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Ingredients</a>
+                        </li>
+                        <li class="border gms-border-medium w-full md:flex-1">
+                        	<a href="/admin/allergens" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Allergens</a>
+                        </li>
+                        <li class="border gms-border-medium w-full md:flex-1">
+                        	<a href="/admin/tables" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Tables</a>
+                        </li>
 						<li class="border gms-border-medium w-full md:flex-1">
 							<a href="/admin/logout" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Logout</a>
 						</li>

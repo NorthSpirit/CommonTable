@@ -1,7 +1,9 @@
 package admin
 
+import "CommonTable/internal/templates/admin/adminshared"
+
 templ DashboardPage() {
-	@Layout("Dashboard", dashboardPageContent())
+	@adminshared.Layout("Dashboard", dashboardPageContent())
 }
 
 templ dashboardPageContent() {

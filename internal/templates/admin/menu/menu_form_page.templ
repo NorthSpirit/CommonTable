@@ -1,0 +1,80 @@
+package menu
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ MenuFormPage(restaurantID int32, isEdit bool, menu adminshared.MenuView, errorMessage string) {
+	@adminshared.Layout(menuFormTitle(isEdit), menuFormContent(restaurantID, isEdit, menu, errorMessage))
+}
+
+func menuFormTitle(isEdit bool) string {
+	if isEdit {
+		return "Edit Menu"
+	}
+	return "New Menu"
+}
+
+func menuFormAction(restaurantID int32, isEdit bool, menuID int32) templ.SafeURL {
+	base := "/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus"
+	if isEdit {
+		return templ.URL(base + "/" + adminshared.Itoa(menuID) + "/edit")
+	}
+	return templ.URL(base + "/new")
+}
+
+templ menuFormContent(restaurantID int32, isEdit bool, menu adminshared.MenuView, errorMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+			{ menuFormTitle(isEdit) }
+		</h2>
+
+		if errorMessage != "" {
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+		}
+
+		<form method="POST" action={ menuFormAction(restaurantID, isEdit, menu.ID) } enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Details</legend>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Name</span>
+					<input type="text" name="name" value={ menu.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Name (Alt Language)</span>
+					<input type="text" name="name_alt" value={ menu.NameAlt } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Description</span>
+					<textarea name="description" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ menu.Description }</textarea>
+				</label>
+
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">Description (Alt Language)</span>
+					<textarea name="description_alt" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ menu.DescriptionAlt }</textarea>
+				</label>
+			</fieldset>
+
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Image</legend>
+
+				<img id="menu-image-preview" src={ menu.ImageURL } alt="Menu image preview" class={ "h-40 w-full object-cover rounded border gms-border-medium mb-4", templ.KV("hidden", menu.ImageURL == "") }/>
+				<div id="menu-image-preview-placeholder" class={ "h-40 w-full flex items-center justify-center rounded border gms-border-medium mb-4", templ.KV("hidden", menu.ImageURL != "") }>
+					<p class="text-sm italic opacity-70">No image set.</p>
+				</div>
+
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">Replace Image</span>
+					<input type="file" name="image" data-preview-target="menu-image-preview" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
+				</label>
+			</fieldset>
+
+			<div class="lg:col-span-2 flex justify-end">
+				<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+			</div>
+		</form>
+	</main>
+
+	<script src="/assets/jsscripts/image_preview.js"></script>
+}
