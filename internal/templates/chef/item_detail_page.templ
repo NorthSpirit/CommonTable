@@ -1,0 +1,65 @@
+package chef
+
+import "strconv"
+
+templ ChefItemDetailPage(item ChefItemDetailView) {
+	@Layout(item.Name, chefItemDetailContent(item))
+}
+
+templ chefItemDetailContent(item ChefItemDetailView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto">
+		if item.ImageURL != "" {
+			<img src={ item.ImageURL } alt={ item.Name } class="w-full max-h-72 object-cover rounded-lg border gms-border-medium mb-4"/>
+		}
+		<h2 class="text-3xl font-bold mb-2 gms-main-text">{ item.Name }</h2>
+		if item.Description != "" {
+			<p class="gms-main-text mb-4">{ item.Description }</p>
+		}
+
+		if item.Instructions != "" {
+			<div class="mb-4">
+				<h3 class="text-lg font-semibold mb-1 gms-main-text">Preparation Instructions</h3>
+				<p class="gms-main-text">{ item.Instructions }</p>
+			</div>
+		}
+
+		<div class="mb-4">
+			<h3 class="text-lg font-semibold mb-1 gms-main-text">Ingredients</h3>
+			if len(item.Ingredients) == 0 {
+				<p class="gms-main-text italic">No ingredients listed.</p>
+			} else {
+				<ul class="list-disc pl-5 gms-main-text">
+					for _, ing := range item.Ingredients {
+						<li>
+							{ ing.Name }
+							if ing.Measurement != "" {
+								<span class="opacity-70"> ({ formatAmount(ing.Amount) } { ing.Measurement })</span>
+							}
+						</li>
+					}
+				</ul>
+			}
+		</div>
+
+		<div class="mb-4">
+			<h3 class="text-lg font-semibold mb-1 gms-main-text">Allergens</h3>
+			if len(item.Allergens) == 0 {
+				<p class="gms-main-text italic">No known allergens listed.</p>
+			} else {
+				<ul class="list-disc pl-5 gms-main-text">
+					for _, allergen := range item.Allergens {
+						<li>{ allergen }</li>
+					}
+				</ul>
+			}
+		</div>
+
+		<a href="javascript:history.back()" class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium">
+			Back
+		</a>
+	</main>
+}
+
+func formatAmount(amount float64) string {
+	return strconv.FormatFloat(amount, 'f', -1, 64)
+}

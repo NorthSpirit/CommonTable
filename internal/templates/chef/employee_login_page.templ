@@ -1,0 +1,37 @@
+package chef
+
+templ EmployeeLoginPage(restaurantID int32, restaurantName string, errorMessage string) {
+	@Layout("Log In", employeeLoginContent(restaurantID, restaurantName, errorMessage))
+}
+
+templ employeeLoginContent(restaurantID int32, restaurantName string, errorMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center justify-center">
+		<div class="w-full max-w-sm p-6 rounded-lg shadow-lg border gms-border-medium gms-dark-bg gms-light-text">
+			<h2 class="text-xl font-bold mb-1 text-center">{ restaurantName }</h2>
+			<p class="text-sm mb-4 text-center opacity-80">Kitchen staff log in</p>
+
+			if errorMessage != "" {
+				<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+			}
+
+			<form method="POST" action="/chef/login/employee" class="space-y-4">
+				<input type="hidden" name="restaurant_id" value={ itoa(restaurantID) }/>
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">Your Name</span>
+					<input type="text" name="employee_name" required autofocus class="p-2 border rounded-md w-full gms-dark-text"/>
+				</label>
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">PIN / Password</span>
+					<input type="password" name="password" required class="p-2 border rounded-md w-full gms-dark-text"/>
+				</label>
+				<button type="submit" class="w-full px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+					Log In
+				</button>
+			</form>
+		</div>
+	</main>
+}
+
+func itoa(id int32) string {
+	return strconv.Itoa(int(id))
+}

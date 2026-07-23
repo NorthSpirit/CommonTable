@@ -1,0 +1,33 @@
+package chef
+
+templ ChefMenuDetailPage(menuName string, items []ChefItemListView) {
+	@Layout(menuName, chefMenuDetailContent(menuName, items))
+}
+
+templ chefMenuDetailContent(menuName string, items []ChefItemListView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">{ menuName }</h2>
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+			for _, item := range items {
+				<a href={ templ.URL("/chef/items/" + itoa(item.ID)) } class={ "block gms-hover-bg-light border gms-border-medium rounded-lg shadow-lg overflow-hidden", templ.KV("opacity-50", !item.IsAvailable) }>
+					<div class="h-32 w-full bg-gray-200 flex items-center justify-center relative">
+						if item.ImageURL != "" {
+							<img src={ item.ImageURL } alt={ item.Name } class="h-full w-full object-cover"/>
+						} else {
+							<div class="text-gray-500 italic">No Image</div>
+						}
+						if !item.IsAvailable {
+							<div class="absolute top-1 right-1 px-2 py-0.5 text-xs font-bold rounded bg-yellow-500 text-black">UNAVAILABLE</div>
+						}
+					</div>
+					<div class="p-4">
+						<h3 class="text-lg font-bold gms-main-text">{ item.Name }</h3>
+					</div>
+				</a>
+			}
+			if len(items) == 0 {
+				<p class="text-center italic gms-main-text col-span-full">No items on this menu.</p>
+			}
+		</div>
+	</main>
+}
