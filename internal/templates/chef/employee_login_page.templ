@@ -1,7 +1,9 @@
 package chef
 
+import "strconv"
+
 templ EmployeeLoginPage(restaurantID int32, restaurantName string, errorMessage string) {
-	@Layout("Log In", employeeLoginContent(restaurantID, restaurantName, errorMessage))
+	@Layout("Log In", "", employeeLoginContent(restaurantID, restaurantName, errorMessage))
 }
 
 templ employeeLoginContent(restaurantID int32, restaurantName string, errorMessage string) {

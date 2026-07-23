@@ -11,6 +11,18 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countFoodItems = `-- name: CountFoodItems :one
+SELECT COUNT(*) FROM food_items
+WHERE deleted_at IS NULL
+`
+
+func (q *Queries) CountFoodItems(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countFoodItems)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createFoodItem = `-- name: CreateFoodItem :one
 INSERT INTO food_items (restaurant_id, name, name_alt, description, description_alt, is_available, image_url, prep_time_mins, instructions, instructions_alt, price)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -470,6 +482,22 @@ type SetFoodItemAvailabilityParams struct {
 
 func (q *Queries) SetFoodItemAvailability(ctx context.Context, arg SetFoodItemAvailabilityParams) error {
 	_, err := q.db.Exec(ctx, setFoodItemAvailability, arg.ID, arg.IsAvailable)
+	return err
+}
+
+const setFoodItemInstructions = `-- name: SetFoodItemInstructions :exec
+UPDATE food_items
+SET instructions = $2
+WHERE id = $1 AND deleted_at IS NULL
+`
+
+type SetFoodItemInstructionsParams struct {
+	ID           int32       `json:"id"`
+	Instructions pgtype.Text `json:"instructions"`
+}
+
+func (q *Queries) SetFoodItemInstructions(ctx context.Context, arg SetFoodItemInstructionsParams) error {
+	_, err := q.db.Exec(ctx, setFoodItemInstructions, arg.ID, arg.Instructions)
 	return err
 }
 

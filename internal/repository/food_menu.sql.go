@@ -11,6 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countFoodMenus = `-- name: CountFoodMenus :one
+SELECT COUNT(*) FROM food_menu
+`
+
+func (q *Queries) CountFoodMenus(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countFoodMenus)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createFoodMenu = `-- name: CreateFoodMenu :one
 INSERT INTO food_menu (restaurant_id, name, name_alt, description, description_alt, image_url)
 VALUES ($1, $2, $3, $4, $5, $6)

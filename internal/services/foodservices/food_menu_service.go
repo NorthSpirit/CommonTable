@@ -116,3 +116,11 @@ func (f *FoodMenuService) DeleteFoodMenu(ctx context.Context, id int32) error {
 
 	return nil
 }
+
+func (f *FoodMenuService) CountFoodMenus(ctx context.Context) (int64, error) {
+	count, err := f.queries.CountFoodMenus(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("count food menus: %w", err)
+	}
+	return count, nil
+}

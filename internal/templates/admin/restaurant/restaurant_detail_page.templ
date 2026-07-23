@@ -27,5 +27,8 @@ templ restaurantDetailContent(restaurant adminshared.RestaurantView) {
 		<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/menus") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 			Manage Menus
 		</a>
+		<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/chat") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2">
+        	View Chat
+        </a>
 	</main>
 }

@@ -41,3 +41,6 @@ WHERE id = $1;
 -- name: DeleteFoodMenu :exec
 DELETE FROM food_menu
 WHERE id = $1;
+
+-- name: CountFoodMenus :one
+SELECT COUNT(*) FROM food_menu;

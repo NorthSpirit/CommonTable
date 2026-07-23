@@ -73,3 +73,22 @@ func (f *ChatMessageService) DeleteChatMessage(ctx context.Context, id int32) er
 
 	return nil
 }
+
+func (f *ChatMessageService) ListMessagesByRestaurantWithSender(ctx context.Context, restaurantID int32) ([]repository.ListMessagesByRestaurantWithSenderRow, error) {
+	messages, err := f.queries.ListMessagesByRestaurantWithSender(ctx, restaurantID)
+	if err != nil {
+		return nil, fmt.Errorf("list messages by restaurant with sender: %w", err)
+	}
+	return messages, nil
+}
+
+func (f *ChatMessageService) ListMessagesByRestaurantAfterID(ctx context.Context, restaurantID int32, afterID int32) ([]repository.ListMessagesByRestaurantAfterIDRow, error) {
+	messages, err := f.queries.ListMessagesByRestaurantAfterID(ctx, repository.ListMessagesByRestaurantAfterIDParams{
+		RestaurantID: restaurantID,
+		ID:           afterID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("list messages by restaurant after id: %w", err)
+	}
+	return messages, nil
+}

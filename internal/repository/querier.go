@@ -16,6 +16,9 @@ type Querier interface {
 	AddWaiterQuickItem(ctx context.Context, arg AddWaiterQuickItemParams) error
 	ClearOrderItems(ctx context.Context, orderID int32) error
 	ClearWaiterQuickItems(ctx context.Context, employeeID int32) error
+	CountEmployees(ctx context.Context) (int64, error)
+	CountFoodItems(ctx context.Context) (int64, error)
+	CountFoodMenus(ctx context.Context) (int64, error)
 	CountWaiterQuickItems(ctx context.Context, employeeID int32) (int64, error)
 	CreateAllergen(ctx context.Context, arg CreateAllergenParams) (Allergen, error)
 	CreateChatMessage(ctx context.Context, arg CreateChatMessageParams) (ChatMessage, error)
@@ -79,6 +82,8 @@ type Querier interface {
 	ListMenusForItem(ctx context.Context, itemID int32) ([]FoodMenu, error)
 	ListMessagesByEmployee(ctx context.Context, employeeID int32) ([]ChatMessage, error)
 	ListMessagesByRestaurant(ctx context.Context, restaurantID int32) ([]ChatMessage, error)
+	ListMessagesByRestaurantAfterID(ctx context.Context, arg ListMessagesByRestaurantAfterIDParams) ([]ListMessagesByRestaurantAfterIDRow, error)
+	ListMessagesByRestaurantWithSender(ctx context.Context, restaurantID int32) ([]ListMessagesByRestaurantWithSenderRow, error)
 	ListMostOrderedItemsByRestaurant(ctx context.Context, arg ListMostOrderedItemsByRestaurantParams) ([]ListMostOrderedItemsByRestaurantRow, error)
 	ListOrdersByRestaurant(ctx context.Context, restaurantID int32) ([]FoodOrder, error)
 	ListOrdersByStatus(ctx context.Context, arg ListOrdersByStatusParams) ([]FoodOrder, error)
@@ -99,6 +104,7 @@ type Querier interface {
 	RestoreRestaurant(ctx context.Context, id int32) error
 	SetEmployeeActive(ctx context.Context, arg SetEmployeeActiveParams) error
 	SetFoodItemAvailability(ctx context.Context, arg SetFoodItemAvailabilityParams) error
+	SetFoodItemInstructions(ctx context.Context, arg SetFoodItemInstructionsParams) error
 	SetPaymentTransactionID(ctx context.Context, arg SetPaymentTransactionIDParams) error
 	SetTableStatus(ctx context.Context, arg SetTableStatusParams) error
 	SoftDeleteFoodItem(ctx context.Context, id int32) error

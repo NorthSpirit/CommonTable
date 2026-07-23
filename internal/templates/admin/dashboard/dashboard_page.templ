@@ -1,14 +1,65 @@
-package admin
+package dashboard
 
 import "CommonTable/internal/templates/admin/adminshared"
+import "strconv"
 
-templ DashboardPage() {
-	@adminshared.Layout("Dashboard", dashboardPageContent())
+templ DashboardPage(stats adminshared.DashboardStats) {
+	@adminshared.Layout("Dashboard", dashboardPageContent(stats))
 }
 
-templ dashboardPageContent() {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-4 gms-main-text">Welcome, Admin</h2>
-		<p class="gms-main-text">Use the navigation above to manage homepage content and restaurants.</p>
+templ dashboardPageContent(stats adminshared.DashboardStats) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-4xl mx-auto w-full">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Overview</h2>
+
+		<a href="/admin/restaurants" class="block gms-dark-bg gms-light-text rounded-lg shadow-lg p-6 mb-8 gms-hover-bg-light transition-transform hover:-translate-y-0.5">
+			<div class="flex items-center justify-between">
+				<div>
+					<p class="text-sm uppercase tracking-wide opacity-80">Restaurants</p>
+					<p class="text-4xl font-bold mt-1">{ formatCount(stats.Restaurants) }</p>
+				</div>
+				<span class="text-2xl opacity-80">→</span>
+			</div>
+		</a>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<section class="border gms-border-medium rounded-lg overflow-hidden">
+				<h3 class="text-sm font-bold uppercase tracking-wide px-4 py-2 gms-dark-bg gms-light-text">Menu Content</h3>
+				<div class="divide-y gms-border-medium">
+					@statRow("Menus", stats.Menus, "")
+					@statRow("Food Items", stats.FoodItems, "")
+					@statRow("Employees", stats.Employees, "")
+				</div>
+			</section>
+
+			<section class="border gms-border-medium rounded-lg overflow-hidden">
+				<h3 class="text-sm font-bold uppercase tracking-wide px-4 py-2 gms-dark-bg gms-light-text">Shared Catalog</h3>
+				<div class="divide-y gms-border-medium">
+					@statRow("Ingredients", stats.Ingredients, "/admin/ingredients")
+					@statRow("Allergens", stats.Allergens, "/admin/allergens")
+					@statRow("Tables", stats.Tables, "/admin/tables")
+				</div>
+			</section>
+		</div>
 	</main>
+}
+
+templ statRow(label string, count int64, href string) {
+	if href != "" {
+		<a href={ templ.URL(href) } class="flex items-center justify-between px-4 py-3 gms-hover-bg-light">
+			<span class="text-sm">{ label }</span>
+			<span class="flex items-center gap-2">
+				<span class="text-lg font-bold gms-main-text">{ formatCount(count) }</span>
+				<span class="opacity-60">→</span>
+			</span>
+		</a>
+	} else {
+		<div class="flex items-center justify-between px-4 py-3">
+			<span class="text-sm opacity-80">{ label }</span>
+			<span class="text-lg font-bold gms-main-text">{ formatCount(count) }</span>
+		</div>
+	}
+}
+
+func formatCount(count int64) string {
+	return strconv.FormatInt(count, 10)
 }

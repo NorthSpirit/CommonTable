@@ -27,6 +27,7 @@ type FoodItemView struct {
 	PrepTimeMins    int32
 	IsAvailable     bool
 	IsDeleted       bool
+	Ingredients     []ItemIngredientView
 }
 
 type AllergenCheckboxView struct {
@@ -80,6 +81,35 @@ type TableView struct {
 	Capacity int32
 	Section  string
 	Status   string
+}
+
+type IngredientOptionView struct {
+	ID   int32
+	Name string
+}
+
+type ItemIngredientView struct {
+	IngredientID int32
+	Name         string
+	Measurement  string
+	Amount       float64
+}
+
+type DashboardStats struct {
+	Restaurants int64
+	Menus       int64
+	FoodItems   int64
+	Employees   int64
+	Ingredients int64
+	Allergens   int64
+	Tables      int64
+}
+
+type ChatMessageView struct {
+	ID         int32
+	SenderName string
+	Message    string
+	SentAt     string
 }
 
 func Itoa(id int32) string {

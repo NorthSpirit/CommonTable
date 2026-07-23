@@ -190,3 +190,23 @@ func (f *FoodItemService) RestoreFoodItem(ctx context.Context, id int32) error {
 
 	return nil
 }
+
+func (f *FoodItemService) CountFoodItems(ctx context.Context) (int64, error) {
+	count, err := f.queries.CountFoodItems(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("count food items: %w", err)
+	}
+	return count, nil
+}
+
+func (f *FoodItemService) SetFoodItemInstructions(ctx context.Context, id int32, instructions *string) error {
+	err := f.queries.SetFoodItemInstructions(ctx, repository.SetFoodItemInstructionsParams{
+		ID:           id,
+		Instructions: helpers.TextFromString(instructions),
+	})
+	if err != nil {
+		return fmt.Errorf("set food item instructions: %w", err)
+	}
+
+	return nil
+}

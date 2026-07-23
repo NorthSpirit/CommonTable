@@ -7,6 +7,7 @@ import (
 	"CommonTable/internal/repository"
 	"CommonTable/internal/services/adminservices"
 	"CommonTable/internal/services/authservices"
+	"CommonTable/internal/services/chatservices"
 	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
 	"CommonTable/internal/services/homepageservices"
@@ -29,17 +30,20 @@ type Services struct {
 	FoodIngredient *foodservices.FoodIngredientService
 	Employee       *restaurantservices.EmployeeService
 	Table          *foodorderservices.TableService
+	IngredientItem *foodrelationshipservices.IngredientItemService
+	ChatMessage    *chatservices.ChatMessageService
 
 	JWTTokenTTL time.Duration
 	UploadsDir  string
 }
 
 type ServicesConfig struct {
-	AdminUsername     string
-	AdminPasswordHash string
-	JWTSecret         []byte
-	JWTTokenTTL       time.Duration
-	UploadsDir        string
+	AdminUsername        string
+	AdminPasswordHash    string
+	AdminCredentialsPath string
+	JWTSecret            []byte
+	JWTTokenTTL          time.Duration
+	UploadsDir           string
 }
 
 func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
@@ -50,6 +54,7 @@ func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
 				Username:     cfg.AdminUsername,
 				PasswordHash: cfg.AdminPasswordHash,
 			},
+			cfg.AdminCredentialsPath,
 			cfg.JWTSecret,
 			cfg.JWTTokenTTL,
 		),
@@ -64,6 +69,8 @@ func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
 		FoodIngredient: foodservices.NewFoodIngredientService(queries),
 		Employee:       restaurantservices.NewEmployeeService(queries),
 		Table:          foodorderservices.NewTableService(queries),
+		IngredientItem: foodrelationshipservices.NewIngredientItemService(queries),
+		ChatMessage:    chatservices.NewChatMessageService(queries),
 		JWTTokenTTL:    cfg.JWTTokenTTL,
 		UploadsDir:     cfg.UploadsDir,
 	}

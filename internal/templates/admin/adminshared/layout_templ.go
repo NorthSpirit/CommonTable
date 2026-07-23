@@ -36,7 +36,7 @@ func Layout(title string, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `adminshared/layout.templ`, Line: 7, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/adminshared/layout.templ`, Line: 7, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -49,13 +49,13 @@ func Layout(title string, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `adminshared/layout.templ`, Line: 27, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/adminshared/layout.templ`, Line: 27, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div></header><nav class=\"border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg\"><ul id=\"menu-items\" class=\"list-none m-0 w-full flex flex-col md:flex-row md:justify-center md:items-stretch text-center\"><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Dashboard</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/homepage\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Homepage Content</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/restaurants\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Restaurants</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"#\" id=\"MColour\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Palette Swap</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/ingredients\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Ingredients</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/allergens\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Allergens</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/tables\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Tables</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/logout\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Logout</a></li></ul></nav><div class=\"flex flex-col flex-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p></div></header><nav class=\"border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg\"><div class=\"md:hidden w-full\"><button id=\"menu-toggle\" class=\"px-4 py-1 w-full flex items-center justify-between gms-main-text gms-hover-bg-light rounded\"><div class=\"flex items-center space-x-2\"><svg class=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg> <span class=\"text-base font-bold tracking-wider\">Menu</span></div></button></div><ul id=\"menu-items\" class=\"hidden md:flex list-none m-0 w-full flex-col md:flex-row md:justify-center md:items-stretch text-center\"><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Dashboard</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/homepage\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Homepage Content</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/restaurants\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Restaurants</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/ingredients\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Ingredients</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/allergens\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Allergens</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/tables\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Tables</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"#\" id=\"MColour\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Palette Swap</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/change-password\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Change Password</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/admin/logout\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Logout</a></li></ul></nav><div class=\"flex flex-col flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,7 +63,7 @@ func Layout(title string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><footer class=\"gms-dark-bg gms-light-text p-4 text-center gms-accent-text\"><p>&copy; 2026 CommonTable Admin</p></footer></div><script src=\"/assets/jsscripts/colour_swap.js\"></script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><footer class=\"gms-dark-bg gms-light-text p-4 text-center gms-accent-text\"><p>&copy; 2026 CommonTable Admin</p></footer></div><script src=\"/assets/jsscripts/hamburger.js\"></script><script src=\"/assets/jsscripts/colour_swap.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

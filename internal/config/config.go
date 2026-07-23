@@ -12,8 +12,9 @@ import (
 type Config struct {
 	DBString string
 
-	AdminUsername     string
-	AdminPasswordHash string
+	AdminUsername        string
+	AdminPasswordHash    string
+	AdminCredentialsPath string
 
 	JWTSecret   []byte
 	JWTTokenTTL time.Duration
@@ -65,6 +66,11 @@ func Load() (*Config, error) {
 	translationsDir := os.Getenv("TRANSLATIONS_DIR")
 	if translationsDir == "" {
 		translationsDir = "./locales"
+	}
+
+	adminCredentialsPath := os.Getenv("ADMIN_CREDENTIALS_PATH")
+	if adminCredentialsPath == "" {
+		adminCredentialsPath = "./admin_credentials.json"
 	}
 
 	uploadsDir := os.Getenv("UPLOADS_DIR")

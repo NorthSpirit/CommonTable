@@ -44,3 +44,7 @@ WHERE id = $1;
 -- name: GetEmployeeByRestaurantAndName :one
 SELECT * FROM employee
 WHERE restaurant_id = $1 AND name = $2 AND is_active = true;
+
+-- name: CountEmployees :one
+SELECT COUNT(*) FROM employee
+WHERE is_active = true;

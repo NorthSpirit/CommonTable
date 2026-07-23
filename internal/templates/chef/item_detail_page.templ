@@ -2,12 +2,12 @@ package chef
 
 import "strconv"
 
-templ ChefItemDetailPage(item ChefItemDetailView) {
-	@Layout(item.Name, chefItemDetailContent(item))
+templ ChefItemDetailPage(employeeName string, item ChefItemDetailView, successMessage string) {
+	@Layout(item.Name, employeeName, chefItemDetailContent(item, successMessage))
 }
 
-templ chefItemDetailContent(item ChefItemDetailView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto">
+templ chefItemDetailContent(item ChefItemDetailView, successMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
 		if item.ImageURL != "" {
 			<img src={ item.ImageURL } alt={ item.Name } class="w-full max-h-72 object-cover rounded-lg border gms-border-medium mb-4"/>
 		}
@@ -16,12 +16,19 @@ templ chefItemDetailContent(item ChefItemDetailView) {
 			<p class="gms-main-text mb-4">{ item.Description }</p>
 		}
 
-		if item.Instructions != "" {
-			<div class="mb-4">
-				<h3 class="text-lg font-semibold mb-1 gms-main-text">Preparation Instructions</h3>
-				<p class="gms-main-text">{ item.Instructions }</p>
-			</div>
+		if successMessage != "" {
+			<p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm text-center">{ successMessage }</p>
 		}
+
+		<div class="mb-4">
+			<h3 class="text-lg font-semibold mb-1 gms-main-text">Preparation Instructions</h3>
+			<form method="POST" action={ templ.URL("/chef/items/" + strconv.Itoa(int(item.ID)) + "/instructions") }>
+				<textarea name="instructions" rows="6" class="p-2 border gms-border-medium rounded-md w-full">{ item.Instructions }</textarea>
+				<div class="flex justify-end mt-2">
+					<input type="submit" value="Save Instructions" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+				</div>
+			</form>
+		</div>
 
 		<div class="mb-4">
 			<h3 class="text-lg font-semibold mb-1 gms-main-text">Ingredients</h3>

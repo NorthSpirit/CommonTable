@@ -66,13 +66,15 @@ func (h *MenuHandler) List(w http.ResponseWriter, r *http.Request) {
 		views = append(views, view)
 	}
 
-	if err := chef.MenusPage(restaurant.Name, views).Render(r.Context(), w); err != nil {
+	if err := chef.MenusPage(restaurant.Name, claims.Name, views).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
 
 // MenuDetail handles GET /chef/menus/{menuID}
 func (h *MenuHandler) MenuDetail(w http.ResponseWriter, r *http.Request) {
+	claims := claimsFromContext(r.Context())
+
 	menuID, err := strconv.Atoi(chi.URLParam(r, "menuID"))
 	if err != nil {
 		http.Error(w, "invalid menu id", http.StatusBadRequest)
@@ -107,13 +109,16 @@ func (h *MenuHandler) MenuDetail(w http.ResponseWriter, r *http.Request) {
 		views = append(views, view)
 	}
 
-	if err := chef.ChefMenuDetailPage(menu.Name, views).Render(r.Context(), w); err != nil {
+	if err := chef.ChefMenuDetailPage(menu.Name, claims.Name, views).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
 
 // ItemDetail handles GET /chef/items/{itemID}
+// ItemDetail handles GET /chef/items/{itemID}
 func (h *MenuHandler) ItemDetail(w http.ResponseWriter, r *http.Request) {
+	claims := claimsFromContext(r.Context())
+
 	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
 	if err != nil {
 		http.Error(w, "invalid item id", http.StatusBadRequest)
@@ -165,7 +170,83 @@ func (h *MenuHandler) ItemDetail(w http.ResponseWriter, r *http.Request) {
 		view.Allergens = append(view.Allergens, a.Name)
 	}
 
-	if err := chef.ChefItemDetailPage(view).Render(r.Context(), w); err != nil {
+	if err := chef.ChefItemDetailPage(claims.Name, view, "").Render(r.Context(), w); err != nil {
+		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	}
+}
+
+// UpdateInstructions handles POST /chef/items/{itemID}/instructions
+func (h *MenuHandler) UpdateInstructions(w http.ResponseWriter, r *http.Request) {
+	claims := claimsFromContext(r.Context())
+
+	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
+	if err != nil {
+		http.Error(w, "invalid item id", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form submission", http.StatusBadRequest)
+		return
+	}
+
+	instructions := r.FormValue("instructions")
+	var instructionsPtr *string
+	if instructions != "" {
+		instructionsPtr = &instructions
+	}
+
+	if err := h.foodItemService.SetFoodItemInstructions(r.Context(), int32(itemID), instructionsPtr); err != nil {
+		http.Error(w, "failed to update instructions", http.StatusInternalServerError)
+		return
+	}
+
+	item, err := h.foodItemService.GetFoodItemForDisplay(r.Context(), int32(itemID), "en")
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		http.Error(w, "failed to load item", http.StatusInternalServerError)
+		return
+	}
+
+	ingredients, err := h.ingredientItemService.ListIngredientsForItem(r.Context(), int32(itemID))
+	if err != nil {
+		http.Error(w, "failed to load ingredients", http.StatusInternalServerError)
+		return
+	}
+
+	allergens, err := h.itemAllergenService.ListAllergensForItem(r.Context(), int32(itemID))
+	if err != nil {
+		http.Error(w, "failed to load allergens", http.StatusInternalServerError)
+		return
+	}
+
+	view := chef.ChefItemDetailView{
+		ID:           item.ID,
+		Name:         item.Name,
+		Description:  item.Description,
+		Instructions: item.Instructions,
+	}
+	if item.ImageUrl.Valid {
+		view.ImageURL = item.ImageUrl.String
+	}
+	for _, ing := range ingredients {
+		ingView := chef.ChefIngredientView{Name: ing.Name}
+		if ing.Measurement.Valid {
+			ingView.Measurement = ing.Measurement.String
+		}
+		if ing.Amount.Valid {
+			ingView.Amount = ing.Amount.Float64
+		}
+		view.Ingredients = append(view.Ingredients, ingView)
+	}
+	for _, a := range allergens {
+		view.Allergens = append(view.Allergens, a.Name)
+	}
+
+	if err := chef.ChefItemDetailPage(claims.Name, view, "Instructions saved.").Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }

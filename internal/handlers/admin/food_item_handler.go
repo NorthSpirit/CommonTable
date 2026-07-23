@@ -15,29 +15,35 @@ import (
 )
 
 type FoodItemHandler struct {
-	foodItemService     *foodservices.FoodItemService
-	foodMenuService     *foodservices.FoodMenuService
-	foodAllergenService *foodservices.FoodAllergenService
-	itemAllergenService *foodrelationshipservices.ItemAllergenService
-	itemMenuService     *foodrelationshipservices.ItemMenuService
-	uploadsDir          string
+	foodItemService       *foodservices.FoodItemService
+	foodMenuService       *foodservices.FoodMenuService
+	foodAllergenService   *foodservices.FoodAllergenService
+	foodIngredientService *foodservices.FoodIngredientService
+	itemAllergenService   *foodrelationshipservices.ItemAllergenService
+	itemMenuService       *foodrelationshipservices.ItemMenuService
+	ingredientItemService *foodrelationshipservices.IngredientItemService
+	uploadsDir            string
 }
 
 func NewFoodItemHandler(
 	foodItemService *foodservices.FoodItemService,
 	foodMenuService *foodservices.FoodMenuService,
 	foodAllergenService *foodservices.FoodAllergenService,
+	foodIngredientService *foodservices.FoodIngredientService,
 	itemAllergenService *foodrelationshipservices.ItemAllergenService,
 	itemMenuService *foodrelationshipservices.ItemMenuService,
+	ingredientItemService *foodrelationshipservices.IngredientItemService,
 	uploadsDir string,
 ) *FoodItemHandler {
 	return &FoodItemHandler{
-		foodItemService:     foodItemService,
-		foodMenuService:     foodMenuService,
-		foodAllergenService: foodAllergenService,
-		itemAllergenService: itemAllergenService,
-		itemMenuService:     itemMenuService,
-		uploadsDir:          uploadsDir,
+		foodItemService:       foodItemService,
+		foodMenuService:       foodMenuService,
+		foodAllergenService:   foodAllergenService,
+		foodIngredientService: foodIngredientService,
+		itemAllergenService:   itemAllergenService,
+		itemMenuService:       itemMenuService,
+		ingredientItemService: ingredientItemService,
+		uploadsDir:            uploadsDir,
 	}
 }
 
@@ -61,6 +67,37 @@ func (h *FoodItemHandler) buildAllergenCheckboxes(r *http.Request, itemID int32)
 	views := make([]adminshared.AllergenCheckboxView, 0, len(allAllergens))
 	for _, a := range allAllergens {
 		views = append(views, adminshared.AllergenCheckboxView{ID: a.ID, Name: a.Name, Checked: checked[a.ID]})
+	}
+	return views, nil
+}
+
+func (h *FoodItemHandler) buildIngredientOptions(r *http.Request) ([]adminshared.IngredientOptionView, error) {
+	all, err := h.foodIngredientService.GetFoodIngredientList(r.Context())
+	if err != nil {
+		return nil, err
+	}
+	views := make([]adminshared.IngredientOptionView, 0, len(all))
+	for _, ing := range all {
+		views = append(views, adminshared.IngredientOptionView{ID: ing.ID, Name: ing.Name})
+	}
+	return views, nil
+}
+
+func (h *FoodItemHandler) buildItemIngredients(r *http.Request, itemID int32) ([]adminshared.ItemIngredientView, error) {
+	linked, err := h.ingredientItemService.ListIngredientsForItem(r.Context(), itemID)
+	if err != nil {
+		return nil, err
+	}
+	views := make([]adminshared.ItemIngredientView, 0, len(linked))
+	for _, ing := range linked {
+		view := adminshared.ItemIngredientView{IngredientID: ing.ID, Name: ing.Name}
+		if ing.Measurement.Valid {
+			view.Measurement = ing.Measurement.String
+		}
+		if ing.Amount.Valid {
+			view.Amount = ing.Amount.Float64
+		}
+		views = append(views, view)
 	}
 	return views, nil
 }
@@ -130,7 +167,7 @@ func (h *FoodItemHandler) NewForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := fooditem.FoodItemFormPage(int32(restaurantID), false, adminshared.FoodItemView{}, allergens, menus, "").Render(r.Context(), w); err != nil {
+	if err := fooditem.FoodItemFormPage(int32(restaurantID), int32(menuID), false, adminshared.FoodItemView{}, allergens, menus, nil, "").Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
@@ -221,6 +258,11 @@ func (h *FoodItemHandler) EditForm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid restaurant id", http.StatusBadRequest)
 		return
 	}
+	menuID, err := strconv.Atoi(chi.URLParam(r, "menuID"))
+	if err != nil {
+		http.Error(w, "invalid menu id", http.StatusBadRequest)
+		return
+	}
 	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
 	if err != nil {
 		http.Error(w, "invalid item id", http.StatusBadRequest)
@@ -249,7 +291,20 @@ func (h *FoodItemHandler) EditForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := fooditem.FoodItemFormPage(int32(restaurantID), true, toFoodItemViewFromGet(item), allergens, menus, "").Render(r.Context(), w); err != nil {
+	ingredientOptions, err := h.buildIngredientOptions(r)
+	if err != nil {
+		http.Error(w, "failed to load ingredients", http.StatusInternalServerError)
+		return
+	}
+
+	view := toFoodItemViewFromGet(item)
+	view.Ingredients, err = h.buildItemIngredients(r, int32(itemID))
+	if err != nil {
+		http.Error(w, "failed to load item ingredients", http.StatusInternalServerError)
+		return
+	}
+
+	if err := fooditem.FoodItemFormPage(int32(restaurantID), int32(menuID), true, view, allergens, menus, ingredientOptions, "").Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
@@ -270,6 +325,29 @@ func (h *FoodItemHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
 		http.Error(w, "invalid form submission", http.StatusBadRequest)
+		return
+	}
+
+	// Ingredient add/remove are handled as their own quick round-trip,
+	// separate from the main item Save — bypasses the required-field
+	// validation on name/price via formnovalidate on those buttons.
+	if r.FormValue("add_ingredient") != "" {
+		ingredientID, errID := strconv.Atoi(r.FormValue("new_ingredient_id"))
+		amount, _ := strconv.ParseFloat(r.FormValue("new_ingredient_amount"), 64)
+		measurement := r.FormValue("new_ingredient_measurement")
+		if errID == nil && ingredientID != 0 {
+			_ = h.ingredientItemService.AddIngredientToItem(r.Context(), int32(ingredientID), int32(itemID), strPtrOrNil(measurement), &amount)
+		}
+		http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/menus/"+menuID+"/items/"+strconv.Itoa(itemID)+"/edit", http.StatusFound)
+		return
+	}
+
+	if removeID := r.FormValue("remove_ingredient"); removeID != "" {
+		ingredientID, errID := strconv.Atoi(removeID)
+		if errID == nil {
+			_ = h.ingredientItemService.RemoveIngredientFromItem(r.Context(), int32(ingredientID), int32(itemID))
+		}
+		http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/menus/"+menuID+"/items/"+strconv.Itoa(itemID)+"/edit", http.StatusFound)
 		return
 	}
 

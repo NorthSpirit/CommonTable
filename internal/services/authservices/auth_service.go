@@ -17,6 +17,7 @@ var ErrInvalidCredentials = errors.New("invalid credentials")
 type EmployeeClaims struct {
 	RestaurantID int32  `json:"restaurant_id"`
 	EmployeeID   int32  `json:"employee_id"`
+	Name         string `json:"name"`
 	Role         string `json:"role"`
 	jwt.RegisteredClaims
 }
@@ -71,6 +72,7 @@ func (a *AuthService) IssueEmployeeToken(employee repository.Employee) (string, 
 	claims := EmployeeClaims{
 		RestaurantID: employee.RestaurantID,
 		EmployeeID:   employee.ID,
+		Name:         employee.Name,
 		Role:         string(employee.Role),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(a.tokenTTL)),

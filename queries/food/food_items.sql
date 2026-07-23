@@ -87,3 +87,12 @@ WHERE fi.restaurant_id = sqlc.arg(restaurant_id)::integer
 GROUP BY fi.id, fi.name, fi.name_alt, fi.image_url
 ORDER BY order_count DESC
 LIMIT sqlc.arg(item_limit)::integer;
+
+-- name: CountFoodItems :one
+SELECT COUNT(*) FROM food_items
+WHERE deleted_at IS NULL;
+
+-- name: SetFoodItemInstructions :exec
+UPDATE food_items
+SET instructions = $2
+WHERE id = $1 AND deleted_at IS NULL;

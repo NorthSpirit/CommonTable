@@ -1,7 +1,7 @@
 package chef
 
-templ ChefMenuDetailPage(menuName string, items []ChefItemListView) {
-	@Layout(menuName, chefMenuDetailContent(menuName, items))
+templ ChefMenuDetailPage(menuName string, employeeName string, items []ChefItemListView) {
+	@Layout(menuName, employeeName, chefMenuDetailContent(menuName, items))
 }
 
 templ chefMenuDetailContent(menuName string, items []ChefItemListView) {

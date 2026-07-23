@@ -28,3 +28,10 @@ type ChefIngredientView struct {
 	Measurement string
 	Amount      float64
 }
+
+type ChatMessageView struct {
+	ID         int32
+	SenderName string
+	Message    string
+	SentAt     string
+}

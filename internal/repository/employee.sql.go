@@ -11,6 +11,18 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countEmployees = `-- name: CountEmployees :one
+SELECT COUNT(*) FROM employee
+WHERE is_active = true
+`
+
+func (q *Queries) CountEmployees(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countEmployees)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createEmployee = `-- name: CreateEmployee :one
 INSERT INTO employee (restaurant_id, name, role, pin_hash, hire_date, email, phone_number)
 VALUES ($1, $2, $3, $4, $5, $6, $7)

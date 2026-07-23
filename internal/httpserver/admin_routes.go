@@ -8,16 +8,18 @@ import (
 )
 
 type AdminHandlers struct {
-	Auth       *admin.AuthHandler
-	Dashboard  *admin.DashboardHandler
-	Homepage   *admin.HomepageHandler
-	Restaurant *admin.RestaurantHandler
-	Menu       *admin.MenuHandler
-	FoodItem   *admin.FoodItemHandler
-	Ingredient *admin.IngredientHandler
-	Allergen   *admin.AllergenHandler
-	Employee   *admin.EmployeeHandler
-	Table      *admin.TableHandler
+	Auth           *admin.AuthHandler
+	Dashboard      *admin.DashboardHandler
+	Homepage       *admin.HomepageHandler
+	Restaurant     *admin.RestaurantHandler
+	Menu           *admin.MenuHandler
+	FoodItem       *admin.FoodItemHandler
+	Ingredient     *admin.IngredientHandler
+	Allergen       *admin.AllergenHandler
+	Employee       *admin.EmployeeHandler
+	Table          *admin.TableHandler
+	ChangePassword *admin.ChangePasswordHandler
+	Chat           *admin.ChatHandler
 }
 
 func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservices.AdminService) {
@@ -31,12 +33,16 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 			r.Get("/", h.Dashboard.Dashboard)
 			r.Get("/homepage", h.Homepage.Edit)
 			r.Post("/homepage", h.Homepage.Update)
+			r.Get("/change-password", h.ChangePassword.Edit)
+			r.Post("/change-password", h.ChangePassword.Update)
 
 			r.Route("/restaurants", func(r chi.Router) {
 				r.Get("/", h.Restaurant.List)
 				r.Get("/new", h.Restaurant.NewForm)
 				r.Post("/new", h.Restaurant.Create)
 				r.Get("/{id}", h.Restaurant.Detail)
+				r.Get("/{id}/chat", h.Chat.Page)
+				r.Get("/{id}/chat/messages", h.Chat.Poll)
 				r.Get("/{id}/edit", h.Restaurant.EditForm)
 				r.Post("/{id}/edit", h.Restaurant.Update)
 				r.Get("/{id}/delete", h.Restaurant.DeleteConfirm)

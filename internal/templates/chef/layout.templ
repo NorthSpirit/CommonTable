@@ -1,6 +1,6 @@
 package chef
 
-templ Layout(title string, content templ.Component) {
+templ Layout(title string, employeeName string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -23,6 +23,9 @@ templ Layout(title string, content templ.Component) {
 					<div class="container mx-auto text-center">
 						<h1 class="gms-title-text lg:text-3xl sm:text-2xl font-bold mb-1">CommonTable Kitchen</h1>
 						<p class="text-sm gms-demo-accent-text">{ title }</p>
+						if employeeName != "" {
+							<p class="text-xs opacity-80 mt-1">Logged in as { employeeName }</p>
+						}
 					</div>
 				</header>
 
@@ -31,6 +34,12 @@ templ Layout(title string, content templ.Component) {
 						<li class="border gms-border-medium w-full md:flex-1">
 							<a href="/chef/menus" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Menus</a>
 						</li>
+						<li class="border gms-border-medium w-full md:flex-1">
+							<a href="/chef/profile" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">My Profile</a>
+						</li>
+						<li class="border gms-border-medium w-full md:flex-1">
+                        	<a href="/chef/chat" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Chat</a>
+                        </li>
 						<li class="border gms-border-medium w-full md:flex-1">
 							<a href="#" id="MColour" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Palette Swap</a>
 						</li>

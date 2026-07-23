@@ -150,3 +150,11 @@ func (f *EmployeeService) DeleteEmployee(ctx context.Context, id int32) error {
 
 	return nil
 }
+
+func (f *EmployeeService) CountEmployees(ctx context.Context) (int64, error) {
+	count, err := f.queries.CountEmployees(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("count employees: %w", err)
+	}
+	return count, nil
+}

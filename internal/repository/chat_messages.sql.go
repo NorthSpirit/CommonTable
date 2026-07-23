@@ -133,3 +133,88 @@ func (q *Queries) ListMessagesByRestaurant(ctx context.Context, restaurantID int
 	}
 	return items, nil
 }
+
+const listMessagesByRestaurantAfterID = `-- name: ListMessagesByRestaurantAfterID :many
+SELECT cm.id, cm.message, cm.sent_at, e.name AS sender_name
+FROM chat_messages cm
+         JOIN employee e ON e.id = cm.employee_id
+WHERE cm.restaurant_id = $1 AND cm.id > $2
+ORDER BY cm.id
+`
+
+type ListMessagesByRestaurantAfterIDParams struct {
+	RestaurantID int32 `json:"restaurant_id"`
+	ID           int32 `json:"id"`
+}
+
+type ListMessagesByRestaurantAfterIDRow struct {
+	ID         int32            `json:"id"`
+	Message    string           `json:"message"`
+	SentAt     pgtype.Timestamp `json:"sent_at"`
+	SenderName string           `json:"sender_name"`
+}
+
+func (q *Queries) ListMessagesByRestaurantAfterID(ctx context.Context, arg ListMessagesByRestaurantAfterIDParams) ([]ListMessagesByRestaurantAfterIDRow, error) {
+	rows, err := q.db.Query(ctx, listMessagesByRestaurantAfterID, arg.RestaurantID, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListMessagesByRestaurantAfterIDRow
+	for rows.Next() {
+		var i ListMessagesByRestaurantAfterIDRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Message,
+			&i.SentAt,
+			&i.SenderName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listMessagesByRestaurantWithSender = `-- name: ListMessagesByRestaurantWithSender :many
+SELECT cm.id, cm.message, cm.sent_at, e.name AS sender_name
+FROM chat_messages cm
+         JOIN employee e ON e.id = cm.employee_id
+WHERE cm.restaurant_id = $1
+ORDER BY cm.sent_at, cm.id
+`
+
+type ListMessagesByRestaurantWithSenderRow struct {
+	ID         int32            `json:"id"`
+	Message    string           `json:"message"`
+	SentAt     pgtype.Timestamp `json:"sent_at"`
+	SenderName string           `json:"sender_name"`
+}
+
+func (q *Queries) ListMessagesByRestaurantWithSender(ctx context.Context, restaurantID int32) ([]ListMessagesByRestaurantWithSenderRow, error) {
+	rows, err := q.db.Query(ctx, listMessagesByRestaurantWithSender, restaurantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListMessagesByRestaurantWithSenderRow
+	for rows.Next() {
+		var i ListMessagesByRestaurantWithSenderRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Message,
+			&i.SentAt,
+			&i.SenderName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
