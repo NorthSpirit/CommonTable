@@ -76,11 +76,12 @@ type EmployeeView struct {
 }
 
 type TableView struct {
-	ID       int32
-	Number   int32
-	Capacity int32
-	Section  string
-	Status   string
+	ID        int32
+	Number    int32
+	Capacity  int32
+	Section   string
+	Status    string
+	IsDeleted bool
 }
 
 type IngredientOptionView struct {
@@ -110,6 +111,11 @@ type ChatMessageView struct {
 	SenderName string
 	Message    string
 	SentAt     string
+}
+
+type UsageItemView struct {
+	ID   int32
+	Name string
 }
 
 func Itoa(id int32) string {

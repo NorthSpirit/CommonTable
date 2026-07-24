@@ -122,3 +122,11 @@ func (s *FoodOrderService) DeleteFoodOrder(ctx context.Context, id int32) error 
 
 	return nil
 }
+
+func (s *FoodOrderService) ListActiveOrdersByRestaurantForKitchen(ctx context.Context, restaurantID int32) ([]repository.ListActiveOrdersByRestaurantForKitchenRow, error) {
+	orders, err := s.queries.ListActiveOrdersByRestaurantForKitchen(ctx, restaurantID)
+	if err != nil {
+		return nil, fmt.Errorf("list active orders by restaurant for kitchen: %w", err)
+	}
+	return orders, nil
+}

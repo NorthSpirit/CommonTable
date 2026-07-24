@@ -27,10 +27,17 @@ templ tablesPageContent(tables []adminshared.TableView) {
 						<p class="text-sm gms-main-text">Section: { t.Section }</p>
 					}
 					<div class="flex gap-2 mt-3">
-						<a href={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
-							Edit
-						</a>
-					</div>
+                    	if t.IsDeleted {
+                    		<form method="POST" action={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/restore") }>
+                    			<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">Restore</button>
+                    		</form>
+                    	} else {
+                    		<a href={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Edit</a>
+                    		<form method="POST" action={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/delete") } onsubmit="return confirm('Delete this table?');">
+                    			<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Delete</button>
+                    		</form>
+                    	}
+                    </div>
 				</div>
 			}
 			if len(tables) == 0 {

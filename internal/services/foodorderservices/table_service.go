@@ -98,10 +98,25 @@ func (f *TableService) SetTableStatus(ctx context.Context, id int32, status repo
 }
 
 func (f *TableService) DeleteTable(ctx context.Context, id int32) error {
-	err := f.queries.DeleteTable(ctx, id)
+	err := f.queries.SoftDeleteTable(ctx, id)
 	if err != nil {
 		return fmt.Errorf("delete table: %w", err)
 	}
+	return nil
+}
 
+func (f *TableService) ListTablesForAdmin(ctx context.Context) ([]repository.Table, error) {
+	tables, err := f.queries.ListTablesForAdmin(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list tables for admin: %w", err)
+	}
+	return tables, nil
+}
+
+func (f *TableService) RestoreTable(ctx context.Context, id int32) error {
+	err := f.queries.RestoreTable(ctx, id)
+	if err != nil {
+		return fmt.Errorf("restore table: %w", err)
+	}
 	return nil
 }

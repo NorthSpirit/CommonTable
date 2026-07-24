@@ -1,46 +1,55 @@
-Food Ingredient Stuff: DS
-    GetAllFoodIngredients DS
-    GetFoodIngredientByID DS
-    InsertFoodIngredient DS
-    UpdateFoodIngredient DS
-    DeleteFoodIngredient DS
+Food Ingredient Stuff: DSHR
+    GetAllFoodIngredients DSHR
+    GetFoodIngredientByID DSHR
+    InsertFoodIngredient DSHR
+    UpdateFoodIngredient DSHR
+    DeleteFoodIngredient DSHR
 
-Allergen Stuff: DS
-    GetAllAllergens DS
-    GetAllergenByID DS
+Allergen Stuff: DSHR
+    GetAllAllergens DSHR
+    GetAllergenByID DSHR
     GetAllergenByCode DS
-    InsertAllergen DS
-    UpdateAllergen DS
-    DeleteAllergen DS
+    InsertAllergen DSHR
+    UpdateAllergen DSHR
+    DeleteAllergen DSHR
 
-Food Item Stuff: DS
-    GetFoodItemByID DS
+Food Item Stuff: DSHR
+    GetFoodItemByID DSHR
+    GetFoodItemForDisplay DSHR
     ListFoodItemsByRestaurant DS
+    ListFoodItemsByRestaurantForAdmin DSHR
     ListAvailableFoodItemsByRestaurant DS
-    InsertFoodItem DS
-    UpdateFoodItem DS
-    SetFoodItemAvailability DS
-    DeleteFoodItem (soft delete) DS
-    RestoreFoodItem DS
+    ListMenuItemsForDisplay DSHR
+    ListMostOrderedItemsByRestaurant DSHR
+    InsertFoodItem DSHR
+    UpdateFoodItem DSHR
+    SetFoodItemAvailability DSHR (admin + chef)
+    SetFoodItemInstructions DSHR (chef)
+    DeleteFoodItem (soft delete) DSHR
+    RestoreFoodItem DSHR
 
-Food Menu Stuff: DS
-    GetFoodMenuByID DS
-    ListFoodMenusByRestaurant DS
-    InsertFoodMenu DS
-    UpdateFoodMenu DS
-    DeleteFoodMenu DS
+Food Menu Stuff: DSHR
+    GetFoodMenuByID DSHR
+    GetFoodMenuForDisplay DSHR
+    ListFoodMenusByRestaurant DSHR
+    ListFoodMenusByRestaurantForDisplay DSHR
+    CountFoodMenus DSHR
+    InsertFoodMenu DSHR
+    UpdateFoodMenu DSHR
+    DeleteFoodMenu DSHR
 
-Item-Menu Relationship Stuff: DS
-    AddFoodItemToMenu DS
-    RemoveFoodItemFromMenu DS
+Item-Menu Relationship Stuff: DSHR
+    AddFoodItemToMenu DSHR
+    RemoveFoodItemFromMenu DSHR
     ListItemsInMenu DS
-    ListMenusForItem DS
+    ListItemsInMenuForAdmin DSHR (admin + chef)
+    ListMenusForItem DSHR
 
-Ingredient-Item Relationship Stuff: DS
-    AddIngredientToItem DS
+Ingredient-Item Relationship Stuff: DSHR
+    AddIngredientToItem DSHR
     UpdateIngredientInItem DS
-    RemoveIngredientFromItem DS
-    ListIngredientsForItem DS
+    RemoveIngredientFromItem DSHR
+    ListIngredientsForItem DSHR (admin + chef)
     ListItemsUsingIngredient DS
 
 Restaurant-Ingredient Relationship Stuff: DS
@@ -54,53 +63,63 @@ Restaurant-Allergen Relationship Stuff: DS
     UnlinkRestaurantAllergen DS
     ListAllergensForRestaurant DS
 
-FoodItem-Allergen Relationship Stuff: DS
-    ListAllergensForItem DS
+FoodItem-Allergen Relationship Stuff: DSHR
+    ListAllergensForItem DSHR
+    ListAllergensForItemDisplay DSHR
     ListItemsWithAllergen DS
-    AddAllergenToItem DS
-    RemoveAllergenFromItem DS
+    AddAllergenToItem DSHR
+    RemoveAllergenFromItem DSHR
 
-Restaurant Stuff: DS
-    GetRestaurant DS
+Restaurant Stuff: DSHR
+    GetRestaurant DSHR
     GetRestaurantByName DS
-    ListRestaurants DS
-    InsertRestaurant DS
-    UpdateRestaurant DS
-    UpdateRestaurantPasswordHash DS
-    DeleteRestaurant DS
+    GetRestaurantForDisplay DSHR
+    ListRestaurants DSHR
+    ListRestaurantsForDisplay DSHR
+    ListRestaurantsForAdmin DSHR
+    InsertRestaurant DSHR
+    UpdateRestaurant DSHR
+    UpdateRestaurantPasswordHash DSHR (self-service via chef+admin flows)
+    SoftDeleteRestaurant DSHR (password-gated)
+    RestoreRestaurant DSHR
 
-Employee Stuff: DS (pending regen after name NOT NULL migration)
-    GetEmployeeByID DS
+Employee Stuff: DSHR
+    GetEmployeeByID DSHR
     GetEmployeeByRestaurantAndName DS
-    ListEmployeesByRestaurant DS
-    InsertEmployee DS
-    UpdateEmployee DS
-    SetEmployeeActive DS
-    UpdateEmployeePinHash DS
-    DeleteEmployee DS
+    ListEmployeesByRestaurant DSHR
+    CountEmployees DSHR
+    InsertEmployee DSHR
+    UpdateEmployee DSHR (admin + chef self-service)
+    SetEmployeeActive DSHR
+    UpdateEmployeePinHash DSHR (admin + chef self-service)
+    DeleteEmployee D (unused — soft "toggle active" used instead)
 
-Table Stuff: DS
-    GetTableByID DS
-    ListTables DS
-    InsertTable DS
-    UpdateTableStatus DS
-    DeleteTable DS
+Table Stuff: DSHR
+    GetTableByID DSHR
+    ListTables DSHR
+    ListTablesForAdmin DS
+    InsertTable DSHR
+    UpdateTable DSHR
+    SetTableStatus DSHR
+    SoftDeleteTable DS
+    RestoreTable D
 
-Food Order Stuff: DS
+Food Order Stuff: DSHR
     GetFoodOrderByID DS
     ListOrdersByRestaurant DS
     ListOrdersByTable DS
     ListOrdersByStatus DS
+    ListActiveOrdersByRestaurantForKitchen DSHR
     InsertFoodOrder DS
-    UpdateOrderStatus DS
+    UpdateOrderStatus DSHR (kitchen board)
     UpdateFoodOrderNotes DS
     DeleteFoodOrder DS
 
-Item-Order Relationship Stuff: DS
+Item-Order Relationship Stuff: DSHR
     AddItemToOrder (with name/description snapshot) DS
     UpdateItemOrderQuantity DS
     RemoveItemFromOrder DS
-    ListItemsForOrder DS
+    ListItemsForOrder DSHR (kitchen board)
 
 Payment Stuff: DS
     GetPaymentByID DS
@@ -109,22 +128,36 @@ Payment Stuff: DS
     UpdatePaymentStatus DS
     DeletePayment DS
 
-Chat Message Stuff: DS
-    GetChatMessageByID DS
-    ListMessagesByRestaurant DS
-    InsertChatMessage DS
-    DeleteChatMessage DS
+Chat Message Stuff: DSHR
+    GetChatMessageByID D
+    ListMessagesByRestaurant D
+    ListMessagesByRestaurantWithSender DSHR (chef read/send + admin read-only)
+    ListMessagesByRestaurantAfterID DSHR (polling)
+    InsertChatMessage DSHR (chef only)
+    DeleteChatMessage D
 
-Auth Stuff: S
-    VerifyRestaurantPassword S
-    VerifyEmployeeLogin S
-    IssueEmployeeToken S
-    ValidateEmployeeToken S
+Auth Stuff: SHR
+    VerifyRestaurantPassword SHR (chef + kitchen login)
+    VerifyEmployeeLogin SHR (chef + kitchen login, role-gated)
+    IssueEmployeeToken SHR
+    ValidateEmployeeToken SHR
 
-Admin Stuff: S
-    VerifyAdminLogin S
-    IssueAdminToken S
-    ValidateAdminToken S
+Admin Stuff: SHR
+    VerifyAdminLogin SHR
+    VerifyPassword SHR (delete-confirm re-auth)
+    ChangePassword SHR (self-service, persisted to disk)
+    IssueAdminToken SHR
+    ValidateAdminToken SHR
+
+Homepage Content Stuff: SHR
+    GetContent SHR
+    GetContentForDisplay SHR
+    UpdateContent SHR (rich-text markup + image upload)
+
+Kitchen Board Stuff: SHR
+    Board (live order display) SHR
+    Poll (JSON, 4s interval) SHR
+    UpdateStatus (status progression) SHR
 
 
 S = Service is done

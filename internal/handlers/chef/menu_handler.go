@@ -250,3 +250,26 @@ func (h *MenuHandler) UpdateInstructions(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
+
+// ToggleAvailability handles POST /chef/items/{itemID}/availability
+func (h *MenuHandler) ToggleAvailability(w http.ResponseWriter, r *http.Request) {
+	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
+	if err != nil {
+		http.Error(w, "invalid item id", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form submission", http.StatusBadRequest)
+		return
+	}
+
+	available := r.FormValue("available") == "true"
+
+	if err := h.foodItemService.SetFoodItemAvailability(r.Context(), int32(itemID), available); err != nil {
+		http.Error(w, "failed to update availability", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/chef/items/"+strconv.Itoa(itemID), http.StatusFound)
+}

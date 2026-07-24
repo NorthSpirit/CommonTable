@@ -31,6 +31,22 @@ templ chefItemDetailContent(item ChefItemDetailView, successMessage string) {
 		</div>
 
 		<div class="mb-4">
+        	<form method="POST" action={ templ.URL("/chef/items/" + strconv.Itoa(int(item.ID)) + "/availability") }>
+        		if item.IsAvailable {
+        			<input type="hidden" name="available" value="false"/>
+        			<button type="submit" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium">
+        				Mark as 86'd (Unavailable)
+        			</button>
+        		} else {
+        			<input type="hidden" name="available" value="true"/>
+        			<button type="submit" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+        				Mark as Available
+        			</button>
+        		}
+        	</form>
+        </div>
+
+		<div class="mb-4">
 			<h3 class="text-lg font-semibold mb-1 gms-main-text">Ingredients</h3>
 			if len(item.Ingredients) == 0 {
 				<p class="gms-main-text italic">No ingredients listed.</p>

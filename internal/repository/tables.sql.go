@@ -14,7 +14,7 @@ import (
 const createTable = `-- name: CreateTable :one
 INSERT INTO tables (number, capacity, section, status)
 VALUES ($1, $2, $3, $4)
-RETURNING id, number, capacity, section, status
+RETURNING id, number, capacity, section, status, deleted_at
 `
 
 type CreateTableParams struct {
@@ -38,23 +38,14 @@ func (q *Queries) CreateTable(ctx context.Context, arg CreateTableParams) (Table
 		&i.Capacity,
 		&i.Section,
 		&i.Status,
+		&i.DeletedAt,
 	)
 	return i, err
 }
 
-const deleteTable = `-- name: DeleteTable :exec
-DELETE FROM tables
-WHERE id = $1
-`
-
-func (q *Queries) DeleteTable(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteTable, id)
-	return err
-}
-
 const getTable = `-- name: GetTable :one
-SELECT id, number, capacity, section, status FROM tables
-WHERE id = $1
+SELECT id, number, capacity, section, status, deleted_at FROM tables
+WHERE id = $1 AND deleted_at IS NULL
 `
 
 func (q *Queries) GetTable(ctx context.Context, id int32) (Table, error) {
@@ -66,12 +57,14 @@ func (q *Queries) GetTable(ctx context.Context, id int32) (Table, error) {
 		&i.Capacity,
 		&i.Section,
 		&i.Status,
+		&i.DeletedAt,
 	)
 	return i, err
 }
 
 const listTables = `-- name: ListTables :many
-SELECT id, number, capacity, section, status FROM tables
+SELECT id, number, capacity, section, status, deleted_at FROM tables
+WHERE deleted_at IS NULL
 ORDER BY number
 `
 
@@ -90,6 +83,7 @@ func (q *Queries) ListTables(ctx context.Context) ([]Table, error) {
 			&i.Capacity,
 			&i.Section,
 			&i.Status,
+			&i.DeletedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -102,8 +96,8 @@ func (q *Queries) ListTables(ctx context.Context) ([]Table, error) {
 }
 
 const listTablesByStatus = `-- name: ListTablesByStatus :many
-SELECT id, number, capacity, section, status FROM tables
-WHERE status = $1
+SELECT id, number, capacity, section, status, deleted_at FROM tables
+WHERE status = $1 AND deleted_at IS NULL
 ORDER BY number
 `
 
@@ -122,6 +116,7 @@ func (q *Queries) ListTablesByStatus(ctx context.Context, status TableStatus) ([
 			&i.Capacity,
 			&i.Section,
 			&i.Status,
+			&i.DeletedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -133,10 +128,53 @@ func (q *Queries) ListTablesByStatus(ctx context.Context, status TableStatus) ([
 	return items, nil
 }
 
+const listTablesForAdmin = `-- name: ListTablesForAdmin :many
+SELECT id, number, capacity, section, status, deleted_at FROM tables
+ORDER BY deleted_at IS NULL DESC, number
+`
+
+func (q *Queries) ListTablesForAdmin(ctx context.Context) ([]Table, error) {
+	rows, err := q.db.Query(ctx, listTablesForAdmin)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Table
+	for rows.Next() {
+		var i Table
+		if err := rows.Scan(
+			&i.ID,
+			&i.Number,
+			&i.Capacity,
+			&i.Section,
+			&i.Status,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const restoreTable = `-- name: RestoreTable :exec
+UPDATE tables
+SET deleted_at = NULL
+WHERE id = $1
+`
+
+func (q *Queries) RestoreTable(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, restoreTable, id)
+	return err
+}
+
 const setTableStatus = `-- name: SetTableStatus :exec
 UPDATE tables
 SET status = $2
-WHERE id = $1
+WHERE id = $1 AND deleted_at IS NULL
 `
 
 type SetTableStatusParams struct {
@@ -149,10 +187,21 @@ func (q *Queries) SetTableStatus(ctx context.Context, arg SetTableStatusParams) 
 	return err
 }
 
+const softDeleteTable = `-- name: SoftDeleteTable :exec
+UPDATE tables
+SET deleted_at = now()
+WHERE id = $1 AND deleted_at IS NULL
+`
+
+func (q *Queries) SoftDeleteTable(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, softDeleteTable, id)
+	return err
+}
+
 const updateTable = `-- name: UpdateTable :exec
 UPDATE tables
 SET number = $2, capacity = $3, section = $4
-WHERE id = $1
+WHERE id = $1 AND deleted_at IS NULL
 `
 
 type UpdateTableParams struct {

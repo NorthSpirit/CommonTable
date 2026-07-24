@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
 	"CommonTable/internal/templates/admin/adminshared"
 	"CommonTable/internal/templates/admin/ingredient"
@@ -15,10 +16,11 @@ import (
 
 type IngredientHandler struct {
 	foodIngredientService *foodservices.FoodIngredientService
+	ingredientItemService *foodrelationshipservices.IngredientItemService
 }
 
-func NewIngredientHandler(foodIngredientService *foodservices.FoodIngredientService) *IngredientHandler {
-	return &IngredientHandler{foodIngredientService: foodIngredientService}
+func NewIngredientHandler(foodIngredientService *foodservices.FoodIngredientService, ingredientItemService *foodrelationshipservices.IngredientItemService) *IngredientHandler {
+	return &IngredientHandler{foodIngredientService: foodIngredientService, ingredientItemService: ingredientItemService}
 }
 
 // List handles GET /admin/ingredients
@@ -134,4 +136,38 @@ func (h *IngredientHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/admin/ingredients", http.StatusFound)
+}
+
+// Usage handles GET /admin/ingredients/{id}/usage
+func (h *IngredientHandler) Usage(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "invalid ingredient id", http.StatusBadRequest)
+		return
+	}
+
+	dbIngredient, err := h.foodIngredientService.GetFoodIngredientByID(r.Context(), int32(id))
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		http.Error(w, "failed to load ingredient", http.StatusInternalServerError)
+		return
+	}
+
+	items, err := h.ingredientItemService.ListItemsUsingIngredient(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "failed to load usage", http.StatusInternalServerError)
+		return
+	}
+
+	views := make([]adminshared.UsageItemView, 0, len(items))
+	for _, item := range items {
+		views = append(views, adminshared.UsageItemView{ID: item.ID, Name: item.Name})
+	}
+
+	if err := ingredient.IngredientUsagePage(dbIngredient.Name, views).Render(r.Context(), w); err != nil {
+		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	}
 }

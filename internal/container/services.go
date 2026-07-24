@@ -26,6 +26,8 @@ type Services struct {
 	FoodAllergen   *foodservices.FoodAllergenService
 	ItemAllergen   *foodrelationshipservices.ItemAllergenService
 	ItemMenu       *foodrelationshipservices.ItemMenuService
+	FoodOrder      *foodorderservices.FoodOrderService
+	ItemOrder      *foodorderservices.ItemOrderService
 	Homepage       *homepageservices.HomepageService
 	FoodIngredient *foodservices.FoodIngredientService
 	Employee       *restaurantservices.EmployeeService
@@ -71,6 +73,8 @@ func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
 		Table:          foodorderservices.NewTableService(queries),
 		IngredientItem: foodrelationshipservices.NewIngredientItemService(queries),
 		ChatMessage:    chatservices.NewChatMessageService(queries),
+		FoodOrder:      foodorderservices.NewFoodOrderService(queries),
+		ItemOrder:      foodorderservices.NewItemOrderService(queries),
 		JWTTokenTTL:    cfg.JWTTokenTTL,
 		UploadsDir:     cfg.UploadsDir,
 	}

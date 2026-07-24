@@ -181,10 +181,11 @@ func toEmployeeView(e repository.Employee) adminshared.EmployeeView {
 
 func toTableView(t repository.Table) adminshared.TableView {
 	view := adminshared.TableView{
-		ID:       t.ID,
-		Number:   t.Number,
-		Capacity: t.Capacity,
-		Status:   string(t.Status),
+		ID:        t.ID,
+		Number:    t.Number,
+		Capacity:  t.Capacity,
+		Status:    string(t.Status),
+		IsDeleted: t.DeletedAt.Valid,
 	}
 	if t.Section.Valid {
 		view.Section = t.Section.String

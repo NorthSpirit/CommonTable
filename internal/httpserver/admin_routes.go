@@ -85,6 +85,7 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Get("/{id}/edit", h.Ingredient.EditForm)
 				r.Post("/{id}/edit", h.Ingredient.Update)
 				r.Post("/{id}/delete", h.Ingredient.Delete)
+				r.Get("/{id}/usage", h.Ingredient.Usage)
 			})
 
 			r.Route("/allergens", func(r chi.Router) {
@@ -94,6 +95,7 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Get("/{id}/edit", h.Allergen.EditForm)
 				r.Post("/{id}/edit", h.Allergen.Update)
 				r.Post("/{id}/delete", h.Allergen.Delete)
+				r.Get("/{id}/usage", h.Allergen.Usage)
 			})
 
 			r.Route("/tables", func(r chi.Router) {
@@ -102,6 +104,8 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Post("/new", h.Table.Create)
 				r.Get("/{id}/edit", h.Table.EditForm)
 				r.Post("/{id}/edit", h.Table.Update)
+				r.Post("/{id}/delete", h.Table.Delete)
+				r.Post("/{id}/restore", h.Table.Restore)
 			})
 		})
 	})

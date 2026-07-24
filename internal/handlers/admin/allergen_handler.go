@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"CommonTable/internal/services/foodrelationshipservices"
 	"errors"
 	"net/http"
 	"strconv"
@@ -15,10 +16,11 @@ import (
 
 type AllergenHandler struct {
 	foodAllergenService *foodservices.FoodAllergenService
+	itemAllergenService *foodrelationshipservices.ItemAllergenService
 }
 
-func NewAllergenHandler(foodAllergenService *foodservices.FoodAllergenService) *AllergenHandler {
-	return &AllergenHandler{foodAllergenService: foodAllergenService}
+func NewAllergenHandler(foodAllergenService *foodservices.FoodAllergenService, itemAllergenService *foodrelationshipservices.ItemAllergenService) *AllergenHandler {
+	return &AllergenHandler{foodAllergenService: foodAllergenService, itemAllergenService: itemAllergenService}
 }
 
 // List handles GET /admin/allergens
@@ -152,4 +154,34 @@ func (h *AllergenHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/admin/allergens", http.StatusFound)
+}
+
+// Usage handles GET /admin/allergens/{id}/usage
+func (h *AllergenHandler) Usage(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "invalid allergen id", http.StatusBadRequest)
+		return
+	}
+
+	dbAllergen, err := h.foodAllergenService.GetFoodAllergenByID(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "failed to load allergen", http.StatusInternalServerError)
+		return
+	}
+
+	items, err := h.itemAllergenService.ListItemsWithAllergen(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "failed to load usage", http.StatusInternalServerError)
+		return
+	}
+
+	views := make([]adminshared.UsageItemView, 0, len(items))
+	for _, item := range items {
+		views = append(views, adminshared.UsageItemView{ID: item.ID, Name: item.Name})
+	}
+
+	if err := allergen.AllergenUsagePage(dbAllergen.Name, views).Render(r.Context(), w); err != nil {
+		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	}
 }

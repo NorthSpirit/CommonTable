@@ -19,6 +19,7 @@ type ChefItemDetailView struct {
 	Description  string
 	Instructions string
 	ImageURL     string
+	IsAvailable  bool
 	Ingredients  []ChefIngredientView
 	Allergens    []string
 }

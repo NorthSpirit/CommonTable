@@ -1,0 +1,31 @@
+package kitchen
+
+templ Layout(employeeName string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>CommonTable Kitchen Board</title>
+			<meta charset="utf-8"/>
+			<link rel="icon" href="data:,"/>
+			<script src="https://cdn.tailwindcss.com"></script>
+			<link rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<style>
+				html, body { height: 100%; }
+				:root { font-family: 'Lora', serif; }
+			</style>
+		</head>
+		<body class="min-h-screen flex flex-col gms-dark-bg">
+			<header class="gms-dark-bg gms-light-text p-2 shadow-md flex items-center justify-between px-6">
+				<h1 class="text-xl font-bold gms-title-text">Kitchen Board</h1>
+				<div class="flex items-center gap-4">
+					<span class="text-sm opacity-80">{ employeeName }</span>
+					<a href="/kitchen/logout" class="text-sm underline">Logout</a>
+				</div>
+			</header>
+			<div class="flex-1 p-4 gms-content-bg">
+				@content
+			</div>
+		</body>
+	</html>
+}

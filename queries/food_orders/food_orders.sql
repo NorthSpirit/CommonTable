@@ -35,3 +35,25 @@ WHERE id = $1;
 -- name: DeleteFoodOrder :exec
 DELETE FROM food_orders
 WHERE id = $1;
+
+-- name: ListActiveOrdersByRestaurantForKitchen :many
+SELECT fo.id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number
+FROM food_orders fo
+         JOIN tables t ON t.id = fo.table_id
+WHERE fo.restaurant_id = $1 AND fo.order_status NOT IN ('delivered', 'cancelled')
+ORDER BY fo.order_creation_date;
+
+-- name: ListOrdersByRestaurantForAdmin :many
+SELECT fo.id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number, e.name AS waiter_name
+FROM food_orders fo
+         JOIN tables t ON t.id = fo.table_id
+         JOIN employee e ON e.id = fo.waiter_id
+WHERE fo.restaurant_id = $1
+ORDER BY fo.order_creation_date DESC;
+
+-- name: GetOrderForAdmin :one
+SELECT fo.id, fo.restaurant_id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number, e.name AS waiter_name
+FROM food_orders fo
+         JOIN tables t ON t.id = fo.table_id
+         JOIN employee e ON e.id = fo.waiter_id
+WHERE fo.id = $1;

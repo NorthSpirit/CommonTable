@@ -82,6 +82,50 @@ func (q *Queries) GetFoodOrder(ctx context.Context, id int32) (FoodOrder, error)
 	return i, err
 }
 
+const listActiveOrdersByRestaurantForKitchen = `-- name: ListActiveOrdersByRestaurantForKitchen :many
+SELECT fo.id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number
+FROM food_orders fo
+         JOIN tables t ON t.id = fo.table_id
+WHERE fo.restaurant_id = $1 AND fo.order_status NOT IN ('delivered', 'cancelled')
+ORDER BY fo.order_creation_date
+`
+
+type ListActiveOrdersByRestaurantForKitchenRow struct {
+	ID                int32            `json:"id"`
+	OrderNumber       int32            `json:"order_number"`
+	OrderStatus       OrderStatus      `json:"order_status"`
+	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
+	Notes             pgtype.Text      `json:"notes"`
+	TableNumber       int32            `json:"table_number"`
+}
+
+func (q *Queries) ListActiveOrdersByRestaurantForKitchen(ctx context.Context, restaurantID int32) ([]ListActiveOrdersByRestaurantForKitchenRow, error) {
+	rows, err := q.db.Query(ctx, listActiveOrdersByRestaurantForKitchen, restaurantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListActiveOrdersByRestaurantForKitchenRow
+	for rows.Next() {
+		var i ListActiveOrdersByRestaurantForKitchenRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrderNumber,
+			&i.OrderStatus,
+			&i.OrderCreationDate,
+			&i.Notes,
+			&i.TableNumber,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listOrdersByRestaurant = `-- name: ListOrdersByRestaurant :many
 SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes FROM food_orders
 WHERE restaurant_id = $1

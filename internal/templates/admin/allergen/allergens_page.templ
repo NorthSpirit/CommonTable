@@ -27,6 +27,9 @@ templ allergensAdminPageContent(allergens []adminshared.AllergenAdminView) {
 						<a href={ templ.URL("/admin/allergens/" + adminshared.Itoa(allergen.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
 							Edit
 						</a>
+						<a href={ templ.URL("/admin/allergens/" + adminshared.Itoa(allergen.ID) + "/usage") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+                        	Used In
+                        </a>
 						<form method="POST" action={ templ.URL("/admin/allergens/" + adminshared.Itoa(allergen.ID) + "/delete") } onsubmit="return confirm('Delete this allergen? This removes it from any items/restaurants currently using it.');">
 							<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Delete</button>
 						</form>

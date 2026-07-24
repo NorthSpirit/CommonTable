@@ -376,11 +376,12 @@ type RestaurantIngredient struct {
 }
 
 type Table struct {
-	ID       int32       `json:"id"`
-	Number   int32       `json:"number"`
-	Capacity int32       `json:"capacity"`
-	Section  pgtype.Text `json:"section"`
-	Status   TableStatus `json:"status"`
+	ID        int32            `json:"id"`
+	Number    int32            `json:"number"`
+	Capacity  int32            `json:"capacity"`
+	Section   pgtype.Text      `json:"section"`
+	Status    TableStatus      `json:"status"`
+	DeletedAt pgtype.Timestamp `json:"deleted_at"`
 }
 
 type WaiterQuickItem struct {

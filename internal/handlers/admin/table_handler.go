@@ -24,7 +24,7 @@ func NewTableHandler(tableService *foodorderservices.TableService) *TableHandler
 
 // List handles GET /admin/tables
 func (h *TableHandler) List(w http.ResponseWriter, r *http.Request) {
-	tables, err := h.tableService.ListTables(r.Context())
+	tables, err := h.tableService.ListTablesForAdmin(r.Context())
 	if err != nil {
 		http.Error(w, "failed to load tables", http.StatusInternalServerError)
 		return
@@ -38,6 +38,34 @@ func (h *TableHandler) List(w http.ResponseWriter, r *http.Request) {
 	if err := table.TablesPage(views).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
+}
+
+// Delete handles POST /admin/tables/{id}/delete
+func (h *TableHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "invalid table id", http.StatusBadRequest)
+		return
+	}
+	if err := h.tableService.DeleteTable(r.Context(), int32(id)); err != nil {
+		http.Error(w, "failed to delete table", http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/admin/tables", http.StatusFound)
+}
+
+// Restore handles POST /admin/tables/{id}/restore
+func (h *TableHandler) Restore(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "invalid table id", http.StatusBadRequest)
+		return
+	}
+	if err := h.tableService.RestoreTable(r.Context(), int32(id)); err != nil {
+		http.Error(w, "failed to restore table", http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/admin/tables", http.StatusFound)
 }
 
 // NewForm handles GET /admin/tables/new

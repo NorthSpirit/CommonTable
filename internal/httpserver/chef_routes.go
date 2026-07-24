@@ -34,6 +34,7 @@ func RegisterChefRoutes(r chi.Router, h ChefHandlers, authService *authservices.
 			r.Get("/menus/{menuID}", h.Menu.MenuDetail)
 			r.Get("/items/{itemID}", h.Menu.ItemDetail)
 			r.Post("/items/{itemID}/instructions", h.Menu.UpdateInstructions)
+			r.Post("/items/{itemID}/availability", h.Menu.ToggleAvailability)
 			r.Get("/profile", h.Profile.Edit)
 			r.Post("/profile", h.Profile.Update)
 			r.Get("/chat", h.Chat.Page)

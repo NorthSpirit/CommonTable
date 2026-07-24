@@ -37,7 +37,6 @@ type Querier interface {
 	DeleteFoodMenu(ctx context.Context, id int32) error
 	DeleteFoodOrder(ctx context.Context, id int32) error
 	DeletePayment(ctx context.Context, id int32) error
-	DeleteTable(ctx context.Context, id int32) error
 	GetAllergen(ctx context.Context, id int32) (Allergen, error)
 	GetAllergenByCode(ctx context.Context, code string) (Allergen, error)
 	GetChatMessage(ctx context.Context, id int32) (ChatMessage, error)
@@ -60,6 +59,7 @@ type Querier interface {
 	LinkRestaurantAllergen(ctx context.Context, arg LinkRestaurantAllergenParams) error
 	LinkRestaurantIngredient(ctx context.Context, arg LinkRestaurantIngredientParams) error
 	ListActiveEmployeesByRestaurant(ctx context.Context, restaurantID int32) ([]Employee, error)
+	ListActiveOrdersByRestaurantForKitchen(ctx context.Context, restaurantID int32) ([]ListActiveOrdersByRestaurantForKitchenRow, error)
 	ListAllergens(ctx context.Context) ([]Allergen, error)
 	ListAllergensForItem(ctx context.Context, itemID int32) ([]Allergen, error)
 	ListAllergensForItemDisplay(ctx context.Context, arg ListAllergensForItemDisplayParams) ([]ListAllergensForItemDisplayRow, error)
@@ -94,6 +94,7 @@ type Querier interface {
 	ListRestaurantsForDisplay(ctx context.Context, locale string) ([]ListRestaurantsForDisplayRow, error)
 	ListTables(ctx context.Context) ([]Table, error)
 	ListTablesByStatus(ctx context.Context, status TableStatus) ([]Table, error)
+	ListTablesForAdmin(ctx context.Context) ([]Table, error)
 	ListWaiterQuickItems(ctx context.Context, employeeID int32) ([]ListWaiterQuickItemsRow, error)
 	RemoveAllergenFromItem(ctx context.Context, arg RemoveAllergenFromItemParams) error
 	RemoveFoodItemFromMenu(ctx context.Context, arg RemoveFoodItemFromMenuParams) error
@@ -102,6 +103,7 @@ type Querier interface {
 	RemoveWaiterQuickItem(ctx context.Context, arg RemoveWaiterQuickItemParams) error
 	RestoreFoodItem(ctx context.Context, id int32) error
 	RestoreRestaurant(ctx context.Context, id int32) error
+	RestoreTable(ctx context.Context, id int32) error
 	SetEmployeeActive(ctx context.Context, arg SetEmployeeActiveParams) error
 	SetFoodItemAvailability(ctx context.Context, arg SetFoodItemAvailabilityParams) error
 	SetFoodItemInstructions(ctx context.Context, arg SetFoodItemInstructionsParams) error
@@ -109,6 +111,7 @@ type Querier interface {
 	SetTableStatus(ctx context.Context, arg SetTableStatusParams) error
 	SoftDeleteFoodItem(ctx context.Context, id int32) error
 	SoftDeleteRestaurant(ctx context.Context, id int32) error
+	SoftDeleteTable(ctx context.Context, id int32) error
 	UnlinkRestaurantAllergen(ctx context.Context, arg UnlinkRestaurantAllergenParams) error
 	UnlinkRestaurantIngredient(ctx context.Context, arg UnlinkRestaurantIngredientParams) error
 	UpdateAllergen(ctx context.Context, arg UpdateAllergenParams) error
