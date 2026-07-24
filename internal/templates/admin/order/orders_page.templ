@@ -1,0 +1,49 @@
+package order
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ OrdersPage(restaurantID int32, restaurantName string, orders []adminshared.OrderListItemView) {
+	@adminshared.Layout(restaurantName+" - Orders", ordersPageContent(restaurantID, orders))
+}
+
+templ ordersPageContent(restaurantID int32, orders []adminshared.OrderListItemView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Orders</h2>
+
+		<div class="border gms-border-medium rounded-lg overflow-hidden">
+			<table class="w-full text-sm">
+				<thead>
+					<tr class="gms-dark-bg gms-light-text">
+						<th class="text-left p-2">Order #</th>
+						<th class="text-left p-2">Table</th>
+						<th class="text-left p-2">Waiter</th>
+						<th class="text-left p-2">Status</th>
+						<th class="text-left p-2">Created</th>
+						<th class="p-2"></th>
+					</tr>
+				</thead>
+				<tbody class="divide-y gms-border-medium">
+					for _, o := range orders {
+						<tr>
+							<td class="p-2">{ adminshared.Itoa(o.OrderNumber) }</td>
+							<td class="p-2">{ adminshared.Itoa(o.TableNumber) }</td>
+							<td class="p-2">{ o.WaiterName }</td>
+							<td class="p-2 uppercase text-xs font-bold">{ o.Status }</td>
+							<td class="p-2">{ o.CreatedAt }</td>
+							<td class="p-2">
+								<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(o.ID)) } class="px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+									View
+								</a>
+							</td>
+						</tr>
+					}
+					if len(orders) == 0 {
+						<tr>
+							<td colspan="6" class="p-4 text-center italic opacity-70">No orders yet.</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</main>
+}

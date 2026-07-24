@@ -1,0 +1,71 @@
+package order
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ OrderDetailPage(restaurantID int32, order adminshared.OrderDetailView, errorMessage string) {
+	@adminshared.Layout("Order #"+adminshared.Itoa(order.OrderNumber), orderDetailContent(restaurantID, order, errorMessage))
+}
+
+templ orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, errorMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto w-full">
+		<h2 class="text-2xl font-bold mb-2 gms-main-text text-center">Order #{ adminshared.Itoa(order.OrderNumber) }</h2>
+		<p class="text-center text-sm opacity-70 mb-6">Table { adminshared.Itoa(order.TableNumber) } — { order.WaiterName } — { order.CreatedAt }</p>
+
+		if errorMessage != "" {
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+		}
+
+		<div class="border gms-border-medium rounded-lg p-4 mb-6">
+			<h3 class="font-semibold mb-2">Items</h3>
+			<ul class="text-sm divide-y gms-border-medium">
+				for _, item := range order.Items {
+					<li class="py-2 flex justify-between">
+						<span>{ adminshared.Itoa(item.Quantity) }x { item.Name }
+							if item.Notes != "" {
+								<span class="block text-xs opacity-70">{ item.Notes }</span>
+							}
+						</span>
+						<span>€{ adminshared.FormatPrice(item.Price) }</span>
+					</li>
+				}
+				if len(order.Items) == 0 {
+					<li class="py-2 italic opacity-70">No items.</li>
+				}
+			</ul>
+		</div>
+
+		<div class="border gms-border-medium rounded-lg p-4 mb-6">
+			<h3 class="font-semibold mb-2">Payments</h3>
+			<ul class="text-sm divide-y gms-border-medium">
+				for _, p := range order.Payments {
+					<li class="py-2 flex justify-between">
+						<span>{ p.Method }</span>
+						<span>€{ adminshared.FormatPrice(p.Amount) } — { p.Status }</span>
+					</li>
+				}
+				if len(order.Payments) == 0 {
+					<li class="py-2 italic opacity-70">No payments recorded.</li>
+				}
+			</ul>
+		</div>
+
+		<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID)) } class="border gms-border-medium rounded-lg p-4">
+			<h3 class="font-semibold mb-2">Edit</h3>
+			<label class="block mb-4">
+				<span class="text-sm font-medium mb-1 block">Status</span>
+				<select name="status" class="p-2 border gms-border-medium rounded-md w-full">
+					<option value="pending" selected?={ order.Status == "pending" }>Pending</option>
+					<option value="preparing" selected?={ order.Status == "preparing" }>Preparing</option>
+					<option value="ready" selected?={ order.Status == "ready" }>Ready</option>
+					<option value="delivered" selected?={ order.Status == "delivered" }>Delivered</option>
+					<option value="cancelled" selected?={ order.Status == "cancelled" }>Cancelled</option>
+				</select>
+			</label>
+			<label class="block mb-4">
+				<span class="text-sm font-medium mb-1 block">Notes</span>
+				<textarea name="notes" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ order.Notes }</textarea>
+			</label>
+			<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+		</form>
+	</main>
+}

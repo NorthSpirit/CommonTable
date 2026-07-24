@@ -118,6 +118,41 @@ type UsageItemView struct {
 	Name string
 }
 
+type OrderListItemView struct {
+	ID          int32
+	OrderNumber int32
+	TableNumber int32
+	WaiterName  string
+	Status      string
+	CreatedAt   string
+}
+
+type OrderDetailView struct {
+	ID          int32
+	OrderNumber int32
+	TableNumber int32
+	WaiterName  string
+	Status      string
+	CreatedAt   string
+	Notes       string
+	Items       []OrderDetailItemView
+	Payments    []OrderPaymentView
+}
+
+type OrderDetailItemView struct {
+	Name     string
+	Quantity int32
+	Price    float64
+	Notes    string
+}
+
+type OrderPaymentView struct {
+	ID     int32
+	Amount float64
+	Method string
+	Status string
+}
+
 func Itoa(id int32) string {
 	return strconv.Itoa(int(id))
 }

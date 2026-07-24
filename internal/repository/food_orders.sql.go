@@ -82,6 +82,41 @@ func (q *Queries) GetFoodOrder(ctx context.Context, id int32) (FoodOrder, error)
 	return i, err
 }
 
+const getOrderForAdmin = `-- name: GetOrderForAdmin :one
+SELECT fo.id, fo.restaurant_id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number, e.name AS waiter_name
+FROM food_orders fo
+         JOIN tables t ON t.id = fo.table_id
+         JOIN employee e ON e.id = fo.waiter_id
+WHERE fo.id = $1
+`
+
+type GetOrderForAdminRow struct {
+	ID                int32            `json:"id"`
+	RestaurantID      int32            `json:"restaurant_id"`
+	OrderNumber       int32            `json:"order_number"`
+	OrderStatus       OrderStatus      `json:"order_status"`
+	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
+	Notes             pgtype.Text      `json:"notes"`
+	TableNumber       int32            `json:"table_number"`
+	WaiterName        string           `json:"waiter_name"`
+}
+
+func (q *Queries) GetOrderForAdmin(ctx context.Context, id int32) (GetOrderForAdminRow, error) {
+	row := q.db.QueryRow(ctx, getOrderForAdmin, id)
+	var i GetOrderForAdminRow
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.OrderNumber,
+		&i.OrderStatus,
+		&i.OrderCreationDate,
+		&i.Notes,
+		&i.TableNumber,
+		&i.WaiterName,
+	)
+	return i, err
+}
+
 const listActiveOrdersByRestaurantForKitchen = `-- name: ListActiveOrdersByRestaurantForKitchen :many
 SELECT fo.id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number
 FROM food_orders fo
@@ -150,6 +185,53 @@ func (q *Queries) ListOrdersByRestaurant(ctx context.Context, restaurantID int32
 			&i.OrderStatus,
 			&i.OrderNumber,
 			&i.Notes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listOrdersByRestaurantForAdmin = `-- name: ListOrdersByRestaurantForAdmin :many
+SELECT fo.id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number, e.name AS waiter_name
+FROM food_orders fo
+         JOIN tables t ON t.id = fo.table_id
+         JOIN employee e ON e.id = fo.waiter_id
+WHERE fo.restaurant_id = $1
+ORDER BY fo.order_creation_date DESC
+`
+
+type ListOrdersByRestaurantForAdminRow struct {
+	ID                int32            `json:"id"`
+	OrderNumber       int32            `json:"order_number"`
+	OrderStatus       OrderStatus      `json:"order_status"`
+	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
+	Notes             pgtype.Text      `json:"notes"`
+	TableNumber       int32            `json:"table_number"`
+	WaiterName        string           `json:"waiter_name"`
+}
+
+func (q *Queries) ListOrdersByRestaurantForAdmin(ctx context.Context, restaurantID int32) ([]ListOrdersByRestaurantForAdminRow, error) {
+	rows, err := q.db.Query(ctx, listOrdersByRestaurantForAdmin, restaurantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListOrdersByRestaurantForAdminRow
+	for rows.Next() {
+		var i ListOrdersByRestaurantForAdminRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrderNumber,
+			&i.OrderStatus,
+			&i.OrderCreationDate,
+			&i.Notes,
+			&i.TableNumber,
+			&i.WaiterName,
 		); err != nil {
 			return nil, err
 		}

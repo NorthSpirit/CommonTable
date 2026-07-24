@@ -33,6 +33,7 @@ type Services struct {
 	Employee       *restaurantservices.EmployeeService
 	Table          *foodorderservices.TableService
 	IngredientItem *foodrelationshipservices.IngredientItemService
+	Payment        *foodorderservices.PaymentService
 	ChatMessage    *chatservices.ChatMessageService
 
 	JWTTokenTTL time.Duration
@@ -75,6 +76,7 @@ func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
 		ChatMessage:    chatservices.NewChatMessageService(queries),
 		FoodOrder:      foodorderservices.NewFoodOrderService(queries),
 		ItemOrder:      foodorderservices.NewItemOrderService(queries),
+		Payment:        foodorderservices.NewPaymentService(queries),
 		JWTTokenTTL:    cfg.JWTTokenTTL,
 		UploadsDir:     cfg.UploadsDir,
 	}

@@ -130,3 +130,19 @@ func (s *FoodOrderService) ListActiveOrdersByRestaurantForKitchen(ctx context.Co
 	}
 	return orders, nil
 }
+
+func (s *FoodOrderService) ListOrdersByRestaurantForAdmin(ctx context.Context, restaurantID int32) ([]repository.ListOrdersByRestaurantForAdminRow, error) {
+	orders, err := s.queries.ListOrdersByRestaurantForAdmin(ctx, restaurantID)
+	if err != nil {
+		return nil, fmt.Errorf("list orders by restaurant for admin: %w", err)
+	}
+	return orders, nil
+}
+
+func (s *FoodOrderService) GetOrderForAdmin(ctx context.Context, id int32) (repository.GetOrderForAdminRow, error) {
+	order, err := s.queries.GetOrderForAdmin(ctx, id)
+	if err != nil {
+		return repository.GetOrderForAdminRow{}, fmt.Errorf("get order for admin: %w", err)
+	}
+	return order, nil
+}

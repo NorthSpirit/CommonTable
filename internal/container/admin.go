@@ -17,6 +17,7 @@ func NewAdminHandlers(s *Services) httpserver.AdminHandlers {
 		Ingredient:     admin.NewIngredientHandler(s.FoodIngredient, s.IngredientItem),
 		Employee:       admin.NewEmployeeHandler(s.Employee, s.Restaurant),
 		Table:          admin.NewTableHandler(s.Table),
+		Order:          admin.NewOrderHandler(s.FoodOrder, s.ItemOrder, s.Payment),
 		Chat:           admin.NewChatHandler(s.ChatMessage, s.Restaurant),
 		ChangePassword: admin.NewChangePasswordHandler(s.Admin),
 	}

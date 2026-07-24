@@ -171,7 +171,20 @@ func restaurantDetailContent(restaurant adminshared.RestaurantView) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2\">View Chat</a></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2\">View Chat</a> <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 templ.SafeURL
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/orders"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/restaurant/restaurant_detail_page.templ`, Line: 33, Col: 96}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2\">View Orders</a></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
