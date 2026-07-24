@@ -96,3 +96,10 @@ WHERE deleted_at IS NULL;
 UPDATE food_items
 SET instructions = $2
 WHERE id = $1 AND deleted_at IS NULL;
+
+-- name: ListMenuItemsForWaiter :many
+SELECT fi.id, fi.name, fi.description, fi.price, fi.image_url, fi.is_available
+FROM food_items fi
+         JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
+WHERE fitm.menu_id = $1 AND fi.deleted_at IS NULL
+ORDER BY fi.name;

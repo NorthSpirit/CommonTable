@@ -180,3 +180,35 @@ func (h *OrderHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/orders/"+strconv.Itoa(orderID), http.StatusFound)
 }
+
+// UpdatePaymentStatus handles POST /admin/restaurants/{id}/orders/{orderID}/payments/{paymentID}
+func (h *OrderHandler) UpdatePaymentStatus(w http.ResponseWriter, r *http.Request) {
+	restaurantID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "invalid restaurant id", http.StatusBadRequest)
+		return
+	}
+	orderID, err := strconv.Atoi(chi.URLParam(r, "orderID"))
+	if err != nil {
+		http.Error(w, "invalid order id", http.StatusBadRequest)
+		return
+	}
+	paymentID, err := strconv.Atoi(chi.URLParam(r, "paymentID"))
+	if err != nil {
+		http.Error(w, "invalid payment id", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form submission", http.StatusBadRequest)
+		return
+	}
+
+	status := repository.PaymentStatus(r.FormValue("status"))
+	if err := h.paymentService.UpdatePaymentStatus(r.Context(), int32(paymentID), status); err != nil {
+		http.Error(w, "failed to update payment status", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/orders/"+strconv.Itoa(orderID), http.StatusFound)
+}

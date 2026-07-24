@@ -102,3 +102,42 @@ func (a *AuthService) ValidateEmployeeToken(tokenString string) (*EmployeeClaims
 
 	return claims, nil
 }
+
+// IssueEmployeeTokenWithTTL is like IssueEmployeeToken but lets the caller
+// specify a custom expiry window instead of the service's default TTL —
+// used by the waiter API's shorter, sliding-expiry sessions.
+func (a *AuthService) IssueEmployeeTokenWithTTL(employee repository.Employee, ttl time.Duration) (string, error) {
+	claims := EmployeeClaims{
+		RestaurantID: employee.RestaurantID,
+		EmployeeID:   employee.ID,
+		Name:         employee.Name,
+		Role:         string(employee.Role),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ttl)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(a.jwtSecret)
+}
+
+// RefreshEmployeeToken reissues a token from already-validated claims,
+// with a fresh expiry — no database lookup needed, since the claims
+// themselves (restaurant, employee, name, role) don't change between
+// requests within a session.
+func (a *AuthService) RefreshEmployeeToken(claims *EmployeeClaims, ttl time.Duration) (string, error) {
+	newClaims := EmployeeClaims{
+		RestaurantID: claims.RestaurantID,
+		EmployeeID:   claims.EmployeeID,
+		Name:         claims.Name,
+		Role:         claims.Role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ttl)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, newClaims)
+	return token.SignedString(a.jwtSecret)
+}

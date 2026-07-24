@@ -2,6 +2,7 @@ package container
 
 import (
 	"CommonTable/internal/services/foodorderservices"
+	"CommonTable/internal/services/waiterservices"
 	"time"
 
 	"CommonTable/internal/repository"
@@ -20,21 +21,22 @@ type Services struct {
 	Auth  *authservices.AuthService
 	Admin *adminservices.AdminService
 
-	Restaurant     *restaurantservices.RestaurantService
-	FoodMenu       *foodservices.FoodMenuService
-	FoodItem       *foodservices.FoodItemService
-	FoodAllergen   *foodservices.FoodAllergenService
-	ItemAllergen   *foodrelationshipservices.ItemAllergenService
-	ItemMenu       *foodrelationshipservices.ItemMenuService
-	FoodOrder      *foodorderservices.FoodOrderService
-	ItemOrder      *foodorderservices.ItemOrderService
-	Homepage       *homepageservices.HomepageService
-	FoodIngredient *foodservices.FoodIngredientService
-	Employee       *restaurantservices.EmployeeService
-	Table          *foodorderservices.TableService
-	IngredientItem *foodrelationshipservices.IngredientItemService
-	Payment        *foodorderservices.PaymentService
-	ChatMessage    *chatservices.ChatMessageService
+	Restaurant      *restaurantservices.RestaurantService
+	FoodMenu        *foodservices.FoodMenuService
+	FoodItem        *foodservices.FoodItemService
+	FoodAllergen    *foodservices.FoodAllergenService
+	ItemAllergen    *foodrelationshipservices.ItemAllergenService
+	ItemMenu        *foodrelationshipservices.ItemMenuService
+	FoodOrder       *foodorderservices.FoodOrderService
+	ItemOrder       *foodorderservices.ItemOrderService
+	Homepage        *homepageservices.HomepageService
+	FoodIngredient  *foodservices.FoodIngredientService
+	Employee        *restaurantservices.EmployeeService
+	Table           *foodorderservices.TableService
+	IngredientItem  *foodrelationshipservices.IngredientItemService
+	Payment         *foodorderservices.PaymentService
+	ChatMessage     *chatservices.ChatMessageService
+	WaiterQuickItem *waiterservices.WaiterQuickItemService
 
 	JWTTokenTTL time.Duration
 	UploadsDir  string
@@ -62,22 +64,23 @@ func NewServices(queries *repository.Queries, cfg ServicesConfig) *Services {
 			cfg.JWTTokenTTL,
 		),
 
-		Restaurant:     restaurantservices.NewRestaurantService(queries),
-		FoodMenu:       foodservices.NewFoodMenuService(queries),
-		FoodItem:       foodservices.NewFoodItemService(queries),
-		FoodAllergen:   foodservices.NewFoodAllergenService(queries),
-		ItemAllergen:   foodrelationshipservices.NewItemAllergenService(queries),
-		Homepage:       homepageservices.NewHomepageService(queries),
-		ItemMenu:       foodrelationshipservices.NewItemMenuService(queries),
-		FoodIngredient: foodservices.NewFoodIngredientService(queries),
-		Employee:       restaurantservices.NewEmployeeService(queries),
-		Table:          foodorderservices.NewTableService(queries),
-		IngredientItem: foodrelationshipservices.NewIngredientItemService(queries),
-		ChatMessage:    chatservices.NewChatMessageService(queries),
-		FoodOrder:      foodorderservices.NewFoodOrderService(queries),
-		ItemOrder:      foodorderservices.NewItemOrderService(queries),
-		Payment:        foodorderservices.NewPaymentService(queries),
-		JWTTokenTTL:    cfg.JWTTokenTTL,
-		UploadsDir:     cfg.UploadsDir,
+		Restaurant:      restaurantservices.NewRestaurantService(queries),
+		FoodMenu:        foodservices.NewFoodMenuService(queries),
+		FoodItem:        foodservices.NewFoodItemService(queries),
+		FoodAllergen:    foodservices.NewFoodAllergenService(queries),
+		ItemAllergen:    foodrelationshipservices.NewItemAllergenService(queries),
+		Homepage:        homepageservices.NewHomepageService(queries),
+		ItemMenu:        foodrelationshipservices.NewItemMenuService(queries),
+		FoodIngredient:  foodservices.NewFoodIngredientService(queries),
+		Employee:        restaurantservices.NewEmployeeService(queries),
+		Table:           foodorderservices.NewTableService(queries),
+		IngredientItem:  foodrelationshipservices.NewIngredientItemService(queries),
+		ChatMessage:     chatservices.NewChatMessageService(queries),
+		FoodOrder:       foodorderservices.NewFoodOrderService(queries),
+		ItemOrder:       foodorderservices.NewItemOrderService(queries),
+		Payment:         foodorderservices.NewPaymentService(queries),
+		WaiterQuickItem: waiterservices.NewWaiterQuickItemService(queries),
+		JWTTokenTTL:     cfg.JWTTokenTTL,
+		UploadsDir:      cfg.UploadsDir,
 	}
 }

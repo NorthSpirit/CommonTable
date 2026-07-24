@@ -210,3 +210,11 @@ func (f *FoodItemService) SetFoodItemInstructions(ctx context.Context, id int32,
 
 	return nil
 }
+
+func (f *FoodItemService) ListMenuItemsForWaiter(ctx context.Context, menuID int32) ([]repository.ListMenuItemsForWaiterRow, error) {
+	items, err := f.queries.ListMenuItemsForWaiter(ctx, menuID)
+	if err != nil {
+		return nil, fmt.Errorf("list menu items for waiter: %w", err)
+	}
+	return items, nil
+}

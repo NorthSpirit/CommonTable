@@ -404,6 +404,50 @@ func (q *Queries) ListMenuItemsForDisplay(ctx context.Context, arg ListMenuItems
 	return items, nil
 }
 
+const listMenuItemsForWaiter = `-- name: ListMenuItemsForWaiter :many
+SELECT fi.id, fi.name, fi.description, fi.price, fi.image_url, fi.is_available
+FROM food_items fi
+         JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
+WHERE fitm.menu_id = $1 AND fi.deleted_at IS NULL
+ORDER BY fi.name
+`
+
+type ListMenuItemsForWaiterRow struct {
+	ID          int32          `json:"id"`
+	Name        string         `json:"name"`
+	Description pgtype.Text    `json:"description"`
+	Price       pgtype.Numeric `json:"price"`
+	ImageUrl    pgtype.Text    `json:"image_url"`
+	IsAvailable bool           `json:"is_available"`
+}
+
+func (q *Queries) ListMenuItemsForWaiter(ctx context.Context, menuID int32) ([]ListMenuItemsForWaiterRow, error) {
+	rows, err := q.db.Query(ctx, listMenuItemsForWaiter, menuID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListMenuItemsForWaiterRow
+	for rows.Next() {
+		var i ListMenuItemsForWaiterRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Price,
+			&i.ImageUrl,
+			&i.IsAvailable,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listMostOrderedItemsByRestaurant = `-- name: ListMostOrderedItemsByRestaurant :many
 SELECT
     fi.id,

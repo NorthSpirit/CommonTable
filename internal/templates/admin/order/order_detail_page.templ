@@ -35,19 +35,32 @@ templ orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, 
 		</div>
 
 		<div class="border gms-border-medium rounded-lg p-4 mb-6">
-			<h3 class="font-semibold mb-2">Payments</h3>
-			<ul class="text-sm divide-y gms-border-medium">
-				for _, p := range order.Payments {
-					<li class="py-2 flex justify-between">
-						<span>{ p.Method }</span>
-						<span>€{ adminshared.FormatPrice(p.Amount) } — { p.Status }</span>
-					</li>
-				}
-				if len(order.Payments) == 0 {
-					<li class="py-2 italic opacity-70">No payments recorded.</li>
-				}
-			</ul>
-		</div>
+        	<h3 class="font-semibold mb-2">Payments</h3>
+        	<ul class="text-sm divide-y gms-border-medium">
+        		for _, p := range order.Payments {
+        			<li class="py-2">
+        				<div class="flex justify-between items-center mb-2">
+        					<span>{ p.Method }</span>
+        					<span>€{ adminshared.FormatPrice(p.Amount) }</span>
+        				</div>
+        				<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/" + adminshared.Itoa(p.ID)) } class="flex gap-2 items-center">
+        					<select name="status" class="p-1 border gms-border-medium rounded-md text-xs">
+        						<option value="pending" selected?={ p.Status == "pending" }>Pending</option>
+        						<option value="paid" selected?={ p.Status == "paid" }>Paid</option>
+        						<option value="failed" selected?={ p.Status == "failed" }>Failed</option>
+        						<option value="refunded" selected?={ p.Status == "refunded" }>Refunded</option>
+        					</select>
+        					<button type="submit" class="px-2 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+        						Update
+        					</button>
+        				</form>
+        			</li>
+        		}
+        		if len(order.Payments) == 0 {
+        			<li class="py-2 italic opacity-70">No payments recorded.</li>
+        		}
+        	</ul>
+        </div>
 
 		<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID)) } class="border gms-border-medium rounded-lg p-4">
 			<h3 class="font-semibold mb-2">Edit</h3>

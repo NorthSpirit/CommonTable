@@ -50,6 +50,8 @@ func main() {
 	kitchenHandlers := container.NewKitchenHandlers(services)
 	hubHandler := hub.NewHubHandler()
 
+	waiterAPIHandlers := container.NewWaiterAPIHandlers(services)
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
@@ -57,6 +59,8 @@ func main() {
 	httpserver.RegisterAdminRoutes(r, adminHandlers, services.Admin)
 	httpserver.RegisterChefRoutes(r, chefHandlers, services.Auth)
 	httpserver.RegisterKitchenRoutes(r, kitchenHandlers, services.Auth)
+
+	httpserver.RegisterWaiterAPIRoutes(r, waiterAPIHandlers, services.Auth)
 
 	r.Handle("/assets/*", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
 	r.Handle("/uploads/*", http.StripPrefix("/uploads", http.FileServer(http.Dir(cfg.UploadsDir))))

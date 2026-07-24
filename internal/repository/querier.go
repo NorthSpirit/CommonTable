@@ -80,6 +80,7 @@ type Querier interface {
 	ListItemsUsingIngredient(ctx context.Context, ingredientID int32) ([]ListItemsUsingIngredientRow, error)
 	ListItemsWithAllergen(ctx context.Context, allergenID int32) ([]ListItemsWithAllergenRow, error)
 	ListMenuItemsForDisplay(ctx context.Context, arg ListMenuItemsForDisplayParams) ([]ListMenuItemsForDisplayRow, error)
+	ListMenuItemsForWaiter(ctx context.Context, menuID int32) ([]ListMenuItemsForWaiterRow, error)
 	ListMenusForItem(ctx context.Context, itemID int32) ([]FoodMenu, error)
 	ListMessagesByEmployee(ctx context.Context, employeeID int32) ([]ChatMessage, error)
 	ListMessagesByRestaurant(ctx context.Context, restaurantID int32) ([]ChatMessage, error)

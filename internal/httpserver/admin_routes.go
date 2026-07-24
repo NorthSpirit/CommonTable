@@ -53,6 +53,7 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Get("/{id}/orders", h.Order.List)
 				r.Get("/{id}/orders/{orderID}", h.Order.Detail)
 				r.Post("/{id}/orders/{orderID}", h.Order.Update)
+				r.Post("/{id}/orders/{orderID}/payments/{paymentID}", h.Order.UpdatePaymentStatus)
 
 				r.Route("/{id}/menus", func(r chi.Router) {
 					r.Get("/", h.Menu.List)
