@@ -8,7 +8,12 @@ templ OrdersPage(restaurantID int32, restaurantName string, orders []adminshared
 
 templ ordersPageContent(restaurantID int32, orders []adminshared.OrderListItemView) {
 	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Orders</h2>
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
+			<h2 class="text-2xl font-bold gms-main-text">Orders</h2>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/new") } class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				+ New Order
+			</a>
+		</div>
 
 		<div class="border gms-border-medium rounded-lg overflow-hidden">
 			<table class="w-full text-sm">

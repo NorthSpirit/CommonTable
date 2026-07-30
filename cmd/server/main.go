@@ -1,27 +1,31 @@
 package main
 
 import (
-	"CommonTable/internal/handlers/hub"
-	"CommonTable/internal/templates/shared"
 	"context"
 	"log"
 	"net/http"
 
 	"CommonTable/internal/config"
 	"CommonTable/internal/container"
+	"CommonTable/internal/discovery"
+	"CommonTable/internal/handlers/hub"
 	"CommonTable/internal/httpserver"
 	"CommonTable/internal/repository"
+	"CommonTable/internal/templates/shared"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+const httpPort = ":41241"
+
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("load config: %v", err)
 	}
+
 	shared.SetAltLanguageLabel(cfg.AltLanguageLabel)
 
 	if err := shared.LoadTranslations(cfg.TranslationsDir); err != nil {
@@ -45,12 +49,11 @@ func main() {
 	})
 
 	customerHandlers := container.NewCustomerHandlers(services)
-	adminHandlers := container.NewAdminHandlers(services)
+	adminHandlers := container.NewAdminHandlers(services, pool)
 	chefHandlers := container.NewChefHandlers(services)
 	kitchenHandlers := container.NewKitchenHandlers(services)
+	waiterAPIHandlers := container.NewWaiterAPIHandlers(services, pool)
 	hubHandler := hub.NewHubHandler()
-
-	waiterAPIHandlers := container.NewWaiterAPIHandlers(services)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -59,15 +62,21 @@ func main() {
 	httpserver.RegisterAdminRoutes(r, adminHandlers, services.Admin)
 	httpserver.RegisterChefRoutes(r, chefHandlers, services.Auth)
 	httpserver.RegisterKitchenRoutes(r, kitchenHandlers, services.Auth)
-
 	httpserver.RegisterWaiterAPIRoutes(r, waiterAPIHandlers, services.Auth)
 
 	r.Handle("/assets/*", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
 	r.Handle("/uploads/*", http.StripPrefix("/uploads", http.FileServer(http.Dir(cfg.UploadsDir))))
 	r.Get("/hub", hubHandler.Page)
+	r.Get("/download/waiter-app.apk", hub.ServeAPK("./assets/downloads/waiter_app.apk"))
+	r.Get("/api/discover", hub.Discover)
 
-	log.Println("listening on :41241")
-	if err := http.ListenAndServe(":41241", r); err != nil {
+	// UDP LAN discovery — lets clients find this server without a
+	// hardcoded IP. Irrelevant/unused once deployed behind a real
+	// hostname, but harmless to leave running either way.
+	discovery.StartResponder(41241)
+
+	log.Printf("listening on %s", httpPort)
+	if err := http.ListenAndServe(httpPort, r); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
 }

@@ -12,6 +12,8 @@ type WaiterAPIHandlers struct {
 	Me         *waiterapi.MeHandler
 	Menu       *waiterapi.MenuHandler
 	QuickItems *waiterapi.QuickItemsHandler
+	Chat       *waiterapi.ChatHandler
+	Order      *waiterapi.OrderHandler
 }
 
 func RegisterWaiterAPIRoutes(r chi.Router, h WaiterAPIHandlers, authService *authservices.AuthService) {
@@ -28,6 +30,13 @@ func RegisterWaiterAPIRoutes(r chi.Router, h WaiterAPIHandlers, authService *aut
 			r.Post("/quick-items", h.QuickItems.Add)
 			r.Delete("/quick-items/{itemID}", h.QuickItems.Remove)
 			r.Patch("/quick-items/{itemID}", h.QuickItems.Reorder)
+			r.Get("/chat/messages", h.Chat.List)
+			r.Get("/chat/messages/after/{id}", h.Chat.Poll)
+			r.Post("/chat/send", h.Chat.Send)
+			r.Get("/items/{itemID}", h.Menu.ItemDetail)
+			r.Post("/orders", h.Order.Create)
+			r.Delete("/orders/{orderID}/items/{itemOrderID}", h.Order.RemoveItem)
+			r.Patch("/orders/{orderID}/items/{itemOrderID}", h.Order.UpdateItemQuantity)
 		})
 	})
 }

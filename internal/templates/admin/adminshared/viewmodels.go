@@ -140,6 +140,7 @@ type OrderDetailView struct {
 }
 
 type OrderDetailItemView struct {
+	ID       int32
 	Name     string
 	Quantity int32
 	Price    float64
@@ -151,6 +152,22 @@ type OrderPaymentView struct {
 	Amount float64
 	Method string
 	Status string
+}
+
+type TableOptionView struct {
+	ID     int32
+	Number int32
+}
+
+type EmployeeOptionView struct {
+	ID   int32
+	Name string
+}
+
+type MenuItemOptionView struct {
+	ID    int32
+	Name  string
+	Price float64
 }
 
 func Itoa(id int32) string {

@@ -311,6 +311,7 @@ type FoodOrder struct {
 	OrderStatus       OrderStatus      `json:"order_status"`
 	OrderNumber       int32            `json:"order_number"`
 	Notes             pgtype.Text      `json:"notes"`
+	IdempotencyKey    pgtype.Text      `json:"idempotency_key"`
 }
 
 type HomepageContent struct {
@@ -320,6 +321,11 @@ type HomepageContent struct {
 	ImageOneUrl    pgtype.Text      `json:"image_one_url"`
 	ImageTwoUrl    pgtype.Text      `json:"image_two_url"`
 	UpdatedAt      pgtype.Timestamp `json:"updated_at"`
+}
+
+type IdempotencyKey struct {
+	Key       string           `json:"key"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
 }
 
 type IngredientInItem struct {

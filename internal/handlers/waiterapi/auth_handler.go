@@ -25,6 +25,7 @@ type restaurantLoginRequest struct {
 type restaurantLoginResponse struct {
 	RestaurantID   int32  `json:"restaurant_id"`
 	RestaurantName string `json:"restaurant_name"`
+	LogoURL        string `json:"logo_url"`
 }
 
 // RestaurantLogin handles POST /api/waiter/login
@@ -46,9 +47,15 @@ func (h *AuthHandler) RestaurantLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	logoURL := ""
+	if restaurant.LogoUrl.Valid {
+		logoURL = restaurant.LogoUrl.String
+	}
+
 	writeJSON(w, http.StatusOK, restaurantLoginResponse{
 		RestaurantID:   restaurant.ID,
 		RestaurantName: restaurant.Name,
+		LogoURL:        logoURL,
 	})
 }
 

@@ -14,7 +14,7 @@ import (
 const createFoodOrder = `-- name: CreateFoodOrder :one
 INSERT INTO food_orders (restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes
+RETURNING id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key
 `
 
 type CreateFoodOrderParams struct {
@@ -47,6 +47,50 @@ func (q *Queries) CreateFoodOrder(ctx context.Context, arg CreateFoodOrderParams
 		&i.OrderStatus,
 		&i.OrderNumber,
 		&i.Notes,
+		&i.IdempotencyKey,
+	)
+	return i, err
+}
+
+const createFoodOrderWithIdempotencyKey = `-- name: CreateFoodOrderWithIdempotencyKey :one
+INSERT INTO food_orders (restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key
+`
+
+type CreateFoodOrderWithIdempotencyKeyParams struct {
+	RestaurantID      int32            `json:"restaurant_id"`
+	TableID           int32            `json:"table_id"`
+	WaiterID          int32            `json:"waiter_id"`
+	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
+	OrderStatus       OrderStatus      `json:"order_status"`
+	OrderNumber       int32            `json:"order_number"`
+	Notes             pgtype.Text      `json:"notes"`
+	IdempotencyKey    pgtype.Text      `json:"idempotency_key"`
+}
+
+func (q *Queries) CreateFoodOrderWithIdempotencyKey(ctx context.Context, arg CreateFoodOrderWithIdempotencyKeyParams) (FoodOrder, error) {
+	row := q.db.QueryRow(ctx, createFoodOrderWithIdempotencyKey,
+		arg.RestaurantID,
+		arg.TableID,
+		arg.WaiterID,
+		arg.OrderCreationDate,
+		arg.OrderStatus,
+		arg.OrderNumber,
+		arg.Notes,
+		arg.IdempotencyKey,
+	)
+	var i FoodOrder
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.TableID,
+		&i.WaiterID,
+		&i.OrderCreationDate,
+		&i.OrderStatus,
+		&i.OrderNumber,
+		&i.Notes,
+		&i.IdempotencyKey,
 	)
 	return i, err
 }
@@ -61,8 +105,37 @@ func (q *Queries) DeleteFoodOrder(ctx context.Context, id int32) error {
 	return err
 }
 
+const getActiveOrderForTable = `-- name: GetActiveOrderForTable :one
+SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key FROM food_orders
+WHERE table_id = $1 AND restaurant_id = $2 AND order_status NOT IN ('delivered', 'cancelled')
+ORDER BY order_creation_date DESC
+LIMIT 1
+`
+
+type GetActiveOrderForTableParams struct {
+	TableID      int32 `json:"table_id"`
+	RestaurantID int32 `json:"restaurant_id"`
+}
+
+func (q *Queries) GetActiveOrderForTable(ctx context.Context, arg GetActiveOrderForTableParams) (FoodOrder, error) {
+	row := q.db.QueryRow(ctx, getActiveOrderForTable, arg.TableID, arg.RestaurantID)
+	var i FoodOrder
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.TableID,
+		&i.WaiterID,
+		&i.OrderCreationDate,
+		&i.OrderStatus,
+		&i.OrderNumber,
+		&i.Notes,
+		&i.IdempotencyKey,
+	)
+	return i, err
+}
+
 const getFoodOrder = `-- name: GetFoodOrder :one
-SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes FROM food_orders
+SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key FROM food_orders
 WHERE id = $1
 `
 
@@ -78,6 +151,44 @@ func (q *Queries) GetFoodOrder(ctx context.Context, id int32) (FoodOrder, error)
 		&i.OrderStatus,
 		&i.OrderNumber,
 		&i.Notes,
+		&i.IdempotencyKey,
+	)
+	return i, err
+}
+
+const getNextOrderNumberForToday = `-- name: GetNextOrderNumberForToday :one
+SELECT COALESCE(MAX(order_number), 0) + 1
+FROM food_orders
+WHERE restaurant_id = $1
+  AND order_creation_date >= CURRENT_DATE
+  AND order_creation_date < CURRENT_DATE + INTERVAL '1 day'
+`
+
+func (q *Queries) GetNextOrderNumberForToday(ctx context.Context, restaurantID int32) (int32, error) {
+	row := q.db.QueryRow(ctx, getNextOrderNumberForToday, restaurantID)
+	var column_1 int32
+	err := row.Scan(&column_1)
+	return column_1, err
+}
+
+const getOrderByIdempotencyKey = `-- name: GetOrderByIdempotencyKey :one
+SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key FROM food_orders
+WHERE idempotency_key = $1
+`
+
+func (q *Queries) GetOrderByIdempotencyKey(ctx context.Context, idempotencyKey pgtype.Text) (FoodOrder, error) {
+	row := q.db.QueryRow(ctx, getOrderByIdempotencyKey, idempotencyKey)
+	var i FoodOrder
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.TableID,
+		&i.WaiterID,
+		&i.OrderCreationDate,
+		&i.OrderStatus,
+		&i.OrderNumber,
+		&i.Notes,
+		&i.IdempotencyKey,
 	)
 	return i, err
 }
@@ -162,7 +273,7 @@ func (q *Queries) ListActiveOrdersByRestaurantForKitchen(ctx context.Context, re
 }
 
 const listOrdersByRestaurant = `-- name: ListOrdersByRestaurant :many
-SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes FROM food_orders
+SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key FROM food_orders
 WHERE restaurant_id = $1
 ORDER BY order_creation_date DESC
 `
@@ -185,6 +296,7 @@ func (q *Queries) ListOrdersByRestaurant(ctx context.Context, restaurantID int32
 			&i.OrderStatus,
 			&i.OrderNumber,
 			&i.Notes,
+			&i.IdempotencyKey,
 		); err != nil {
 			return nil, err
 		}
@@ -244,7 +356,7 @@ func (q *Queries) ListOrdersByRestaurantForAdmin(ctx context.Context, restaurant
 }
 
 const listOrdersByStatus = `-- name: ListOrdersByStatus :many
-SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes FROM food_orders
+SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key FROM food_orders
 WHERE restaurant_id = $1 AND order_status = $2
 ORDER BY order_creation_date DESC
 `
@@ -272,6 +384,7 @@ func (q *Queries) ListOrdersByStatus(ctx context.Context, arg ListOrdersByStatus
 			&i.OrderStatus,
 			&i.OrderNumber,
 			&i.Notes,
+			&i.IdempotencyKey,
 		); err != nil {
 			return nil, err
 		}
@@ -284,7 +397,7 @@ func (q *Queries) ListOrdersByStatus(ctx context.Context, arg ListOrdersByStatus
 }
 
 const listOrdersByTable = `-- name: ListOrdersByTable :many
-SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes FROM food_orders
+SELECT id, restaurant_id, table_id, waiter_id, order_creation_date, order_status, order_number, notes, idempotency_key FROM food_orders
 WHERE table_id = $1
 ORDER BY order_creation_date DESC
 `
@@ -307,6 +420,7 @@ func (q *Queries) ListOrdersByTable(ctx context.Context, tableID int32) ([]FoodO
 			&i.OrderStatus,
 			&i.OrderNumber,
 			&i.Notes,
+			&i.IdempotencyKey,
 		); err != nil {
 			return nil, err
 		}

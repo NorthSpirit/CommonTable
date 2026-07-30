@@ -7,7 +7,7 @@ templ OrderDetailPage(restaurantID int32, order adminshared.OrderDetailView, err
 }
 
 templ orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, errorMessage string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto w-full">
+	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto">
 		<h2 class="text-2xl font-bold mb-2 gms-main-text text-center">Order #{ adminshared.Itoa(order.OrderNumber) }</h2>
 		<p class="text-center text-sm opacity-70 mb-6">Table { adminshared.Itoa(order.TableNumber) } — { order.WaiterName } — { order.CreatedAt }</p>
 
@@ -19,13 +19,26 @@ templ orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, 
 			<h3 class="font-semibold mb-2">Items</h3>
 			<ul class="text-sm divide-y gms-border-medium">
 				for _, item := range order.Items {
-					<li class="py-2 flex justify-between">
-						<span>{ adminshared.Itoa(item.Quantity) }x { item.Name }
-							if item.Notes != "" {
-								<span class="block text-xs opacity-70">{ item.Notes }</span>
-							}
-						</span>
-						<span>€{ adminshared.FormatPrice(item.Price) }</span>
+					<li class="py-2">
+						<div class="flex justify-between items-center">
+							<span>{ adminshared.Itoa(item.Quantity) }x { item.Name }
+								if item.Notes != "" {
+									<span class="block text-xs opacity-70">{ item.Notes }</span>
+								}
+							</span>
+							<span>€{ adminshared.FormatPrice(item.Price) }</span>
+						</div>
+						if order.Status == "pending" {
+							<div class="flex gap-2 mt-1">
+								<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/items/" + adminshared.Itoa(item.ID) + "/edit") } class="flex gap-1 items-center">
+									<input type="number" name="quantity" min="1" value={ adminshared.Itoa(item.Quantity) } class="p-1 border gms-border-medium rounded w-16 text-xs"/>
+									<button type="submit" class="px-2 py-1 text-xs font-bold rounded gms-btn-clear border gms-border-medium">Update</button>
+								</form>
+								<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/items/" + adminshared.Itoa(item.ID) + "/delete") } onsubmit="return confirm('Remove this item?');">
+									<button type="submit" class="px-2 py-1 text-xs font-bold rounded gms-btn-clear border gms-border-medium">Remove</button>
+								</form>
+							</div>
+						}
 					</li>
 				}
 				if len(order.Items) == 0 {
@@ -35,32 +48,32 @@ templ orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, 
 		</div>
 
 		<div class="border gms-border-medium rounded-lg p-4 mb-6">
-        	<h3 class="font-semibold mb-2">Payments</h3>
-        	<ul class="text-sm divide-y gms-border-medium">
-        		for _, p := range order.Payments {
-        			<li class="py-2">
-        				<div class="flex justify-between items-center mb-2">
-        					<span>{ p.Method }</span>
-        					<span>€{ adminshared.FormatPrice(p.Amount) }</span>
-        				</div>
-        				<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/" + adminshared.Itoa(p.ID)) } class="flex gap-2 items-center">
-        					<select name="status" class="p-1 border gms-border-medium rounded-md text-xs">
-        						<option value="pending" selected?={ p.Status == "pending" }>Pending</option>
-        						<option value="paid" selected?={ p.Status == "paid" }>Paid</option>
-        						<option value="failed" selected?={ p.Status == "failed" }>Failed</option>
-        						<option value="refunded" selected?={ p.Status == "refunded" }>Refunded</option>
-        					</select>
-        					<button type="submit" class="px-2 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
-        						Update
-        					</button>
-        				</form>
-        			</li>
-        		}
-        		if len(order.Payments) == 0 {
-        			<li class="py-2 italic opacity-70">No payments recorded.</li>
-        		}
-        	</ul>
-        </div>
+			<h3 class="font-semibold mb-2">Payments</h3>
+			<ul class="text-sm divide-y gms-border-medium">
+				for _, p := range order.Payments {
+					<li class="py-2">
+						<div class="flex justify-between items-center mb-2">
+							<span>{ p.Method }</span>
+							<span>€{ adminshared.FormatPrice(p.Amount) }</span>
+						</div>
+						<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/" + adminshared.Itoa(p.ID)) } class="flex gap-2 items-center">
+							<select name="status" class="p-1 border gms-border-medium rounded-md text-xs">
+								<option value="pending" selected?={ p.Status == "pending" }>Pending</option>
+								<option value="paid" selected?={ p.Status == "paid" }>Paid</option>
+								<option value="failed" selected?={ p.Status == "failed" }>Failed</option>
+								<option value="refunded" selected?={ p.Status == "refunded" }>Refunded</option>
+							</select>
+							<button type="submit" class="px-2 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+								Update
+							</button>
+						</form>
+					</li>
+				}
+				if len(order.Payments) == 0 {
+					<li class="py-2 italic opacity-70">No payments recorded.</li>
+				}
+			</ul>
+		</div>
 
 		<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID)) } class="border gms-border-medium rounded-lg p-4">
 			<h3 class="font-semibold mb-2">Edit</h3>

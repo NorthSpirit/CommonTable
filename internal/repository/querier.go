@@ -6,6 +6,8 @@ package repository
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
@@ -14,6 +16,7 @@ type Querier interface {
 	AddIngredientToItem(ctx context.Context, arg AddIngredientToItemParams) error
 	AddItemToOrder(ctx context.Context, arg AddItemToOrderParams) (ItemOrder, error)
 	AddWaiterQuickItem(ctx context.Context, arg AddWaiterQuickItemParams) error
+	CheckIdempotencyKey(ctx context.Context, key string) (string, error)
 	ClearOrderItems(ctx context.Context, orderID int32) error
 	ClearWaiterQuickItems(ctx context.Context, employeeID int32) error
 	CountEmployees(ctx context.Context) (int64, error)
@@ -27,6 +30,7 @@ type Querier interface {
 	CreateFoodItem(ctx context.Context, arg CreateFoodItemParams) (CreateFoodItemRow, error)
 	CreateFoodMenu(ctx context.Context, arg CreateFoodMenuParams) (FoodMenu, error)
 	CreateFoodOrder(ctx context.Context, arg CreateFoodOrderParams) (FoodOrder, error)
+	CreateFoodOrderWithIdempotencyKey(ctx context.Context, arg CreateFoodOrderWithIdempotencyKeyParams) (FoodOrder, error)
 	CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error)
 	CreateRestaurant(ctx context.Context, arg CreateRestaurantParams) (Restaurant, error)
 	CreateTable(ctx context.Context, arg CreateTableParams) (Table, error)
@@ -37,6 +41,7 @@ type Querier interface {
 	DeleteFoodMenu(ctx context.Context, id int32) error
 	DeleteFoodOrder(ctx context.Context, id int32) error
 	DeletePayment(ctx context.Context, id int32) error
+	GetActiveOrderForTable(ctx context.Context, arg GetActiveOrderForTableParams) (FoodOrder, error)
 	GetAllergen(ctx context.Context, id int32) (Allergen, error)
 	GetAllergenByCode(ctx context.Context, code string) (Allergen, error)
 	GetChatMessage(ctx context.Context, id int32) (ChatMessage, error)
@@ -51,10 +56,12 @@ type Querier interface {
 	GetHomepageContent(ctx context.Context) (HomepageContent, error)
 	GetHomepageContentForDisplay(ctx context.Context, locale string) (GetHomepageContentForDisplayRow, error)
 	GetItemOrder(ctx context.Context, id int32) (ItemOrder, error)
+	GetNextOrderNumberForToday(ctx context.Context, restaurantID int32) (int32, error)
+	GetOrderByIdempotencyKey(ctx context.Context, idempotencyKey pgtype.Text) (FoodOrder, error)
 	GetOrderForAdmin(ctx context.Context, id int32) (GetOrderForAdminRow, error)
 	GetPayment(ctx context.Context, id int32) (Payment, error)
 	GetRestaurant(ctx context.Context, id int32) (Restaurant, error)
-	GetRestaurantByName(ctx context.Context, name string) (Restaurant, error)
+	GetRestaurantByName(ctx context.Context, lower string) (Restaurant, error)
 	GetRestaurantForDisplay(ctx context.Context, arg GetRestaurantForDisplayParams) (GetRestaurantForDisplayRow, error)
 	GetTable(ctx context.Context, id int32) (Table, error)
 	LinkRestaurantAllergen(ctx context.Context, arg LinkRestaurantAllergenParams) error
@@ -99,6 +106,7 @@ type Querier interface {
 	ListTablesByStatus(ctx context.Context, status TableStatus) ([]Table, error)
 	ListTablesForAdmin(ctx context.Context) ([]Table, error)
 	ListWaiterQuickItems(ctx context.Context, employeeID int32) ([]ListWaiterQuickItemsRow, error)
+	RecordIdempotencyKey(ctx context.Context, key string) error
 	RemoveAllergenFromItem(ctx context.Context, arg RemoveAllergenFromItemParams) error
 	RemoveFoodItemFromMenu(ctx context.Context, arg RemoveFoodItemFromMenuParams) error
 	RemoveIngredientFromItem(ctx context.Context, arg RemoveIngredientFromItemParams) error

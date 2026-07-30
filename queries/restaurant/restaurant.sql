@@ -58,7 +58,7 @@ WHERE id = $1;
 
 -- name: GetRestaurantByName :one
 SELECT * FROM restaurant
-WHERE name = $1 AND deleted_at IS NULL;
+WHERE lower(name) = lower($1) AND deleted_at IS NULL;
 
 -- name: UpdateRestaurantPasswordHash :exec
 UPDATE restaurant

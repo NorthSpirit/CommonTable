@@ -17,11 +17,11 @@ templ chatPageContent(messages []ChatMessageView) {
 		</div>
 
 		<form id="chat-form" method="POST" action="/chef/chat/send" class="flex gap-2">
-			<input type="text" name="message" required autocomplete="off" placeholder="Type a message..." class="p-2 border gms-border-medium rounded-md w-full"/>
-			<button type="submit" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium whitespace-nowrap">
-				Send
-			</button>
-		</form>
+        	<input type="text" id="chat-input" name="message" required autocomplete="off" placeholder="Type a message..." class="p-2 border gms-border-medium rounded-md w-full"/>
+        	<button type="submit" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium whitespace-nowrap">
+        		Send
+        	</button>
+        </form>
 	</main>
 
 	<script src="/assets/jsscripts/chat_poll.js"></script>

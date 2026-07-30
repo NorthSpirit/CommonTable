@@ -106,6 +106,11 @@ func (h *EmployeeHandler) Create(w http.ResponseWriter, r *http.Request) {
 		strPtrOrNil(r.FormValue("phone_number")),
 	)
 	if err != nil {
+		if isUniqueViolation(err) {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = employee.EmployeeFormPage(int32(restaurantID), false, adminshared.EmployeeView{Name: name, Role: roleRaw}, "An active employee named \""+name+"\" already exists at this restaurant.").Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to create employee", http.StatusInternalServerError)
 		return
 	}
@@ -176,6 +181,11 @@ func (h *EmployeeHandler) Update(w http.ResponseWriter, r *http.Request) {
 		strPtrOrNil(r.FormValue("phone_number")),
 	)
 	if err != nil {
+		if isUniqueViolation(err) {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = employee.EmployeeFormPage(int32(restaurantID), true, adminshared.EmployeeView{ID: int32(employeeID), Name: name, Role: roleRaw}, "An active employee named \""+name+"\" already exists at this restaurant.").Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to update employee", http.StatusInternalServerError)
 		return
 	}

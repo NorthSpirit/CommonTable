@@ -1,0 +1,66 @@
+package order
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ OrderFormPage(restaurantID int32, tables []adminshared.TableOptionView, waiters []adminshared.EmployeeOptionView, items []adminshared.MenuItemOptionView, errorMessage string) {
+	@adminshared.Layout("New Order", orderFormContent(restaurantID, tables, waiters, items, errorMessage))
+}
+
+templ orderFormContent(restaurantID int32, tables []adminshared.TableOptionView, waiters []adminshared.EmployeeOptionView, items []adminshared.MenuItemOptionView, errorMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+			Create Order Manually
+		</h2>
+		<p class="text-center text-sm opacity-70 mb-6">For emergency use only — normal orders should go through the waiter app.</p>
+
+		if errorMessage != "" {
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+		}
+
+		<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/new") } class="max-w-2xl mx-auto">
+			<fieldset class="border p-4 rounded-lg gms-border-medium mb-4">
+				<legend class="text-lg font-semibold px-2">Order Details</legend>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Table</span>
+					<select name="table_id" required class="p-2 border gms-border-medium rounded-md w-full">
+						for _, t := range tables {
+							<option value={ adminshared.Itoa(t.ID) }>Table { adminshared.Itoa(t.Number) }</option>
+						}
+					</select>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Waiter</span>
+					<select name="waiter_id" required class="p-2 border gms-border-medium rounded-md w-full">
+						for _, e := range waiters {
+							<option value={ adminshared.Itoa(e.ID) }>{ e.Name }</option>
+						}
+					</select>
+				</label>
+
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">Notes</span>
+					<textarea name="notes" rows="2" class="p-2 border gms-border-medium rounded-md w-full"></textarea>
+				</label>
+			</fieldset>
+
+			<fieldset class="border p-4 rounded-lg gms-border-medium mb-4">
+				<legend class="text-lg font-semibold px-2">Items</legend>
+				<div class="max-h-64 overflow-y-auto border gms-border-medium rounded p-2">
+					for _, item := range items {
+						<label class="flex items-center gap-2 py-1">
+							<input type="number" name={ "quantity_" + adminshared.Itoa(item.ID) } min="0" value="0" class="p-1 border gms-border-medium rounded w-16"/>
+							<span class="text-sm">{ item.Name } — €{ adminshared.FormatPrice(item.Price) }</span>
+						</label>
+					}
+				</div>
+				<p class="text-xs opacity-70 mt-2">Set a quantity above 0 for each item to include.</p>
+			</fieldset>
+
+			<div class="flex justify-end">
+				<input type="submit" value="Create Order" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+			</div>
+		</form>
+	</main>
+}

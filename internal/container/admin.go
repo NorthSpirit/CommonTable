@@ -3,9 +3,11 @@ package container
 import (
 	"CommonTable/internal/handlers/admin"
 	"CommonTable/internal/httpserver"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewAdminHandlers(s *Services) httpserver.AdminHandlers {
+func NewAdminHandlers(s *Services, pool *pgxpool.Pool) httpserver.AdminHandlers {
 	return httpserver.AdminHandlers{
 		Auth:           admin.NewAuthHandler(s.Admin, s.JWTTokenTTL),
 		Dashboard:      admin.NewDashboardHandler(s.Restaurant, s.FoodMenu, s.FoodItem, s.Employee, s.FoodIngredient, s.FoodAllergen, s.Table),
@@ -17,7 +19,7 @@ func NewAdminHandlers(s *Services) httpserver.AdminHandlers {
 		Ingredient:     admin.NewIngredientHandler(s.FoodIngredient, s.IngredientItem),
 		Employee:       admin.NewEmployeeHandler(s.Employee, s.Restaurant),
 		Table:          admin.NewTableHandler(s.Table),
-		Order:          admin.NewOrderHandler(s.FoodOrder, s.ItemOrder, s.Payment),
+		Order:          admin.NewOrderHandler(pool, s.FoodOrder, s.ItemOrder, s.Payment, s.Table, s.Employee, s.FoodMenu, s.ItemMenu),
 		Chat:           admin.NewChatHandler(s.ChatMessage, s.Restaurant),
 		ChangePassword: admin.NewChangePasswordHandler(s.Admin),
 	}

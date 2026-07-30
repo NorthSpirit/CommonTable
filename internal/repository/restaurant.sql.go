@@ -80,11 +80,11 @@ func (q *Queries) GetRestaurant(ctx context.Context, id int32) (Restaurant, erro
 
 const getRestaurantByName = `-- name: GetRestaurantByName :one
 SELECT id, name, address, phone, email, password_hash, logo_url, deleted_at, description, description_alt FROM restaurant
-WHERE name = $1 AND deleted_at IS NULL
+WHERE lower(name) = lower($1) AND deleted_at IS NULL
 `
 
-func (q *Queries) GetRestaurantByName(ctx context.Context, name string) (Restaurant, error) {
-	row := q.db.QueryRow(ctx, getRestaurantByName, name)
+func (q *Queries) GetRestaurantByName(ctx context.Context, lower string) (Restaurant, error) {
+	row := q.db.QueryRow(ctx, getRestaurantByName, lower)
 	var i Restaurant
 	err := row.Scan(
 		&i.ID,

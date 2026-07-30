@@ -10,6 +10,7 @@ sql:
       - "./queries/payments"
       - "./queries/chat_messages"
       - "./queries/homepage"
+      - "./queries/idempotency_keys"
     schema: "./migrations"
     gen:
       go:

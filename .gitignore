@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+admin_credentials.json
 
 # Go build artifacts
 /bin/
@@ -25,5 +26,13 @@ Thumbs.db
 go.work
 go.work.sum
 
+# Runtime-uploaded content (admin/manager images), keep folder structure only
 uploads/*
 !uploads/*/.gitkeep
+
+# Built waiter app APK — a build artifact, not source
+assets/downloads/*.apk
+
+# Flutter build output (if waiter_app/ lives inside this repo)
+waiter_app/build/
+waiter_app/.dart_tool/

@@ -100,7 +100,7 @@ func (q *Queries) GetEmployee(ctx context.Context, id int32) (Employee, error) {
 
 const getEmployeeByRestaurantAndName = `-- name: GetEmployeeByRestaurantAndName :one
 SELECT id, restaurant_id, name, role, pin_hash, hire_date, last_login, is_active, email, phone_number FROM employee
-WHERE restaurant_id = $1 AND name = $2 AND is_active = true
+WHERE restaurant_id = $1 AND lower(name) = lower($2::text) AND is_active = true
 `
 
 type GetEmployeeByRestaurantAndNameParams struct {

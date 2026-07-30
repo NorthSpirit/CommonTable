@@ -1,5 +1,6 @@
 const chatContainer = document.getElementById('chat-messages');
 const chatForm = document.getElementById('chat-form');
+const chatInput = document.getElementById('chat-input');
 
 if (chatContainer) {
     const pollUrl = chatContainer.getAttribute('data-poll-url') || '/chef/chat/messages';
@@ -36,4 +37,36 @@ if (chatContainer) {
 
     chatContainer.scrollTop = chatContainer.scrollHeight;
     setInterval(pollMessages, 3000);
+}
+
+// Send without a full page reload, so focus stays in the input and the
+// waiter/chef can keep typing immediately after hitting Enter.
+if (chatForm && chatInput) {
+    chatForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        chatInput.value = '';
+        chatInput.focus();
+
+        try {
+            await fetch(chatForm.action, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'message=' + encodeURIComponent(message),
+            });
+            // Immediately pull the new message rather than waiting for
+            // the next scheduled poll tick.
+            if (typeof pollMessages === 'function') {
+                pollMessages();
+            }
+        } catch (e) {
+            // If the send fails, restore what they typed so it's not lost.
+            chatInput.value = message;
+        }
+
+        chatInput.focus();
+    });
 }

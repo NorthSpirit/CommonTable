@@ -43,7 +43,7 @@ WHERE id = $1;
 
 -- name: GetEmployeeByRestaurantAndName :one
 SELECT * FROM employee
-WHERE restaurant_id = $1 AND name = $2 AND is_active = true;
+WHERE restaurant_id = $1 AND lower(name) = lower(sqlc.arg(name)::text) AND is_active = true;
 
 -- name: CountEmployees :one
 SELECT COUNT(*) FROM employee

@@ -50,11 +50,7 @@ func (q *Queries) CountWaiterQuickItems(ctx context.Context, employeeID int32) (
 }
 
 const listWaiterQuickItems = `-- name: ListWaiterQuickItems :many
-SELECT
-    fi.id,
-    fi.name,
-    fi.image_url,
-    wqi.sort_order
+SELECT fi.id, fi.name, fi.image_url, fi.price, wqi.sort_order
 FROM waiter_quick_items wqi
          JOIN food_items fi ON fi.id = wqi.item_id
 WHERE wqi.employee_id = $1
@@ -64,10 +60,11 @@ ORDER BY wqi.sort_order, fi.name
 `
 
 type ListWaiterQuickItemsRow struct {
-	ID        int32       `json:"id"`
-	Name      string      `json:"name"`
-	ImageUrl  pgtype.Text `json:"image_url"`
-	SortOrder int32       `json:"sort_order"`
+	ID        int32          `json:"id"`
+	Name      string         `json:"name"`
+	ImageUrl  pgtype.Text    `json:"image_url"`
+	Price     pgtype.Numeric `json:"price"`
+	SortOrder int32          `json:"sort_order"`
 }
 
 func (q *Queries) ListWaiterQuickItems(ctx context.Context, employeeID int32) ([]ListWaiterQuickItemsRow, error) {
@@ -83,6 +80,7 @@ func (q *Queries) ListWaiterQuickItems(ctx context.Context, employeeID int32) ([
 			&i.ID,
 			&i.Name,
 			&i.ImageUrl,
+			&i.Price,
 			&i.SortOrder,
 		); err != nil {
 			return nil, err

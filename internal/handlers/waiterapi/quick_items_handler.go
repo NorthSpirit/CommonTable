@@ -1,6 +1,7 @@
 package waiterapi
 
 import (
+	"CommonTable/internal/helpers"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -20,10 +21,11 @@ func NewQuickItemsHandler(quickItemService *waiterservices.WaiterQuickItemServic
 }
 
 type quickItemJSON struct {
-	ItemID    int32  `json:"item_id"`
-	Name      string `json:"name"`
-	ImageURL  string `json:"image_url"`
-	SortOrder int32  `json:"sort_order"`
+	ItemID    int32   `json:"item_id"`
+	Name      string  `json:"name"`
+	ImageURL  string  `json:"image_url"`
+	Price     float64 `json:"price"`
+	SortOrder int32   `json:"sort_order"`
 }
 
 // List handles GET /api/waiter/quick-items
@@ -42,7 +44,11 @@ func (h *QuickItemsHandler) List(w http.ResponseWriter, r *http.Request) {
 		if item.ImageUrl.Valid {
 			imageURL = item.ImageUrl.String
 		}
-		out = append(out, quickItemJSON{ItemID: item.ID, Name: item.Name, ImageURL: imageURL, SortOrder: item.SortOrder})
+		price := 0.0
+		if p, err := helpers.NumericToFloat64(item.Price); err == nil && p != nil {
+			price = *p
+		}
+		out = append(out, quickItemJSON{ItemID: item.ID, Name: item.Name, ImageURL: imageURL, Price: price, SortOrder: item.SortOrder})
 	}
 
 	writeJSON(w, http.StatusOK, out)
