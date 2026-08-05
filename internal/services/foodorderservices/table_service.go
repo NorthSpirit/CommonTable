@@ -120,3 +120,27 @@ func (f *TableService) RestoreTable(ctx context.Context, id int32) error {
 	}
 	return nil
 }
+
+func (s *TableService) ListTablesWithActiveOrderFlag(ctx context.Context, restaurantID int32) ([]repository.ListTablesWithActiveOrderFlagRow, error) {
+	tables, err := s.queries.ListTablesWithActiveOrderFlag(ctx, restaurantID)
+	if err != nil {
+		return nil, fmt.Errorf("list tables with active order flag: %w", err)
+	}
+	return tables, nil
+}
+
+func (s *TableService) ListTablesWithOrderStatusForRestaurant(ctx context.Context, restaurantID int32) ([]repository.ListTablesWithOrderStatusForRestaurantRow, error) {
+	tables, err := s.queries.ListTablesWithOrderStatusForRestaurant(ctx, restaurantID)
+	if err != nil {
+		return nil, fmt.Errorf("list tables with order status for restaurant: %w", err)
+	}
+	return tables, nil
+}
+
+func (s *TableService) ListTablesWithGlobalOrderStatus(ctx context.Context) ([]repository.ListTablesWithGlobalOrderStatusRow, error) {
+	tables, err := s.queries.ListTablesWithGlobalOrderStatus(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list tables with global order status: %w", err)
+	}
+	return tables, nil
+}

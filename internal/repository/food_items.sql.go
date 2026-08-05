@@ -513,6 +513,58 @@ func (q *Queries) RestoreFoodItem(ctx context.Context, id int32) error {
 	return err
 }
 
+const searchFoodItemsForWaiter = `-- name: SearchFoodItemsForWaiter :many
+SELECT DISTINCT fi.id, fi.name, fi.description, fi.price, fi.image_url, fi.is_available
+FROM food_items fi
+         JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
+         JOIN food_menu fm ON fm.id = fitm.menu_id
+WHERE fm.restaurant_id = $1
+  AND fi.deleted_at IS NULL
+  AND fi.name ILIKE '%' || $2 || '%'
+ORDER BY fi.name
+`
+
+type SearchFoodItemsForWaiterParams struct {
+	RestaurantID int32       `json:"restaurant_id"`
+	Column2      pgtype.Text `json:"column_2"`
+}
+
+type SearchFoodItemsForWaiterRow struct {
+	ID          int32          `json:"id"`
+	Name        string         `json:"name"`
+	Description pgtype.Text    `json:"description"`
+	Price       pgtype.Numeric `json:"price"`
+	ImageUrl    pgtype.Text    `json:"image_url"`
+	IsAvailable bool           `json:"is_available"`
+}
+
+func (q *Queries) SearchFoodItemsForWaiter(ctx context.Context, arg SearchFoodItemsForWaiterParams) ([]SearchFoodItemsForWaiterRow, error) {
+	rows, err := q.db.Query(ctx, searchFoodItemsForWaiter, arg.RestaurantID, arg.Column2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SearchFoodItemsForWaiterRow
+	for rows.Next() {
+		var i SearchFoodItemsForWaiterRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.Price,
+			&i.ImageUrl,
+			&i.IsAvailable,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const setFoodItemAvailability = `-- name: SetFoodItemAvailability :exec
 UPDATE food_items
 SET is_available = $2

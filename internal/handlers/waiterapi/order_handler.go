@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/repository"
 	"CommonTable/internal/services/foodorderservices"
 	"CommonTable/internal/services/foodservices"
@@ -44,7 +45,7 @@ type orderLineRequest struct {
 
 type createOrderRequest struct {
 	IdempotencyKey string             `json:"idempotency_key"`
-	TableID        int32              `json:"table_id"`
+	TableID        *int32             `json:"table_id"` // null/absent = takeout
 	Notes          string             `json:"notes"`
 	Items          []orderLineRequest `json:"items"`
 }
@@ -60,11 +61,14 @@ type createOrderResponse struct {
 // Create handles POST /api/waiter/orders
 //
 // Behavior:
-//   - If the table already has an open order (not delivered/cancelled),
-//     the submitted items are appended to it instead of creating a new
-//     order — this is what turns "2 more beers" into an addition to the
-//     existing tab rather than a second bill.
-//   - Otherwise, a new order is created.
+//   - If a table is given and it already has an open order (not
+//     delivered/cancelled), the submitted items are appended to it
+//     instead of creating a new order — this is what turns "2 more
+//     beers" into an addition to the existing tab rather than a second
+//     bill.
+//   - If no table is given (takeout), a new order is always created —
+//     takeout orders are never merged, since multiple unrelated
+//     customers could be ordering takeout at the same time.
 //   - Both paths are idempotency-key protected: a retried request with
 //     the same key is safe and won't duplicate items or orders.
 func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
@@ -78,10 +82,6 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	if req.IdempotencyKey == "" {
 		writeError(w, http.StatusBadRequest, "idempotency_key is required")
-		return
-	}
-	if req.TableID == 0 {
-		writeError(w, http.StatusBadRequest, "table_id is required")
 		return
 	}
 	if len(req.Items) == 0 {
@@ -98,31 +98,34 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	// Check whether this table already has an open order — if so,
-	// append to it instead of creating a duplicate.
-	activeOrder, activeErr := h.foodOrderService.GetActiveOrderForTable(r.Context(), req.TableID, claims.RestaurantID)
-	if activeErr == nil {
-		if err := h.foodOrderService.AppendItemsToOrderAtomic(r.Context(), h.pool, activeOrder.ID, req.IdempotencyKey, lines); err != nil {
-			writeError(w, http.StatusInternalServerError, "failed to add items to existing order")
+	// Only check for an already-open order when there's a real table —
+	// takeout orders (no table) are always independent, never merged.
+	if req.TableID != nil {
+		activeOrder, activeErr := h.foodOrderService.GetActiveOrderForTable(r.Context(), *req.TableID, claims.RestaurantID)
+		if activeErr == nil {
+			if err := h.foodOrderService.AppendItemsToOrderAtomic(r.Context(), h.pool, activeOrder.ID, req.IdempotencyKey, lines); err != nil {
+				writeError(w, http.StatusInternalServerError, "failed to add items to existing order")
+				return
+			}
+
+			writeJSON(w, http.StatusOK, createOrderResponse{
+				OrderID:     activeOrder.ID,
+				OrderNumber: activeOrder.OrderNumber,
+				Status:      string(activeOrder.OrderStatus),
+				Duplicate:   false,
+				Appended:    true,
+			})
 			return
 		}
-
-		writeJSON(w, http.StatusOK, createOrderResponse{
-			OrderID:     activeOrder.ID,
-			OrderNumber: activeOrder.OrderNumber,
-			Status:      string(activeOrder.OrderStatus),
-			Duplicate:   false,
-			Appended:    true,
-		})
-		return
-	}
-	if !errors.Is(activeErr, pgx.ErrNoRows) {
-		writeError(w, http.StatusInternalServerError, "failed to check for active order")
-		return
+		if !errors.Is(activeErr, pgx.ErrNoRows) {
+			writeError(w, http.StatusInternalServerError, "failed to check for active order")
+			return
+		}
 	}
 
-	// No active order for this table — check for a prior successful
-	// submission with this exact key (a retry), then create fresh.
+	// No active order to append to (or no table at all) — check for a
+	// prior successful submission with this exact key (a retry), then
+	// create fresh.
 	existing, err := h.foodOrderService.GetOrderByIdempotencyKey(r.Context(), req.IdempotencyKey)
 	if err == nil {
 		writeJSON(w, http.StatusOK, createOrderResponse{
@@ -260,4 +263,70 @@ func strPtrOrNilJSON(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+type orderStatusItemJSON struct {
+	ItemOrderID int32  `json:"item_order_id"`
+	Name        string `json:"name"`
+	Quantity    int32  `json:"quantity"`
+}
+
+type orderStatusJSON struct {
+	OrderID     int32                 `json:"order_id"`
+	OrderNumber int32                 `json:"order_number"`
+	TableNumber *int32                `json:"table_number"` // null for takeout orders
+	Status      string                `json:"status"`
+	CreatedAt   string                `json:"created_at"`
+	Notes       string                `json:"notes"`
+	Items       []orderStatusItemJSON `json:"items"`
+}
+
+// ListMyOrders handles GET /api/waiter/orders
+func (h *OrderHandler) ListMyOrders(w http.ResponseWriter, r *http.Request) {
+	claims := claimsFromContext(r.Context())
+
+	orders, err := h.foodOrderService.ListActiveOrdersByWaiter(r.Context(), claims.EmployeeID)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to load orders")
+		return
+	}
+
+	out := make([]orderStatusJSON, 0, len(orders))
+	for _, o := range orders {
+		items, err := h.itemOrderService.ListItemsForOrder(r.Context(), o.ID)
+		if err != nil {
+			continue
+		}
+		itemsOut := make([]orderStatusItemJSON, 0, len(items))
+		for _, item := range items {
+			name := "Item"
+			if item.ItemNameSnapshot.Valid {
+				name = item.ItemNameSnapshot.String
+			}
+			itemsOut = append(itemsOut, orderStatusItemJSON{ItemOrderID: item.ID, Name: name, Quantity: item.Quantity})
+		}
+
+		notes := ""
+		if o.Notes.Valid {
+			notes = o.Notes.String
+		}
+
+		var tableNumber *int32
+		if o.TableNumber.Valid {
+			v := o.TableNumber.Int32
+			tableNumber = &v
+		}
+
+		out = append(out, orderStatusJSON{
+			OrderID:     o.ID,
+			OrderNumber: o.OrderNumber,
+			TableNumber: tableNumber,
+			Status:      string(o.OrderStatus),
+			CreatedAt:   helpers.FormatSentAt(o.OrderCreationDate),
+			Notes:       notes,
+			Items:       itemsOut,
+		})
+	}
+
+	writeJSON(w, http.StatusOK, out)
 }

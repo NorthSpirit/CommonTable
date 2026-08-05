@@ -305,7 +305,7 @@ type FoodMenu struct {
 type FoodOrder struct {
 	ID                int32            `json:"id"`
 	RestaurantID      int32            `json:"restaurant_id"`
-	TableID           int32            `json:"table_id"`
+	TableID           pgtype.Int4      `json:"table_id"`
 	WaiterID          int32            `json:"waiter_id"`
 	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
 	OrderStatus       OrderStatus      `json:"order_status"`

@@ -40,3 +40,33 @@ WHERE id = $1 AND deleted_at IS NULL;
 UPDATE tables
 SET deleted_at = NULL
 WHERE id = $1;
+
+-- name: ListTablesWithActiveOrderFlag :many
+SELECT t.id, t.number, t.capacity, t.status,
+       EXISTS (
+           SELECT 1 FROM food_orders fo
+           WHERE fo.table_id = t.id AND fo.restaurant_id = $1 AND fo.order_status NOT IN ('delivered', 'cancelled')
+       ) AS has_active_order
+FROM tables t
+WHERE t.deleted_at IS NULL
+ORDER BY t.number;
+
+-- name: ListTablesWithOrderStatusForRestaurant :many
+SELECT t.id, t.number, t.capacity, t.status,
+       EXISTS (
+           SELECT 1 FROM food_orders fo
+           WHERE fo.table_id = t.id AND fo.restaurant_id = $1 AND fo.order_status NOT IN ('delivered', 'cancelled')
+       ) AS occupied_by_restaurant
+FROM tables t
+WHERE t.deleted_at IS NULL
+ORDER BY t.number;
+
+-- name: ListTablesWithGlobalOrderStatus :many
+SELECT t.id, t.number, t.capacity, t.status,
+       EXISTS (
+           SELECT 1 FROM food_orders fo
+           WHERE fo.table_id = t.id AND fo.order_status NOT IN ('delivered', 'cancelled')
+       ) AS occupied_by_any_restaurant
+FROM tables t
+WHERE t.deleted_at IS NULL
+ORDER BY t.number;

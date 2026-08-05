@@ -7,6 +7,7 @@ import (
 
 	"CommonTable/internal/repository"
 	"CommonTable/internal/services/foodorderservices"
+	"CommonTable/internal/services/restaurantservices"
 	"CommonTable/internal/templates/admin/adminshared"
 	"CommonTable/internal/templates/admin/table"
 
@@ -15,27 +16,69 @@ import (
 )
 
 type TableHandler struct {
-	tableService *foodorderservices.TableService
+	tableService      *foodorderservices.TableService
+	restaurantService *restaurantservices.RestaurantService
 }
 
-func NewTableHandler(tableService *foodorderservices.TableService) *TableHandler {
-	return &TableHandler{tableService: tableService}
+func NewTableHandler(tableService *foodorderservices.TableService, restaurantService *restaurantservices.RestaurantService) *TableHandler {
+	return &TableHandler{tableService: tableService, restaurantService: restaurantService}
 }
 
 // List handles GET /admin/tables
 func (h *TableHandler) List(w http.ResponseWriter, r *http.Request) {
-	tables, err := h.tableService.ListTablesForAdmin(r.Context())
+	restaurantIDStr := r.URL.Query().Get("restaurant_id")
+	selectedRestaurantID := int32(0)
+
+	restaurants, err := h.restaurantService.GetRestaurantListForAdmin(r.Context())
 	if err != nil {
-		http.Error(w, "failed to load tables", http.StatusInternalServerError)
+		http.Error(w, "failed to load restaurants", http.StatusInternalServerError)
 		return
 	}
-
-	views := make([]adminshared.TableView, 0, len(tables))
-	for _, t := range tables {
-		views = append(views, toTableView(t))
+	restaurantOptions := make([]adminshared.RestaurantOptionView, 0, len(restaurants))
+	for _, rest := range restaurants {
+		restaurantOptions = append(restaurantOptions, adminshared.RestaurantOptionView{ID: rest.ID, Name: rest.Name})
 	}
 
-	if err := table.TablesPage(views).Render(r.Context(), w); err != nil {
+	var views []adminshared.TableView
+
+	if restaurantIDStr != "" {
+		id, err := strconv.Atoi(restaurantIDStr)
+		if err == nil {
+			selectedRestaurantID = int32(id)
+			tablesWithStatus, err := h.tableService.ListTablesWithOrderStatusForRestaurant(r.Context(), selectedRestaurantID)
+			if err != nil {
+				http.Error(w, "failed to load tables", http.StatusInternalServerError)
+				return
+			}
+			views = make([]adminshared.TableView, 0, len(tablesWithStatus))
+			for _, t := range tablesWithStatus {
+				views = append(views, adminshared.TableView{
+					ID: t.ID, Number: t.Number, Capacity: t.Capacity,
+					OccupiedByRestaurant: t.OccupiedByRestaurant,
+				})
+			}
+		}
+	}
+
+	if views == nil {
+		// No restaurant selected — show global occupancy: is any
+		// restaurant's order currently active at this table, rather
+		// than the manually-set (and never auto-updated) status column.
+		tablesGlobal, err := h.tableService.ListTablesWithGlobalOrderStatus(r.Context())
+		if err != nil {
+			http.Error(w, "failed to load tables", http.StatusInternalServerError)
+			return
+		}
+		views = make([]adminshared.TableView, 0, len(tablesGlobal))
+		for _, t := range tablesGlobal {
+			views = append(views, adminshared.TableView{
+				ID: t.ID, Number: t.Number, Capacity: t.Capacity,
+				OccupiedByRestaurant: t.OccupiedByAnyRestaurant,
+			})
+		}
+	}
+
+	if err := table.TablesPage(views, restaurantOptions, selectedRestaurantID).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }

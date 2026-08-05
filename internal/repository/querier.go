@@ -68,6 +68,7 @@ type Querier interface {
 	LinkRestaurantIngredient(ctx context.Context, arg LinkRestaurantIngredientParams) error
 	ListActiveEmployeesByRestaurant(ctx context.Context, restaurantID int32) ([]Employee, error)
 	ListActiveOrdersByRestaurantForKitchen(ctx context.Context, restaurantID int32) ([]ListActiveOrdersByRestaurantForKitchenRow, error)
+	ListActiveOrdersByWaiter(ctx context.Context, waiterID int32) ([]ListActiveOrdersByWaiterRow, error)
 	ListAllergens(ctx context.Context) ([]Allergen, error)
 	ListAllergensForItem(ctx context.Context, itemID int32) ([]Allergen, error)
 	ListAllergensForItemDisplay(ctx context.Context, arg ListAllergensForItemDisplayParams) ([]ListAllergensForItemDisplayRow, error)
@@ -97,7 +98,7 @@ type Querier interface {
 	ListOrdersByRestaurant(ctx context.Context, restaurantID int32) ([]FoodOrder, error)
 	ListOrdersByRestaurantForAdmin(ctx context.Context, restaurantID int32) ([]ListOrdersByRestaurantForAdminRow, error)
 	ListOrdersByStatus(ctx context.Context, arg ListOrdersByStatusParams) ([]FoodOrder, error)
-	ListOrdersByTable(ctx context.Context, tableID int32) ([]FoodOrder, error)
+	ListOrdersByTable(ctx context.Context, tableID pgtype.Int4) ([]FoodOrder, error)
 	ListPaymentsByOrder(ctx context.Context, orderID int32) ([]Payment, error)
 	ListRestaurants(ctx context.Context) ([]Restaurant, error)
 	ListRestaurantsForAdmin(ctx context.Context) ([]Restaurant, error)
@@ -105,6 +106,9 @@ type Querier interface {
 	ListTables(ctx context.Context) ([]Table, error)
 	ListTablesByStatus(ctx context.Context, status TableStatus) ([]Table, error)
 	ListTablesForAdmin(ctx context.Context) ([]Table, error)
+	ListTablesWithActiveOrderFlag(ctx context.Context, restaurantID int32) ([]ListTablesWithActiveOrderFlagRow, error)
+	ListTablesWithGlobalOrderStatus(ctx context.Context) ([]ListTablesWithGlobalOrderStatusRow, error)
+	ListTablesWithOrderStatusForRestaurant(ctx context.Context, restaurantID int32) ([]ListTablesWithOrderStatusForRestaurantRow, error)
 	ListWaiterQuickItems(ctx context.Context, employeeID int32) ([]ListWaiterQuickItemsRow, error)
 	RecordIdempotencyKey(ctx context.Context, key string) error
 	RemoveAllergenFromItem(ctx context.Context, arg RemoveAllergenFromItemParams) error
@@ -115,6 +119,7 @@ type Querier interface {
 	RestoreFoodItem(ctx context.Context, id int32) error
 	RestoreRestaurant(ctx context.Context, id int32) error
 	RestoreTable(ctx context.Context, id int32) error
+	SearchFoodItemsForWaiter(ctx context.Context, arg SearchFoodItemsForWaiterParams) ([]SearchFoodItemsForWaiterRow, error)
 	SetEmployeeActive(ctx context.Context, arg SetEmployeeActiveParams) error
 	SetFoodItemAvailability(ctx context.Context, arg SetFoodItemAvailabilityParams) error
 	SetFoodItemInstructions(ctx context.Context, arg SetFoodItemInstructionsParams) error

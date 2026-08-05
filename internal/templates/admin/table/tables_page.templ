@@ -2,11 +2,11 @@ package table
 
 import "CommonTable/internal/templates/admin/adminshared"
 
-templ TablesPage(tables []adminshared.TableView) {
-	@adminshared.Layout("Tables", tablesPageContent(tables))
+templ TablesPage(tables []adminshared.TableView, restaurants []adminshared.RestaurantOptionView, selectedRestaurantID int32) {
+	@adminshared.Layout("Tables", tablesPageContent(tables, restaurants, selectedRestaurantID))
 }
 
-templ tablesPageContent(tables []adminshared.TableView) {
+templ tablesPageContent(tables []adminshared.TableView, restaurants []adminshared.RestaurantOptionView, selectedRestaurantID int32) {
 	<main class="flex-1 p-6 gms-content-bg gms-main-text">
 		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
 			<h2 class="text-2xl font-bold gms-main-text">Tables</h2>
@@ -15,29 +15,45 @@ templ tablesPageContent(tables []adminshared.TableView) {
 			</a>
 		</div>
 
+		<form method="GET" action="/admin/tables" class="mb-6 flex items-center gap-2">
+			<label class="text-sm font-medium">View occupancy for:</label>
+			<select name="restaurant_id" onchange="this.form.submit()" class="p-2 border gms-border-medium rounded-md">
+				<option value="">— All restaurants (global) —</option>
+				for _, r := range restaurants {
+					<option value={ adminshared.Itoa(r.ID) } selected?={ r.ID == selectedRestaurantID }>{ r.Name }</option>
+				}
+			</select>
+		</form>
+
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			for _, t := range tables {
-				<div class="border gms-border-medium rounded-lg shadow p-4">
+				<div class={ "border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", t.IsDeleted) }>
 					<div class="flex justify-between items-start">
 						<h3 class="text-lg font-bold gms-main-text">Table { adminshared.Itoa(t.Number) }</h3>
-						<span class="px-2 py-0.5 text-xs font-bold rounded uppercase bg-gray-200 text-gray-800">{ t.Status }</span>
+						if t.IsDeleted {
+							<span class="px-2 py-0.5 text-xs font-bold rounded bg-red-600 text-white">DELETED</span>
+						} else {
+							<span class={ "px-2 py-0.5 text-xs font-bold rounded", templ.KV("bg-red-600 text-white", t.OccupiedByRestaurant), templ.KV("bg-green-600 text-white", !t.OccupiedByRestaurant) }>
+								{ occupiedLabel(t.OccupiedByRestaurant) }
+							</span>
+						}
 					</div>
 					<p class="text-sm gms-main-text">Capacity: { adminshared.Itoa(t.Capacity) }</p>
 					if t.Section != "" {
 						<p class="text-sm gms-main-text">Section: { t.Section }</p>
 					}
 					<div class="flex gap-2 mt-3">
-                    	if t.IsDeleted {
-                    		<form method="POST" action={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/restore") }>
-                    			<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">Restore</button>
-                    		</form>
-                    	} else {
-                    		<a href={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Edit</a>
-                    		<form method="POST" action={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/delete") } onsubmit="return confirm('Delete this table?');">
-                    			<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Delete</button>
-                    		</form>
-                    	}
-                    </div>
+						if t.IsDeleted {
+							<form method="POST" action={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/restore") }>
+								<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">Restore</button>
+							</form>
+						} else {
+							<a href={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Edit</a>
+							<form method="POST" action={ templ.URL("/admin/tables/" + adminshared.Itoa(t.ID) + "/delete") } onsubmit="return confirm('Delete this table?');">
+								<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Delete</button>
+							</form>
+						}
+					</div>
 				</div>
 			}
 			if len(tables) == 0 {
@@ -45,4 +61,11 @@ templ tablesPageContent(tables []adminshared.TableView) {
 			}
 		</div>
 	</main>
+}
+
+func occupiedLabel(occupied bool) string {
+	if occupied {
+		return "OCCUPIED"
+	}
+	return "FREE"
 }

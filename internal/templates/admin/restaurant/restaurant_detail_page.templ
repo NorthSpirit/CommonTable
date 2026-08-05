@@ -33,5 +33,8 @@ templ restaurantDetailContent(restaurant adminshared.RestaurantView) {
         <a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/orders") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2">
         	View Orders
         </a>
+        <a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/table-status") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2">
+        	Table Status
+        </a>
 	</main>
 }

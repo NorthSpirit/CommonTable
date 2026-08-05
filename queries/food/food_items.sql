@@ -103,3 +103,13 @@ FROM food_items fi
          JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
 WHERE fitm.menu_id = $1 AND fi.deleted_at IS NULL
 ORDER BY fi.name;
+
+-- name: SearchFoodItemsForWaiter :many
+SELECT DISTINCT fi.id, fi.name, fi.description, fi.price, fi.image_url, fi.is_available
+FROM food_items fi
+         JOIN food_item_to_menu fitm ON fitm.item_id = fi.id
+         JOIN food_menu fm ON fm.id = fitm.menu_id
+WHERE fm.restaurant_id = $1
+  AND fi.deleted_at IS NULL
+  AND fi.name ILIKE '%' || $2 || '%'
+ORDER BY fi.name;

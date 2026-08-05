@@ -19,7 +19,7 @@ RETURNING id, restaurant_id, table_id, waiter_id, order_creation_date, order_sta
 
 type CreateFoodOrderParams struct {
 	RestaurantID      int32            `json:"restaurant_id"`
-	TableID           int32            `json:"table_id"`
+	TableID           pgtype.Int4      `json:"table_id"`
 	WaiterID          int32            `json:"waiter_id"`
 	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
 	OrderStatus       OrderStatus      `json:"order_status"`
@@ -60,7 +60,7 @@ RETURNING id, restaurant_id, table_id, waiter_id, order_creation_date, order_sta
 
 type CreateFoodOrderWithIdempotencyKeyParams struct {
 	RestaurantID      int32            `json:"restaurant_id"`
-	TableID           int32            `json:"table_id"`
+	TableID           pgtype.Int4      `json:"table_id"`
 	WaiterID          int32            `json:"waiter_id"`
 	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
 	OrderStatus       OrderStatus      `json:"order_status"`
@@ -113,8 +113,8 @@ LIMIT 1
 `
 
 type GetActiveOrderForTableParams struct {
-	TableID      int32 `json:"table_id"`
-	RestaurantID int32 `json:"restaurant_id"`
+	TableID      pgtype.Int4 `json:"table_id"`
+	RestaurantID int32       `json:"restaurant_id"`
 }
 
 func (q *Queries) GetActiveOrderForTable(ctx context.Context, arg GetActiveOrderForTableParams) (FoodOrder, error) {
@@ -196,7 +196,7 @@ func (q *Queries) GetOrderByIdempotencyKey(ctx context.Context, idempotencyKey p
 const getOrderForAdmin = `-- name: GetOrderForAdmin :one
 SELECT fo.id, fo.restaurant_id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number, e.name AS waiter_name
 FROM food_orders fo
-         JOIN tables t ON t.id = fo.table_id
+         LEFT JOIN tables t ON t.id = fo.table_id
          JOIN employee e ON e.id = fo.waiter_id
 WHERE fo.id = $1
 `
@@ -208,7 +208,7 @@ type GetOrderForAdminRow struct {
 	OrderStatus       OrderStatus      `json:"order_status"`
 	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
 	Notes             pgtype.Text      `json:"notes"`
-	TableNumber       int32            `json:"table_number"`
+	TableNumber       pgtype.Int4      `json:"table_number"`
 	WaiterName        string           `json:"waiter_name"`
 }
 
@@ -231,7 +231,7 @@ func (q *Queries) GetOrderForAdmin(ctx context.Context, id int32) (GetOrderForAd
 const listActiveOrdersByRestaurantForKitchen = `-- name: ListActiveOrdersByRestaurantForKitchen :many
 SELECT fo.id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number
 FROM food_orders fo
-         JOIN tables t ON t.id = fo.table_id
+         LEFT JOIN tables t ON t.id = fo.table_id
 WHERE fo.restaurant_id = $1 AND fo.order_status NOT IN ('delivered', 'cancelled')
 ORDER BY fo.order_creation_date
 `
@@ -242,7 +242,7 @@ type ListActiveOrdersByRestaurantForKitchenRow struct {
 	OrderStatus       OrderStatus      `json:"order_status"`
 	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
 	Notes             pgtype.Text      `json:"notes"`
-	TableNumber       int32            `json:"table_number"`
+	TableNumber       pgtype.Int4      `json:"table_number"`
 }
 
 func (q *Queries) ListActiveOrdersByRestaurantForKitchen(ctx context.Context, restaurantID int32) ([]ListActiveOrdersByRestaurantForKitchenRow, error) {
@@ -254,6 +254,50 @@ func (q *Queries) ListActiveOrdersByRestaurantForKitchen(ctx context.Context, re
 	var items []ListActiveOrdersByRestaurantForKitchenRow
 	for rows.Next() {
 		var i ListActiveOrdersByRestaurantForKitchenRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.OrderNumber,
+			&i.OrderStatus,
+			&i.OrderCreationDate,
+			&i.Notes,
+			&i.TableNumber,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listActiveOrdersByWaiter = `-- name: ListActiveOrdersByWaiter :many
+SELECT fo.id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number
+FROM food_orders fo
+         LEFT JOIN tables t ON t.id = fo.table_id
+WHERE fo.waiter_id = $1 AND fo.order_status NOT IN ('delivered', 'cancelled')
+ORDER BY fo.order_creation_date
+`
+
+type ListActiveOrdersByWaiterRow struct {
+	ID                int32            `json:"id"`
+	OrderNumber       int32            `json:"order_number"`
+	OrderStatus       OrderStatus      `json:"order_status"`
+	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
+	Notes             pgtype.Text      `json:"notes"`
+	TableNumber       pgtype.Int4      `json:"table_number"`
+}
+
+func (q *Queries) ListActiveOrdersByWaiter(ctx context.Context, waiterID int32) ([]ListActiveOrdersByWaiterRow, error) {
+	rows, err := q.db.Query(ctx, listActiveOrdersByWaiter, waiterID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListActiveOrdersByWaiterRow
+	for rows.Next() {
+		var i ListActiveOrdersByWaiterRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.OrderNumber,
@@ -311,7 +355,7 @@ func (q *Queries) ListOrdersByRestaurant(ctx context.Context, restaurantID int32
 const listOrdersByRestaurantForAdmin = `-- name: ListOrdersByRestaurantForAdmin :many
 SELECT fo.id, fo.order_number, fo.order_status, fo.order_creation_date, fo.notes, t.number AS table_number, e.name AS waiter_name
 FROM food_orders fo
-         JOIN tables t ON t.id = fo.table_id
+         LEFT JOIN tables t ON t.id = fo.table_id
          JOIN employee e ON e.id = fo.waiter_id
 WHERE fo.restaurant_id = $1
 ORDER BY fo.order_creation_date DESC
@@ -323,7 +367,7 @@ type ListOrdersByRestaurantForAdminRow struct {
 	OrderStatus       OrderStatus      `json:"order_status"`
 	OrderCreationDate pgtype.Timestamp `json:"order_creation_date"`
 	Notes             pgtype.Text      `json:"notes"`
-	TableNumber       int32            `json:"table_number"`
+	TableNumber       pgtype.Int4      `json:"table_number"`
 	WaiterName        string           `json:"waiter_name"`
 }
 
@@ -402,7 +446,7 @@ WHERE table_id = $1
 ORDER BY order_creation_date DESC
 `
 
-func (q *Queries) ListOrdersByTable(ctx context.Context, tableID int32) ([]FoodOrder, error) {
+func (q *Queries) ListOrdersByTable(ctx context.Context, tableID pgtype.Int4) ([]FoodOrder, error) {
 	rows, err := q.db.Query(ctx, listOrdersByTable, tableID)
 	if err != nil {
 		return nil, err

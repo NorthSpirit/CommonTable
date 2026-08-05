@@ -18,9 +18,10 @@ type AdminHandlers struct {
 	Allergen       *admin.AllergenHandler
 	Employee       *admin.EmployeeHandler
 	Table          *admin.TableHandler
-	ChangePassword *admin.ChangePasswordHandler
-	Chat           *admin.ChatHandler
 	Order          *admin.OrderHandler
+	TableStatus    *admin.TableStatusHandler
+	Chat           *admin.ChatHandler
+	ChangePassword *admin.ChangePasswordHandler
 }
 
 func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservices.AdminService) {
@@ -44,20 +45,12 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Get("/{id}", h.Restaurant.Detail)
 				r.Get("/{id}/chat", h.Chat.Page)
 				r.Get("/{id}/chat/messages", h.Chat.Poll)
+				r.Get("/{id}/table-status", h.TableStatus.Page)
 				r.Get("/{id}/edit", h.Restaurant.EditForm)
 				r.Post("/{id}/edit", h.Restaurant.Update)
 				r.Get("/{id}/delete", h.Restaurant.DeleteConfirm)
 				r.Post("/{id}/delete", h.Restaurant.Delete)
 				r.Post("/{id}/restore", h.Restaurant.Restore)
-
-				r.Get("/{id}/orders", h.Order.List)
-				r.Get("/{id}/orders/{orderID}", h.Order.Detail)
-				r.Post("/{id}/orders/{orderID}", h.Order.Update)
-				r.Post("/{id}/orders/{orderID}/payments/{paymentID}", h.Order.UpdatePaymentStatus)
-				r.Post("/{id}/orders/{orderID}/items/{itemOrderID}/delete", h.Order.RemoveItem)
-				r.Post("/{id}/orders/{orderID}/items/{itemOrderID}/edit", h.Order.UpdateItemQuantity)
-				r.Get("/{id}/orders/new", h.Order.NewForm)
-				r.Post("/{id}/orders/new", h.Order.Create)
 
 				r.Route("/{id}/menus", func(r chi.Router) {
 					r.Get("/", h.Menu.List)
@@ -85,6 +78,17 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 					r.Get("/{employeeID}/edit", h.Employee.EditForm)
 					r.Post("/{employeeID}/edit", h.Employee.Update)
 					r.Post("/{employeeID}/toggle-active", h.Employee.ToggleActive)
+				})
+
+				r.Route("/{id}/orders", func(r chi.Router) {
+					r.Get("/", h.Order.List)
+					r.Get("/new", h.Order.NewForm)
+					r.Post("/new", h.Order.Create)
+					r.Get("/{orderID}", h.Order.Detail)
+					r.Post("/{orderID}", h.Order.Update)
+					r.Post("/{orderID}/payments/{paymentID}", h.Order.UpdatePaymentStatus)
+					r.Post("/{orderID}/items/{itemOrderID}/delete", h.Order.RemoveItem)
+					r.Post("/{orderID}/items/{itemOrderID}/edit", h.Order.UpdateItemQuantity)
 				})
 			})
 
@@ -117,7 +121,6 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Post("/{id}/delete", h.Table.Delete)
 				r.Post("/{id}/restore", h.Table.Restore)
 			})
-
 		})
 	})
 }

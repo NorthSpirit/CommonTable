@@ -36,3 +36,5 @@ assets/downloads/*.apk
 # Flutter build output (if waiter_app/ lives inside this repo)
 waiter_app/build/
 waiter_app/.dart_tool/
+
+logs/

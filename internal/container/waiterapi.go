@@ -15,5 +15,6 @@ func NewWaiterAPIHandlers(s *Services, pool *pgxpool.Pool) httpserver.WaiterAPIH
 		QuickItems: waiterapi.NewQuickItemsHandler(s.WaiterQuickItem),
 		Chat:       waiterapi.NewChatHandler(s.ChatMessage),
 		Order:      waiterapi.NewOrderHandler(pool, s.FoodOrder, s.ItemOrder, s.FoodItem),
+		Table:      waiterapi.NewTableHandler(s.Table),
 	}
 }

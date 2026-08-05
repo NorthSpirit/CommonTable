@@ -41,11 +41,10 @@ func (s *FoodOrderService) ListOrdersByRestaurant(ctx context.Context, restauran
 }
 
 func (s *FoodOrderService) ListOrdersByTable(ctx context.Context, tableID int32) ([]repository.FoodOrder, error) {
-	orders, err := s.queries.ListOrdersByTable(ctx, tableID)
+	orders, err := s.queries.ListOrdersByTable(ctx, pgtype.Int4{Int32: tableID, Valid: true})
 	if err != nil {
 		return nil, fmt.Errorf("list orders by table: %w", err)
 	}
-
 	return orders, nil
 }
 
@@ -79,7 +78,7 @@ func (s *FoodOrderService) CreateFoodOrder(
 
 	order, err := s.queries.CreateFoodOrder(ctx, repository.CreateFoodOrderParams{
 		RestaurantID:      restaurantID,
-		TableID:           tableID,
+		TableID:           pgtype.Int4{Int32: tableID, Valid: true},
 		WaiterID:          waiterID,
 		OrderCreationDate: pgtype.Timestamp{Time: orderCreationDate, Valid: true},
 		OrderStatus:       orderStatus,
@@ -150,38 +149,18 @@ func (s *FoodOrderService) GetOrderForAdmin(ctx context.Context, id int32) (repo
 	return order, nil
 }
 
+func (s *FoodOrderService) ListActiveOrdersByWaiter(ctx context.Context, waiterID int32) ([]repository.ListActiveOrdersByWaiterRow, error) {
+	orders, err := s.queries.ListActiveOrdersByWaiter(ctx, waiterID)
+	if err != nil {
+		return nil, fmt.Errorf("list active orders by waiter: %w", err)
+	}
+	return orders, nil
+}
+
 func (s *FoodOrderService) GetOrderByIdempotencyKey(ctx context.Context, key string) (repository.FoodOrder, error) {
 	order, err := s.queries.GetOrderByIdempotencyKey(ctx, helpers.TextFromString(&key))
 	if err != nil {
 		return repository.FoodOrder{}, fmt.Errorf("get order by idempotency key: %w", err)
-	}
-	return order, nil
-}
-
-func (s *FoodOrderService) CreateFoodOrderWithIdempotencyKey(
-	ctx context.Context,
-	restaurantID int32,
-	tableID int32,
-	waiterID int32,
-	orderCreationDate time.Time,
-	orderStatus repository.OrderStatus,
-	orderNumber int32,
-	notes *string,
-	idempotencyKey string,
-) (repository.FoodOrder, error) {
-
-	order, err := s.queries.CreateFoodOrderWithIdempotencyKey(ctx, repository.CreateFoodOrderWithIdempotencyKeyParams{
-		RestaurantID:      restaurantID,
-		TableID:           tableID,
-		WaiterID:          waiterID,
-		OrderCreationDate: pgtype.Timestamp{Time: orderCreationDate, Valid: true},
-		OrderStatus:       orderStatus,
-		OrderNumber:       orderNumber,
-		Notes:             helpers.TextFromString(notes),
-		IdempotencyKey:    helpers.TextFromString(&idempotencyKey),
-	})
-	if err != nil {
-		return repository.FoodOrder{}, fmt.Errorf("create food order with idempotency key: %w", err)
 	}
 	return order, nil
 }
@@ -194,14 +173,20 @@ func (s *FoodOrderService) GetNextOrderNumberForToday(ctx context.Context, resta
 	return next, nil
 }
 
-// GetActiveOrderForTable returns the currently open order for a table, if
-// any (order_status not in delivered/cancelled). Returns pgx.ErrNoRows
-// (wrapped) if the table has no open order — callers should check with
-// errors.Is(err, pgx.ErrNoRows) to distinguish "no active order" (normal)
-// from a real failure.
+// GetActiveOrderForTable returns the currently open order for a table at
+// a specific restaurant, if any (order_status not in delivered/cancelled).
+// Scoped by both table and restaurant, since the food-hall model allows
+// different restaurants to have independent open orders at the same
+// physical table simultaneously.
+//
+// Returns pgx.ErrNoRows (wrapped) if there's no open order — callers
+// should check with errors.Is(err, pgx.ErrNoRows) to distinguish "no
+// active order" (normal) from a real failure. Never called for takeout
+// orders (no table), since takeout orders are always independent and
+// must never be merged together.
 func (s *FoodOrderService) GetActiveOrderForTable(ctx context.Context, tableID int32, restaurantID int32) (repository.FoodOrder, error) {
 	order, err := s.queries.GetActiveOrderForTable(ctx, repository.GetActiveOrderForTableParams{
-		TableID:      tableID,
+		TableID:      pgtype.Int4{Int32: tableID, Valid: true},
 		RestaurantID: restaurantID,
 	})
 	if err != nil {
@@ -220,11 +205,13 @@ type OrderLine struct {
 // atomic transaction — if any item fails to insert, the whole order rolls
 // back rather than reaching the kitchen incomplete. Used by both the
 // waiter API and admin's manual order-creation screen.
+//
+// tableID is nil for takeout orders (no table assigned).
 func (s *FoodOrderService) CreateOrderWithItemsAtomic(
 	ctx context.Context,
 	pool *pgxpool.Pool,
 	restaurantID int32,
-	tableID int32,
+	tableID *int32,
 	waiterID int32,
 	orderNumber int32,
 	notes *string,
@@ -240,9 +227,14 @@ func (s *FoodOrderService) CreateOrderWithItemsAtomic(
 
 	q := repository.New(tx)
 
+	var tableIDParam pgtype.Int4
+	if tableID != nil {
+		tableIDParam = pgtype.Int4{Int32: *tableID, Valid: true}
+	}
+
 	order, err := q.CreateFoodOrderWithIdempotencyKey(ctx, repository.CreateFoodOrderWithIdempotencyKeyParams{
 		RestaurantID:      restaurantID,
-		TableID:           tableID,
+		TableID:           tableIDParam,
 		WaiterID:          waiterID,
 		OrderCreationDate: pgtype.Timestamp{Time: time.Now(), Valid: true},
 		OrderStatus:       repository.OrderStatusPending,
@@ -291,6 +283,10 @@ func (s *FoodOrderService) CreateOrderWithItemsAtomic(
 // atomic transaction. Idempotency is tracked via the dedicated
 // idempotency_keys table (not food_orders), since an append isn't itself
 // an order row — this avoids polluting food_orders with marker rows.
+//
+// Only ever called for table orders — takeout orders have no shared
+// identity to append to, so each takeout submission always creates a new
+// order via CreateOrderWithItemsAtomic instead.
 func (s *FoodOrderService) AppendItemsToOrderAtomic(
 	ctx context.Context,
 	pool *pgxpool.Pool,
@@ -344,4 +340,12 @@ func (s *FoodOrderService) AppendItemsToOrderAtomic(
 	}
 
 	return tx.Commit(ctx)
+}
+
+func (s *FoodOrderService) ListTablesWithGlobalOrderStatus(ctx context.Context) ([]repository.ListTablesWithGlobalOrderStatusRow, error) {
+	tables, err := s.queries.ListTablesWithGlobalOrderStatus(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list tables with global order status: %w", err)
+	}
+	return tables, nil
 }

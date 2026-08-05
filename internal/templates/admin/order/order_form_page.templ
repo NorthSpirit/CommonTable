@@ -24,6 +24,7 @@ templ orderFormContent(restaurantID int32, tables []adminshared.TableOptionView,
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Table</span>
 					<select name="table_id" required class="p-2 border gms-border-medium rounded-md w-full">
+						<option value="0">Take-Out (no table)</option>
 						for _, t := range tables {
 							<option value={ adminshared.Itoa(t.ID) }>Table { adminshared.Itoa(t.Number) }</option>
 						}

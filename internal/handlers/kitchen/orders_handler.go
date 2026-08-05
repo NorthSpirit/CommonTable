@@ -72,10 +72,15 @@ func (h *OrdersHandler) buildBoard(r *http.Request) ([]kitchen.KitchenOrderView,
 			notes = o.Notes.String
 		}
 
+		tableNumber := int32(0)
+		if o.TableNumber.Valid {
+			tableNumber = o.TableNumber.Int32
+		}
+
 		views = append(views, kitchen.KitchenOrderView{
 			ID:              o.ID,
 			OrderNumber:     o.OrderNumber,
-			TableNumber:     o.TableNumber,
+			TableNumber:     tableNumber,
 			Status:          string(o.OrderStatus),
 			NextStatus:      string(next),
 			NextStatusLabel: label,

@@ -1,0 +1,1 @@
+Correct name for waiter app is "waiter_app"

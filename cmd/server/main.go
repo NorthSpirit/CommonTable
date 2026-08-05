@@ -10,6 +10,7 @@ import (
 	"CommonTable/internal/discovery"
 	"CommonTable/internal/handlers/hub"
 	"CommonTable/internal/httpserver"
+	"CommonTable/internal/logging"
 	"CommonTable/internal/repository"
 	"CommonTable/internal/templates/shared"
 
@@ -21,6 +22,12 @@ import (
 const httpPort = ":41241"
 
 func main() {
+	logWriter, logFile, err := logging.Setup("./logs")
+	if err != nil {
+		log.Fatalf("failed to set up logging: %v", err)
+	}
+	defer logFile.Close()
+
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("load config: %v", err)
@@ -56,7 +63,10 @@ func main() {
 	hubHandler := hub.NewHubHandler()
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	r.Use(middleware.RequestLogger(&middleware.DefaultLogFormatter{
+		Logger:  log.New(logWriter, "", log.LstdFlags),
+		NoColor: true,
+	}))
 
 	httpserver.RegisterCustomerRoutes(r, customerHandlers)
 	httpserver.RegisterAdminRoutes(r, adminHandlers, services.Admin)

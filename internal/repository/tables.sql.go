@@ -160,6 +160,141 @@ func (q *Queries) ListTablesForAdmin(ctx context.Context) ([]Table, error) {
 	return items, nil
 }
 
+const listTablesWithActiveOrderFlag = `-- name: ListTablesWithActiveOrderFlag :many
+SELECT t.id, t.number, t.capacity, t.status,
+       EXISTS (
+           SELECT 1 FROM food_orders fo
+           WHERE fo.table_id = t.id AND fo.restaurant_id = $1 AND fo.order_status NOT IN ('delivered', 'cancelled')
+       ) AS has_active_order
+FROM tables t
+WHERE t.deleted_at IS NULL
+ORDER BY t.number
+`
+
+type ListTablesWithActiveOrderFlagRow struct {
+	ID             int32       `json:"id"`
+	Number         int32       `json:"number"`
+	Capacity       int32       `json:"capacity"`
+	Status         TableStatus `json:"status"`
+	HasActiveOrder bool        `json:"has_active_order"`
+}
+
+func (q *Queries) ListTablesWithActiveOrderFlag(ctx context.Context, restaurantID int32) ([]ListTablesWithActiveOrderFlagRow, error) {
+	rows, err := q.db.Query(ctx, listTablesWithActiveOrderFlag, restaurantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListTablesWithActiveOrderFlagRow
+	for rows.Next() {
+		var i ListTablesWithActiveOrderFlagRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Number,
+			&i.Capacity,
+			&i.Status,
+			&i.HasActiveOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTablesWithGlobalOrderStatus = `-- name: ListTablesWithGlobalOrderStatus :many
+SELECT t.id, t.number, t.capacity, t.status,
+       EXISTS (
+           SELECT 1 FROM food_orders fo
+           WHERE fo.table_id = t.id AND fo.order_status NOT IN ('delivered', 'cancelled')
+       ) AS occupied_by_any_restaurant
+FROM tables t
+WHERE t.deleted_at IS NULL
+ORDER BY t.number
+`
+
+type ListTablesWithGlobalOrderStatusRow struct {
+	ID                      int32       `json:"id"`
+	Number                  int32       `json:"number"`
+	Capacity                int32       `json:"capacity"`
+	Status                  TableStatus `json:"status"`
+	OccupiedByAnyRestaurant bool        `json:"occupied_by_any_restaurant"`
+}
+
+func (q *Queries) ListTablesWithGlobalOrderStatus(ctx context.Context) ([]ListTablesWithGlobalOrderStatusRow, error) {
+	rows, err := q.db.Query(ctx, listTablesWithGlobalOrderStatus)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListTablesWithGlobalOrderStatusRow
+	for rows.Next() {
+		var i ListTablesWithGlobalOrderStatusRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Number,
+			&i.Capacity,
+			&i.Status,
+			&i.OccupiedByAnyRestaurant,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTablesWithOrderStatusForRestaurant = `-- name: ListTablesWithOrderStatusForRestaurant :many
+SELECT t.id, t.number, t.capacity, t.status,
+       EXISTS (
+           SELECT 1 FROM food_orders fo
+           WHERE fo.table_id = t.id AND fo.restaurant_id = $1 AND fo.order_status NOT IN ('delivered', 'cancelled')
+       ) AS occupied_by_restaurant
+FROM tables t
+WHERE t.deleted_at IS NULL
+ORDER BY t.number
+`
+
+type ListTablesWithOrderStatusForRestaurantRow struct {
+	ID                   int32       `json:"id"`
+	Number               int32       `json:"number"`
+	Capacity             int32       `json:"capacity"`
+	Status               TableStatus `json:"status"`
+	OccupiedByRestaurant bool        `json:"occupied_by_restaurant"`
+}
+
+func (q *Queries) ListTablesWithOrderStatusForRestaurant(ctx context.Context, restaurantID int32) ([]ListTablesWithOrderStatusForRestaurantRow, error) {
+	rows, err := q.db.Query(ctx, listTablesWithOrderStatusForRestaurant, restaurantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListTablesWithOrderStatusForRestaurantRow
+	for rows.Next() {
+		var i ListTablesWithOrderStatusForRestaurantRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Number,
+			&i.Capacity,
+			&i.Status,
+			&i.OccupiedByRestaurant,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const restoreTable = `-- name: RestoreTable :exec
 UPDATE tables
 SET deleted_at = NULL

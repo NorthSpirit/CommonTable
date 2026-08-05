@@ -1,9 +1,6 @@
 package admin
 
 import (
-	"CommonTable/internal/services/foodrelationshipservices"
-	"CommonTable/internal/services/foodservices"
-	"CommonTable/internal/services/restaurantservices"
 	"errors"
 	"fmt"
 	"net/http"
@@ -14,6 +11,9 @@ import (
 	"CommonTable/internal/helpers"
 	"CommonTable/internal/repository"
 	"CommonTable/internal/services/foodorderservices"
+	"CommonTable/internal/services/foodrelationshipservices"
+	"CommonTable/internal/services/foodservices"
+	"CommonTable/internal/services/restaurantservices"
 	"CommonTable/internal/templates/admin/adminshared"
 	"CommonTable/internal/templates/admin/order"
 
@@ -23,14 +23,15 @@ import (
 )
 
 type OrderHandler struct {
-	pool             *pgxpool.Pool
-	foodOrderService *foodorderservices.FoodOrderService
-	itemOrderService *foodorderservices.ItemOrderService
-	paymentService   *foodorderservices.PaymentService
-	tableService     *foodorderservices.TableService
-	employeeService  *restaurantservices.EmployeeService
-	foodMenuService  *foodservices.FoodMenuService
-	itemMenuService  *foodrelationshipservices.ItemMenuService
+	pool              *pgxpool.Pool
+	foodOrderService  *foodorderservices.FoodOrderService
+	itemOrderService  *foodorderservices.ItemOrderService
+	paymentService    *foodorderservices.PaymentService
+	tableService      *foodorderservices.TableService
+	employeeService   *restaurantservices.EmployeeService
+	restaurantService *restaurantservices.RestaurantService
+	foodMenuService   *foodservices.FoodMenuService
+	itemMenuService   *foodrelationshipservices.ItemMenuService
 }
 
 func NewOrderHandler(
@@ -40,13 +41,14 @@ func NewOrderHandler(
 	paymentService *foodorderservices.PaymentService,
 	tableService *foodorderservices.TableService,
 	employeeService *restaurantservices.EmployeeService,
+	restaurantService *restaurantservices.RestaurantService,
 	foodMenuService *foodservices.FoodMenuService,
 	itemMenuService *foodrelationshipservices.ItemMenuService,
 ) *OrderHandler {
 	return &OrderHandler{
 		pool: pool, foodOrderService: foodOrderService, itemOrderService: itemOrderService,
 		paymentService: paymentService, tableService: tableService, employeeService: employeeService,
-		foodMenuService: foodMenuService, itemMenuService: itemMenuService,
+		restaurantService: restaurantService, foodMenuService: foodMenuService, itemMenuService: itemMenuService,
 	}
 }
 
@@ -58,6 +60,12 @@ func (h *OrderHandler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	restaurant, err := h.restaurantService.GetRestaurantByID(r.Context(), int32(restaurantID))
+	if err != nil {
+		http.Error(w, "failed to load restaurant", http.StatusInternalServerError)
+		return
+	}
+
 	orders, err := h.foodOrderService.ListOrdersByRestaurantForAdmin(r.Context(), int32(restaurantID))
 	if err != nil {
 		http.Error(w, "failed to load orders", http.StatusInternalServerError)
@@ -66,17 +74,22 @@ func (h *OrderHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	views := make([]adminshared.OrderListItemView, 0, len(orders))
 	for _, o := range orders {
+		tableNumber := int32(0)
+		if o.TableNumber.Valid {
+			tableNumber = o.TableNumber.Int32
+		}
+
 		views = append(views, adminshared.OrderListItemView{
 			ID:          o.ID,
 			OrderNumber: o.OrderNumber,
-			TableNumber: o.TableNumber,
+			TableNumber: tableNumber,
 			WaiterName:  o.WaiterName,
 			Status:      string(o.OrderStatus),
 			CreatedAt:   helpers.FormatSentAt(o.OrderCreationDate),
 		})
 	}
 
-	if err := order.OrdersPage(int32(restaurantID), "", views).Render(r.Context(), w); err != nil {
+	if err := order.OrdersPage(int32(restaurantID), restaurant.Name, views).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
@@ -128,10 +141,15 @@ func (h *OrderHandler) buildDetailView(r *http.Request, orderID int32) (adminsha
 		notes = o.Notes.String
 	}
 
+	tableNumber := int32(0)
+	if o.TableNumber.Valid {
+		tableNumber = o.TableNumber.Int32
+	}
+
 	return adminshared.OrderDetailView{
 		ID:          o.ID,
 		OrderNumber: o.OrderNumber,
-		TableNumber: o.TableNumber,
+		TableNumber: tableNumber,
 		WaiterName:  o.WaiterName,
 		Status:      string(o.OrderStatus),
 		CreatedAt:   helpers.FormatSentAt(o.OrderCreationDate),
@@ -234,28 +252,19 @@ func (h *OrderHandler) UpdatePaymentStatus(w http.ResponseWriter, r *http.Reques
 	http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/orders/"+strconv.Itoa(orderID), http.StatusFound)
 }
 
-// NewForm handles GET /admin/restaurants/{id}/orders/new
-func (h *OrderHandler) NewForm(w http.ResponseWriter, r *http.Request) {
-	restaurantID, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil {
-		http.Error(w, "invalid restaurant id", http.StatusBadRequest)
-		return
-	}
-
+func (h *OrderHandler) loadFormOptions(r *http.Request, restaurantID int32) ([]adminshared.TableOptionView, []adminshared.EmployeeOptionView, []adminshared.MenuItemOptionView, error) {
 	tables, err := h.tableService.ListTables(r.Context())
 	if err != nil {
-		http.Error(w, "failed to load tables", http.StatusInternalServerError)
-		return
+		return nil, nil, nil, err
 	}
 	tableOptions := make([]adminshared.TableOptionView, 0, len(tables))
 	for _, t := range tables {
 		tableOptions = append(tableOptions, adminshared.TableOptionView{ID: t.ID, Number: t.Number})
 	}
 
-	employees, err := h.employeeService.ListActiveEmployeesByRestaurant(r.Context(), int32(restaurantID))
+	employees, err := h.employeeService.ListActiveEmployeesByRestaurant(r.Context(), restaurantID)
 	if err != nil {
-		http.Error(w, "failed to load employees", http.StatusInternalServerError)
-		return
+		return nil, nil, nil, err
 	}
 	waiterOptions := make([]adminshared.EmployeeOptionView, 0)
 	for _, e := range employees {
@@ -264,10 +273,9 @@ func (h *OrderHandler) NewForm(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	menus, err := h.foodMenuService.ListFoodMenusByRestaurant(r.Context(), int32(restaurantID))
+	menus, err := h.foodMenuService.ListFoodMenusByRestaurant(r.Context(), restaurantID)
 	if err != nil {
-		http.Error(w, "failed to load menus", http.StatusInternalServerError)
-		return
+		return nil, nil, nil, err
 	}
 	itemOptions := make([]adminshared.MenuItemOptionView, 0)
 	seen := map[int32]bool{}
@@ -289,12 +297,34 @@ func (h *OrderHandler) NewForm(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	return tableOptions, waiterOptions, itemOptions, nil
+}
+
+// NewForm handles GET /admin/restaurants/{id}/orders/new
+func (h *OrderHandler) NewForm(w http.ResponseWriter, r *http.Request) {
+	restaurantID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "invalid restaurant id", http.StatusBadRequest)
+		return
+	}
+
+	tableOptions, waiterOptions, itemOptions, err := h.loadFormOptions(r, int32(restaurantID))
+	if err != nil {
+		http.Error(w, "failed to load form options", http.StatusInternalServerError)
+		return
+	}
+
 	if err := order.OrderFormPage(int32(restaurantID), tableOptions, waiterOptions, itemOptions, "").Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
 
 // Create handles POST /admin/restaurants/{id}/orders/new
+//
+// table_id of "0" from the form means Take-Out (no table) — see
+// order_form_page.templ's dropdown. A takeout order is never merged
+// into an existing one, since multiple unrelated customers could be
+// ordering takeout at the same time.
 func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 	restaurantID, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
@@ -307,14 +337,31 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tableID, err := strconv.Atoi(r.FormValue("table_id"))
+	renderFormError := func(message string) {
+		tableOptions, waiterOptions, itemOptions, loadErr := h.loadFormOptions(r, int32(restaurantID))
+		if loadErr != nil {
+			http.Error(w, "failed to load form options", http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		_ = order.OrderFormPage(int32(restaurantID), tableOptions, waiterOptions, itemOptions, message).Render(r.Context(), w)
+	}
+
+	tableIDRaw, err := strconv.Atoi(r.FormValue("table_id"))
 	if err != nil {
-		http.Error(w, "invalid table", http.StatusBadRequest)
+		renderFormError("Invalid table selection.")
 		return
 	}
+
+	var tableIDPtr *int32
+	if tableIDRaw != 0 {
+		v := int32(tableIDRaw)
+		tableIDPtr = &v
+	}
+
 	waiterID, err := strconv.Atoi(r.FormValue("waiter_id"))
 	if err != nil {
-		http.Error(w, "invalid waiter", http.StatusBadRequest)
+		renderFormError("Invalid waiter selection.")
 		return
 	}
 
@@ -336,27 +383,26 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(lines) == 0 {
-		http.Error(w, "at least one item with quantity above 0 is required", http.StatusBadRequest)
+		renderFormError("At least one item with quantity above 0 is required.")
 		return
 	}
 
 	idempotencyKey := fmt.Sprintf("admin-%d-%d", restaurantID, time.Now().UnixNano())
 
-	// Same table-merging behavior as the waiter app: if this table
-	// already has an open order, append to it instead of creating a
-	// second, separate bill.
-	activeOrder, activeErr := h.foodOrderService.GetActiveOrderForTable(r.Context(), int32(tableID), int32(restaurantID))
-	if activeErr == nil {
-		if err := h.foodOrderService.AppendItemsToOrderAtomic(r.Context(), h.pool, activeOrder.ID, idempotencyKey, lines); err != nil {
-			http.Error(w, "failed to add items to existing order", http.StatusInternalServerError)
+	if tableIDPtr != nil {
+		activeOrder, activeErr := h.foodOrderService.GetActiveOrderForTable(r.Context(), *tableIDPtr, int32(restaurantID))
+		if activeErr == nil {
+			if err := h.foodOrderService.AppendItemsToOrderAtomic(r.Context(), h.pool, activeOrder.ID, idempotencyKey, lines); err != nil {
+				http.Error(w, "failed to add items to existing order", http.StatusInternalServerError)
+				return
+			}
+			http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/orders", http.StatusFound)
 			return
 		}
-		http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/orders", http.StatusFound)
-		return
-	}
-	if !errors.Is(activeErr, pgx.ErrNoRows) {
-		http.Error(w, "failed to check for active order", http.StatusInternalServerError)
-		return
+		if !errors.Is(activeErr, pgx.ErrNoRows) {
+			http.Error(w, "failed to check for active order", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	notes := strPtrOrNil(r.FormValue("notes"))
@@ -368,7 +414,7 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = h.foodOrderService.CreateOrderWithItemsAtomic(
-		r.Context(), h.pool, int32(restaurantID), int32(tableID), int32(waiterID), orderNumber, notes, idempotencyKey, lines,
+		r.Context(), h.pool, int32(restaurantID), tableIDPtr, int32(waiterID), orderNumber, notes, idempotencyKey, lines,
 	)
 	if err != nil {
 		http.Error(w, "failed to create order", http.StatusInternalServerError)

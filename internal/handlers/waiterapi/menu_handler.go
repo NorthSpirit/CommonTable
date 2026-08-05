@@ -202,3 +202,46 @@ func (h *MenuHandler) ItemDetail(w http.ResponseWriter, r *http.Request) {
 		Allergens:    allergensOut,
 	})
 }
+
+// Search handles GET /api/waiter/search?q=...
+func (h *MenuHandler) Search(w http.ResponseWriter, r *http.Request) {
+	claims := claimsFromContext(r.Context())
+
+	query := r.URL.Query().Get("q")
+	if query == "" {
+		writeJSON(w, http.StatusOK, []menuItemJSON{})
+		return
+	}
+
+	items, err := h.foodItemService.SearchFoodItemsForWaiter(r.Context(), claims.RestaurantID, query)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "search failed")
+		return
+	}
+
+	out := make([]menuItemJSON, 0, len(items))
+	for _, item := range items {
+		description := ""
+		if item.Description.Valid {
+			description = item.Description.String
+		}
+		imageURL := ""
+		if item.ImageUrl.Valid {
+			imageURL = item.ImageUrl.String
+		}
+		price := 0.0
+		if p, err := helpers.NumericToFloat64(item.Price); err == nil && p != nil {
+			price = *p
+		}
+		out = append(out, menuItemJSON{
+			ID:          item.ID,
+			Name:        item.Name,
+			Description: description,
+			Price:       price,
+			ImageURL:    imageURL,
+			IsAvailable: item.IsAvailable,
+		})
+	}
+
+	writeJSON(w, http.StatusOK, out)
+}

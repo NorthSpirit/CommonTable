@@ -1,0 +1,31 @@
+package order
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+templ TableStatusPage(restaurantID int32, restaurantName string, tables []adminshared.TableStatusView) {
+	@adminshared.Layout(restaurantName+" - Table Status", tableStatusContent(tables))
+}
+
+templ tableStatusContent(tables []adminshared.TableStatusView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Table Status</h2>
+		<p class="text-center text-sm opacity-70 mb-6">Occupied/free from this restaurant's perspective — other restaurants sharing the same tables may see a different status.</p>
+
+		<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+			for _, t := range tables {
+				<div class={ "border-2 rounded-lg p-4 text-center", templ.KV("border-red-500 bg-red-50", t.Occupied), templ.KV("border-green-500 bg-green-50", !t.Occupied) }>
+					<p class="text-lg font-bold">Table { adminshared.Itoa(t.Number) }</p>
+					<p class="text-xs opacity-70">Capacity { adminshared.Itoa(t.Capacity) }</p>
+					<p class="text-sm font-bold mt-1">{ occupiedLabel(t.Occupied) }</p>
+				</div>
+			}
+		</div>
+	</main>
+}
+
+func occupiedLabel(occupied bool) string {
+	if occupied {
+		return "OCCUPIED"
+	}
+	return "FREE"
+}

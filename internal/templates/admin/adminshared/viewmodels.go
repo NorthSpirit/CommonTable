@@ -76,12 +76,18 @@ type EmployeeView struct {
 }
 
 type TableView struct {
-	ID        int32
-	Number    int32
-	Capacity  int32
-	Section   string
-	Status    string
-	IsDeleted bool
+	ID                   int32
+	Number               int32
+	Capacity             int32
+	Section              string
+	Status               string
+	IsDeleted            bool
+	OccupiedByRestaurant bool
+}
+
+type RestaurantOptionView struct {
+	ID   int32
+	Name string
 }
 
 type IngredientOptionView struct {
@@ -168,6 +174,13 @@ type MenuItemOptionView struct {
 	ID    int32
 	Name  string
 	Price float64
+}
+
+type TableStatusView struct {
+	ID       int32
+	Number   int32
+	Capacity int32
+	Occupied bool
 }
 
 func Itoa(id int32) string {

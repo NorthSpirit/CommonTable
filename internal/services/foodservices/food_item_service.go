@@ -6,6 +6,8 @@ import (
 
 	"CommonTable/internal/helpers"
 	"CommonTable/internal/repository"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type FoodItemService struct {
@@ -215,6 +217,17 @@ func (f *FoodItemService) ListMenuItemsForWaiter(ctx context.Context, menuID int
 	items, err := f.queries.ListMenuItemsForWaiter(ctx, menuID)
 	if err != nil {
 		return nil, fmt.Errorf("list menu items for waiter: %w", err)
+	}
+	return items, nil
+}
+
+func (f *FoodItemService) SearchFoodItemsForWaiter(ctx context.Context, restaurantID int32, query string) ([]repository.SearchFoodItemsForWaiterRow, error) {
+	items, err := f.queries.SearchFoodItemsForWaiter(ctx, repository.SearchFoodItemsForWaiterParams{
+		RestaurantID: restaurantID,
+		Column2:      pgtype.Text{String: query, Valid: true},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("search food items for waiter: %w", err)
 	}
 	return items, nil
 }
