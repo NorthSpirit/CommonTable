@@ -39,6 +39,7 @@ func RegisterWaiterAPIRoutes(r chi.Router, h WaiterAPIHandlers, authService *aut
 			r.Get("/orders", h.Order.ListMyOrders)
 			r.Delete("/orders/{orderID}/items/{itemOrderID}", h.Order.RemoveItem)
 			r.Patch("/orders/{orderID}/items/{itemOrderID}", h.Order.UpdateItemQuantity)
+			r.Post("/orders/{orderID}/cancel", h.Order.CancelOrder)
 			r.Get("/tables", h.Table.List)
 			r.Get("/search", h.Menu.Search)
 		})

@@ -89,6 +89,8 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 					r.Post("/{orderID}/payments/{paymentID}", h.Order.UpdatePaymentStatus)
 					r.Post("/{orderID}/items/{itemOrderID}/delete", h.Order.RemoveItem)
 					r.Post("/{orderID}/items/{itemOrderID}/edit", h.Order.UpdateItemQuantity)
+					r.Post("/{orderID}/payments/new", h.Order.CreatePayment)
+					r.Post("/{orderID}/payments/quick-pay", h.Order.QuickPayCash)
 				})
 			})
 

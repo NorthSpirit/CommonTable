@@ -275,7 +275,7 @@ func orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, e
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</ul></div><div class=\"border gms-border-medium rounded-lg p-4 mb-6\"><h3 class=\"font-semibold mb-2\">Payments</h3><ul class=\"text-sm divide-y gms-border-medium\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</ul></div><div class=\"border gms-border-medium rounded-lg p-4 mb-6\"><h3 class=\"font-semibold mb-2\">Payments</h3><ul class=\"text-sm divide-y gms-border-medium mb-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -370,83 +370,184 @@ func orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, e
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</ul></div><form method=\"POST\" action=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</ul><div class=\"pt-3 border-t gms-border-medium\"><p class=\"text-sm mb-2\">Total: €")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var19 templ.SafeURL
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID)))
+		var templ_7745c5c3_Var19 string
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(adminshared.FormatPrice(order.Total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 78, Col: 138}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 79, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"border gms-border-medium rounded-lg p-4\"><h3 class=\"font-semibold mb-2\">Edit</h3><label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Status</span> <select name=\"status\" class=\"p-2 border gms-border-medium rounded-md w-full\"><option value=\"pending\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if order.Status == "pending" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, " selected")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, ">Pending</option> <option value=\"preparing\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if order.Status == "preparing" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, " selected")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, ">Preparing</option> <option value=\"ready\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if order.Status == "ready" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, " selected")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, ">Ready</option> <option value=\"delivered\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if order.Status == "delivered" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, " selected")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, ">Delivered</option> <option value=\"cancelled\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if order.Status == "cancelled" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, " selected")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, ">Cancelled</option></select></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Notes</span> <textarea name=\"notes\" rows=\"3\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, " — Paid: €")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(order.Notes)
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(adminshared.FormatPrice(order.TotalPaid))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 92, Col: 104}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 79, Col: 111}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</textarea></label> <input type=\"submit\" value=\"Save\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium\"></form></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, " — <span class=\"font-bold\">Remaining: €")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var21 string
+		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(adminshared.FormatPrice(order.Remaining))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 80, Col: 85}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</span></p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if order.Remaining > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<form method=\"POST\" action=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var22 templ.SafeURL
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/quick-pay"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 84, Col: 165}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" class=\"mb-3\"><button type=\"submit\" class=\"px-3 py-2 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium\">💵 Mark Fully Paid (Cash) — €")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var23 string
+			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(adminshared.FormatPrice(order.Remaining))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 86, Col: 84}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</button></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<details><summary class=\"text-xs opacity-70 cursor-pointer mb-2\">Or record a different amount / method</summary><form method=\"POST\" action=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var24 templ.SafeURL
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/new"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 93, Col: 159}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\" class=\"flex flex-wrap gap-2 items-end\"><label class=\"text-xs\"><span class=\"block mb-1\">Amount (€)</span> <input type=\"number\" step=\"0.01\" min=\"0.01\" name=\"amount\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var25 string
+		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(adminshared.FormatPrice(order.Remaining))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 96, Col: 113}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var25)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "\" required class=\"p-1 border gms-border-medium rounded w-24\"></label> <label class=\"text-xs\"><span class=\"block mb-1\">Method</span> <select name=\"method\" class=\"p-1 border gms-border-medium rounded\"><option value=\"cash\">Cash</option> <option value=\"card\">Card</option> <option value=\"other\">Other</option></select></label> <label class=\"text-xs\"><span class=\"block mb-1\">Status</span> <select name=\"status\" class=\"p-1 border gms-border-medium rounded\"><option value=\"paid\">Paid</option> <option value=\"pending\">Pending</option></select></label> <button type=\"submit\" class=\"px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium\">Record Payment</button></form></details></div></div><form method=\"POST\" action=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var26 templ.SafeURL
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID)))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 121, Col: 138}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\" class=\"border gms-border-medium rounded-lg p-4\"><h3 class=\"font-semibold mb-2\">Edit</h3><label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Status</span> <select name=\"status\" class=\"p-2 border gms-border-medium rounded-md w-full\"><option value=\"pending\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if order.Status == "pending" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, " selected")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, ">Pending</option> <option value=\"preparing\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if order.Status == "preparing" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, " selected")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, ">Preparing</option> <option value=\"ready\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if order.Status == "ready" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, " selected")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, ">Ready</option> <option value=\"delivered\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if order.Status == "delivered" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, " selected")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, ">Delivered</option> <option value=\"cancelled\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if order.Status == "cancelled" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, " selected")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, ">Cancelled</option></select></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Notes</span> <textarea name=\"notes\" rows=\"3\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var27 string
+		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(order.Notes)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/order/order_detail_page.templ`, Line: 135, Col: 104}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</textarea></label> <input type=\"submit\" value=\"Save\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium\"></form></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

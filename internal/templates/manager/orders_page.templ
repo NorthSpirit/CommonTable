@@ -1,0 +1,61 @@
+package manager
+
+templ OrdersPage(restaurantName string, employeeName string, orders []OrderListItemView) {
+	@Layout(restaurantName+" - Orders", employeeName, ordersPageContent(orders))
+}
+
+templ ordersPageContent(orders []OrderListItemView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
+			<h2 class="text-2xl font-bold gms-main-text">Orders</h2>
+			<a href="/manager/orders/new" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				+ New Order
+			</a>
+		</div>
+
+		<div class="border gms-border-medium rounded-lg overflow-hidden">
+			<table class="w-full text-sm">
+				<thead>
+					<tr class="gms-dark-bg gms-light-text">
+						<th class="text-left p-2">ID</th>
+						<th class="text-left p-2">Order #</th>
+						<th class="text-left p-2">Table</th>
+						<th class="text-left p-2">Waiter</th>
+						<th class="text-left p-2">Status</th>
+						<th class="text-left p-2">Created</th>
+						<th class="p-2"></th>
+					</tr>
+				</thead>
+				<tbody class="divide-y gms-border-medium">
+					for _, o := range orders {
+						<tr>
+							<td class="p-2 opacity-60 text-xs">#{ itoa(o.ID) }</td>
+							<td class="p-2">{ itoa(o.OrderNumber) }</td>
+							<td class="p-2">{ formatTableNumber(o.TableNumber) }</td>
+							<td class="p-2">{ o.WaiterName }</td>
+							<td class="p-2 uppercase text-xs font-bold">{ o.Status }</td>
+							<td class="p-2">{ o.CreatedAt }</td>
+							<td class="p-2">
+								<a href={ templ.URL("/manager/orders/" + itoa(o.ID)) } class="px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+									View
+								</a>
+							</td>
+						</tr>
+					}
+					if len(orders) == 0 {
+						<tr>
+							<td colspan="7" class="p-4 text-center italic opacity-70">No orders yet.</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</main>
+}
+
+func formatTableNumber(n int32) string {
+	if n == 0 {
+		return "Take-Out"
+	}
+	return itoa(n)
+}

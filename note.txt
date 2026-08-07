@@ -1,7 +1,7 @@
 Food Ingredient Stuff: DSHR
     GetAllFoodIngredients DSHR
     GetFoodIngredientByID DSHR
-    InsertFoodIngredient DSHR
+    InsertFoodIngredient DSHR (admin + manager inline-create)
     UpdateFoodIngredient DSHR
     DeleteFoodIngredient DSHR
 
@@ -9,7 +9,7 @@ Allergen Stuff: DSHR
     GetAllAllergens DSHR
     GetAllergenByID DSHR
     GetAllergenByCode DS
-    InsertAllergen DSHR
+    InsertAllergen DSHR (admin only — manager is select-only)
     UpdateAllergen DSHR
     DeleteAllergen DSHR
 
@@ -20,8 +20,10 @@ Food Item Stuff: DSHR
     ListFoodItemsByRestaurantForAdmin DSHR
     ListAvailableFoodItemsByRestaurant DS
     ListMenuItemsForDisplay DSHR
+    ListMenuItemsForWaiter DSHR
+    SearchFoodItemsForWaiter DSHR
     ListMostOrderedItemsByRestaurant DSHR
-    InsertFoodItem DSHR
+    InsertFoodItem DSHR (admin + manager)
     UpdateFoodItem DSHR
     SetFoodItemAvailability DSHR (admin + chef)
     SetFoodItemInstructions DSHR (chef)
@@ -31,10 +33,10 @@ Food Item Stuff: DSHR
 Food Menu Stuff: DSHR
     GetFoodMenuByID DSHR
     GetFoodMenuForDisplay DSHR
-    ListFoodMenusByRestaurant DSHR
+    ListFoodMenusByRestaurant DSHR (admin + manager + waiter)
     ListFoodMenusByRestaurantForDisplay DSHR
     CountFoodMenus DSHR
-    InsertFoodMenu DSHR
+    InsertFoodMenu DSHR (admin + manager)
     UpdateFoodMenu DSHR
     DeleteFoodMenu DSHR
 
@@ -42,15 +44,15 @@ Item-Menu Relationship Stuff: DSHR
     AddFoodItemToMenu DSHR
     RemoveFoodItemFromMenu DSHR
     ListItemsInMenu DS
-    ListItemsInMenuForAdmin DSHR (admin + chef)
+    ListItemsInMenuForAdmin DSHR (admin + chef + manager)
     ListMenusForItem DSHR
 
 Ingredient-Item Relationship Stuff: DSHR
-    AddIngredientToItem DSHR
+    AddIngredientToItem DSHR (admin + chef + manager, incl. search-or-create)
     UpdateIngredientInItem DS
     RemoveIngredientFromItem DSHR
-    ListIngredientsForItem DSHR (admin + chef)
-    ListItemsUsingIngredient DS
+    ListIngredientsForItem DSHR (admin + chef + manager + waiter item detail)
+    ListItemsUsingIngredient DSHR (admin "where used" lookup)
 
 Restaurant-Ingredient Relationship Stuff: DS
     LinkRestaurantIngredient DS
@@ -66,80 +68,107 @@ Restaurant-Allergen Relationship Stuff: DS
 FoodItem-Allergen Relationship Stuff: DSHR
     ListAllergensForItem DSHR
     ListAllergensForItemDisplay DSHR
-    ListItemsWithAllergen DS
+    ListItemsWithAllergen DSHR (admin "where used" lookup)
     AddAllergenToItem DSHR
     RemoveAllergenFromItem DSHR
 
 Restaurant Stuff: DSHR
     GetRestaurant DSHR
-    GetRestaurantByName DS
+    GetRestaurantByName DSHR (case-insensitive; chef/kitchen/waiter/manager/terminal login)
     GetRestaurantForDisplay DSHR
     ListRestaurants DSHR
     ListRestaurantsForDisplay DSHR
     ListRestaurantsForAdmin DSHR
     InsertRestaurant DSHR
-    UpdateRestaurant DSHR
-    UpdateRestaurantPasswordHash DSHR (self-service via chef+admin flows)
-    SoftDeleteRestaurant DSHR (password-gated)
+    UpdateRestaurant DSHR (admin + manager self-service)
+    UpdateRestaurantPasswordHash DSHR (admin + chef + manager self-service)
+    SoftDeleteRestaurant DSHR (password-gated, admin only)
     RestoreRestaurant DSHR
+    Restaurant name uniqueness: case-insensitive, partial index (soft-delete aware)
 
 Employee Stuff: DSHR
     GetEmployeeByID DSHR
-    GetEmployeeByRestaurantAndName DS
-    ListEmployeesByRestaurant DSHR
+    GetEmployeeByRestaurantAndName DSHR (case-insensitive)
+    ListEmployeesByRestaurant DSHR (admin + manager, manager excludes other managers)
+    ListActiveEmployeesByRestaurant DSHR
     CountEmployees DSHR
-    InsertEmployee DSHR
-    UpdateEmployee DSHR (admin + chef self-service)
+    InsertEmployee DSHR (admin: any role; manager: waiter/chef only)
+    UpdateEmployee DSHR (admin + chef + manager self-service)
     SetEmployeeActive DSHR
-    UpdateEmployeePinHash DSHR (admin + chef self-service)
+    UpdateEmployeePinHash DSHR (admin + chef + manager self-service)
     DeleteEmployee D (unused — soft "toggle active" used instead)
+    Employee name uniqueness: case-insensitive, per-restaurant, partial index (active-only)
 
 Table Stuff: DSHR
     GetTableByID DSHR
     ListTables DSHR
-    ListTablesForAdmin DS
+    ListTablesForAdmin DSHR
+    ListTablesWithActiveOrderFlag DSHR (waiter table picker)
+    ListTablesWithOrderStatusForRestaurant DSHR (admin per-restaurant occupancy)
+    ListTablesWithGlobalOrderStatus DSHR (admin global occupancy)
     InsertTable DSHR
     UpdateTable DSHR
     SetTableStatus DSHR
-    SoftDeleteTable DS
-    RestoreTable D
+    SoftDeleteTable DSHR
+    RestoreTable DSHR
+    Table number uniqueness: partial index (active-only)
 
 Food Order Stuff: DSHR
-    GetFoodOrderByID DS
+    GetFoodOrder DSHR
     ListOrdersByRestaurant DS
     ListOrdersByTable DS
     ListOrdersByStatus DS
-    ListActiveOrdersByRestaurantForKitchen DSHR
+    ListOrdersByRestaurantForAdmin DSHR (admin + manager + terminal)
+    ListActiveOrdersByRestaurantForKitchen DSHR (kitchen board)
+    ListActiveOrdersByWaiter DSHR (waiter "my active orders")
+    GetOrderForAdmin DSHR
+    GetActiveOrderForTable DSHR (append-vs-create logic, restaurant-scoped)
+    GetOrderByIdempotencyKey DSHR
+    GetNextOrderNumberForToday DSHR (per-restaurant daily reset)
     InsertFoodOrder DS
-    UpdateOrderStatus DSHR (kitchen board)
-    UpdateFoodOrderNotes DS
+    CreateFoodOrderWithIdempotencyKey DSHR
+    CreateOrderWithItemsAtomic DSHR (transactional; waiter + admin + manager)
+    AppendItemsToOrderAtomic DSHR (transactional, idempotency-keys table)
+    UpdateOrderStatus DSHR (kitchen board + admin + manager)
+    UpdateFoodOrderNotes DSHR
     DeleteFoodOrder DS
+    table_id made nullable — take-out order support (waiter + admin + manager)
+    Cancel-blocked-if-paid guard (admin + manager)
 
 Item-Order Relationship Stuff: DSHR
-    AddItemToOrder (with name/description snapshot) DS
-    UpdateItemOrderQuantity DS
-    RemoveItemFromOrder DS
-    ListItemsForOrder DSHR (kitchen board)
+    AddItemToOrder (with name/description snapshot) DSHR
+    UpdateItemOrderQuantity DSHR (admin + manager, pending-only gate)
+    RemoveItemFromOrder DSHR (admin + manager, pending-only gate)
+    ListItemsForOrder DSHR (kitchen + admin + manager + waiter + terminal)
 
-Payment Stuff: DS
+Payment Stuff: DSHR
     GetPaymentByID DS
-    ListPaymentsByOrder DS
-    InsertPayment DS
-    UpdatePaymentStatus DS
-    DeletePayment DS
+    ListPaymentsByOrder DSHR
+    InsertPayment DSHR (admin + manager manual record + terminal simulation)
+    UpdatePaymentStatus DSHR (admin + manager)
+    DeletePayment D
+    QuickPayCash (computed remaining balance, one-click) — admin + manager
+    Cancel-if-paid guard tying order status to payment status
+
+Idempotency Keys Stuff: DSHR
+    CheckIdempotencyKey DSHR
+    RecordIdempotencyKey DSHR
+    (dedicated table, decoupled from food_orders — used by order append flow)
 
 Chat Message Stuff: DSHR
     GetChatMessageByID D
     ListMessagesByRestaurant D
-    ListMessagesByRestaurantWithSender DSHR (chef read/send + admin read-only)
-    ListMessagesByRestaurantAfterID DSHR (polling)
-    InsertChatMessage DSHR (chef only)
+    ListMessagesByRestaurantWithSender DSHR (chef + admin + manager + waiter)
+    ListMessagesByRestaurantAfterID DSHR (polling — chef + admin + manager + waiter)
+    InsertChatMessage DSHR (chef + waiter + manager send; admin read-only)
     DeleteChatMessage D
 
 Auth Stuff: SHR
-    VerifyRestaurantPassword SHR (chef + kitchen login)
-    VerifyEmployeeLogin SHR (chef + kitchen login, role-gated)
+    VerifyRestaurantPassword SHR (chef + kitchen + waiter + manager + terminal login)
+    VerifyEmployeeLogin SHR (role-gated per surface)
     IssueEmployeeToken SHR
+    IssueEmployeeTokenWithTTL SHR (waiter sliding-expiry)
+    RefreshEmployeeToken SHR (waiter sliding-expiry)
     ValidateEmployeeToken SHR
 
 Admin Stuff: SHR
@@ -158,6 +187,40 @@ Kitchen Board Stuff: SHR
     Board (live order display) SHR
     Poll (JSON, 4s interval) SHR
     UpdateStatus (status progression) SHR
+
+Waiter API (JSON, mobile app): SHR
+    Auth (two-step, sliding-expiry, saved-credentials support) SHR
+    Menus/Items/Search SHR
+    Item Detail (ingredients/allergens) SHR
+    Quick Items (pin/unpin, max 15) SHR
+    Tables (list + active-order flag) SHR
+    Orders (create/append, cancel, cancel-and-copy, my-active-orders) SHR
+    Chat (read/poll/send) SHR
+
+Manager App (web, restaurant-scoped): SHR
+    Auth (two-step, cookie session, role-gated) SHR
+    Dashboard SHR
+    Employees (waiter/chef only, self-exclusion, ownership-checked) SHR
+    Menus + Food Items (full CRUD, ingredient search-or-create) SHR
+    Orders (view/edit/manual-create/take-out, ownership-checked) SHR
+    Chat (read + send) SHR
+    Restaurant Profile (logo/description/password self-service) SHR
+    Payments (record, quick-pay, ownership-checked) SHR
+
+Terminal App (web, device-scoped, not employee-scoped): SHR
+    Login (restaurant password only, no employee step) SHR
+    Board (orders with remaining balance) SHR
+    Simulate (approve/decline — stands in for real card-terminal webhook) SHR
+
+Logging: SHR
+    Daily file + console (chi RequestLogger wired through) SHR
+    Panic recovery (middleware.Recoverer) SHR
+    LAN address printout on startup SHR
+
+Discovery: SHR
+    UDP broadcast responder (server) SHR
+    Broadcast + subnet-sweep client discovery (waiter app) SHR
+    Rediscovery-on-failure SHR
 
 
 S = Service is done

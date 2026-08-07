@@ -1,0 +1,52 @@
+package manager
+
+templ EmployeesPage(restaurantName string, employeeName string, employees []EmployeeView) {
+	@Layout(restaurantName+" - Employees", employeeName, employeesPageContent(employees))
+}
+
+templ employeesPageContent(employees []EmployeeView) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
+			<h2 class="text-2xl font-bold gms-main-text">Employees</h2>
+			<a href="/manager/employees/new" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				+ New Employee
+			</a>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+			for _, e := range employees {
+				<div class={ "border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", !e.IsActive) }>
+					<div class="flex justify-between items-start">
+						<h3 class="text-lg font-bold gms-main-text">{ e.Name }</h3>
+						if !e.IsActive {
+							<span class="px-2 py-0.5 text-xs font-bold rounded bg-gray-500 text-white">INACTIVE</span>
+						}
+					</div>
+					<p class="text-sm gms-main-text capitalize">{ e.Role }</p>
+					if e.Email != "" {
+						<p class="text-xs opacity-70 mt-1">{ e.Email }</p>
+					}
+					if e.PhoneNumber != "" {
+						<p class="text-xs opacity-70">{ e.PhoneNumber }</p>
+					}
+
+					<div class="flex gap-2 mt-3">
+						<a href={ templ.URL("/manager/employees/" + itoa(e.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+							Edit
+						</a>
+						<form method="POST" action={ templ.URL("/manager/employees/" + itoa(e.ID) + "/toggle-active") }>
+							if e.IsActive {
+								<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Deactivate</button>
+							} else {
+								<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">Activate</button>
+							}
+						</form>
+					</div>
+				</div>
+			}
+			if len(employees) == 0 {
+				<p class="text-center italic gms-main-text col-span-full">No employees yet.</p>
+			}
+		</div>
+	</main>
+}

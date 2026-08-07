@@ -266,9 +266,10 @@ func strPtrOrNilJSON(s string) *string {
 }
 
 type orderStatusItemJSON struct {
-	ItemOrderID int32  `json:"item_order_id"`
-	Name        string `json:"name"`
-	Quantity    int32  `json:"quantity"`
+	ItemID   int32   `json:"item_id"`
+	Name     string  `json:"name"`
+	Quantity int32   `json:"quantity"`
+	Price    float64 `json:"price"`
 }
 
 type orderStatusJSON struct {
@@ -303,7 +304,12 @@ func (h *OrderHandler) ListMyOrders(w http.ResponseWriter, r *http.Request) {
 			if item.ItemNameSnapshot.Valid {
 				name = item.ItemNameSnapshot.String
 			}
-			itemsOut = append(itemsOut, orderStatusItemJSON{ItemOrderID: item.ID, Name: name, Quantity: item.Quantity})
+			price := 0.0
+			if p, err := helpers.NumericToFloat64(item.UnitPriceSnapshot); err == nil && p != nil {
+				price = *p
+			}
+			itemsOut = append(itemsOut, orderStatusItemJSON{ItemID: item.ItemID, Name: name, Quantity: item.Quantity, Price: price})
+
 		}
 
 		notes := ""
@@ -329,4 +335,34 @@ func (h *OrderHandler) ListMyOrders(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, out)
+}
+
+// CancelOrder handles POST /api/waiter/orders/{orderID}/cancel
+//
+// Same "pending only" gate as item edits — once the kitchen has started
+// preparing an order, cancelling it needs to go through admin/kitchen,
+// not a silent waiter action, since food may already be underway.
+func (h *OrderHandler) CancelOrder(w http.ResponseWriter, r *http.Request) {
+	orderID, err := strconv.Atoi(chi.URLParam(r, "orderID"))
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid order id")
+		return
+	}
+
+	order, err := h.foodOrderService.GetFoodOrder(r.Context(), int32(orderID))
+	if err != nil {
+		writeError(w, http.StatusNotFound, "order not found")
+		return
+	}
+	if order.OrderStatus != repository.OrderStatusPending {
+		writeError(w, http.StatusConflict, "order is already being prepared and can no longer be cancelled")
+		return
+	}
+
+	if err := h.foodOrderService.UpdateOrderStatus(r.Context(), int32(orderID), repository.OrderStatusCancelled); err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to cancel order")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]bool{"success": true})
 }

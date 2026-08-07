@@ -1,0 +1,77 @@
+package manager
+
+templ EmployeeFormPage(employeeName string, isEdit bool, employee EmployeeView, errorMessage string) {
+	@Layout(employeeFormTitle(isEdit), employeeName, employeeFormContent(isEdit, employee, errorMessage))
+}
+
+func employeeFormTitle(isEdit bool) string {
+	if isEdit {
+		return "Edit Employee"
+	}
+	return "New Employee"
+}
+
+func employeeFormAction(isEdit bool, employeeID int32) templ.SafeURL {
+	if isEdit {
+		return templ.URL("/manager/employees/" + itoa(employeeID) + "/edit")
+	}
+	return templ.URL("/manager/employees/new")
+}
+
+templ employeeFormContent(isEdit bool, employee EmployeeView, errorMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+			{ employeeFormTitle(isEdit) }
+		</h2>
+
+		if errorMessage != "" {
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+		}
+
+		<form method="POST" action={ employeeFormAction(isEdit, employee.ID) } class="max-w-xl">
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Details</legend>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Name</span>
+					<input type="text" name="name" value={ employee.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Role</span>
+					<select name="role" required class="p-2 border gms-border-medium rounded-md w-full">
+						<option value="waiter" selected?={ employee.Role == "waiter" }>Waiter</option>
+						<option value="chef" selected?={ employee.Role == "chef" }>Chef</option>
+					</select>
+				</label>
+				<p class="text-xs opacity-70 mb-4">Managers can only create waiter and chef accounts.</p>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Email</span>
+					<input type="email" name="email" value={ employee.Email } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Phone</span>
+					<input type="text" name="phone_number" value={ employee.PhoneNumber } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				if isEdit {
+					<label class="block">
+						<span class="text-sm font-medium mb-1 block">New PIN/Password (leave blank to keep current)</span>
+						<input type="password" name="pin" class="p-2 border gms-border-medium rounded-md w-full"/>
+					</label>
+				} else {
+					<label class="block">
+						<span class="text-sm font-medium mb-1 block">PIN/Password</span>
+						<input type="password" name="pin" required class="p-2 border gms-border-medium rounded-md w-full"/>
+					</label>
+				}
+			</fieldset>
+
+			<div class="flex justify-end mt-4">
+				<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+			</div>
+		</form>
+	</main>
+}

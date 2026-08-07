@@ -1,6 +1,7 @@
 package main
 
 import (
+	"CommonTable/internal/handlers/terminal"
 	"context"
 	"log"
 	"net/http"
@@ -60,32 +61,43 @@ func main() {
 	chefHandlers := container.NewChefHandlers(services)
 	kitchenHandlers := container.NewKitchenHandlers(services)
 	waiterAPIHandlers := container.NewWaiterAPIHandlers(services, pool)
+	managerHandlers := container.NewManagerHandlers(services, pool)
 	hubHandler := hub.NewHubHandler()
+	terminalHandlers := httpserver.TerminalHandlers{Handler: terminal.NewHandler(services.Auth, services.FoodOrder, services.ItemOrder, services.Payment)}
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestLogger(&middleware.DefaultLogFormatter{
 		Logger:  log.New(logWriter, "", log.LstdFlags),
 		NoColor: true,
 	}))
+	r.Use(middleware.Recoverer)
 
 	httpserver.RegisterCustomerRoutes(r, customerHandlers)
 	httpserver.RegisterAdminRoutes(r, adminHandlers, services.Admin)
 	httpserver.RegisterChefRoutes(r, chefHandlers, services.Auth)
 	httpserver.RegisterKitchenRoutes(r, kitchenHandlers, services.Auth)
 	httpserver.RegisterWaiterAPIRoutes(r, waiterAPIHandlers, services.Auth)
+	httpserver.RegisterManagerRoutes(r, managerHandlers, services.Auth)
+	httpserver.RegisterTerminalRoutes(r, terminalHandlers)
 
 	r.Handle("/assets/*", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
 	r.Handle("/uploads/*", http.StripPrefix("/uploads", http.FileServer(http.Dir(cfg.UploadsDir))))
 	r.Get("/hub", hubHandler.Page)
 	r.Get("/download/waiter-app.apk", hub.ServeAPK("./assets/downloads/waiter_app.apk"))
 	r.Get("/api/discover", hub.Discover)
-
+	r.Get("/api-docs", hubHandler.ApiDocs)
+	/*
+		r.Get("/debug/crash", func(w http.ResponseWriter, r *http.Request) {
+			panic("intentional test crash")
+		})
+	*/
 	// UDP LAN discovery — lets clients find this server without a
 	// hardcoded IP. Irrelevant/unused once deployed behind a real
 	// hostname, but harmless to leave running either way.
 	discovery.StartResponder(41241)
 
 	log.Printf("listening on %s", httpPort)
+	discovery.PrintLANAddresses()
 	if err := http.ListenAndServe(httpPort, r); err != nil {
 		log.Fatalf("server error: %v", err)
 	}

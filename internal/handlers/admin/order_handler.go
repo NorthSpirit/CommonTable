@@ -146,6 +146,23 @@ func (h *OrderHandler) buildDetailView(r *http.Request, orderID int32) (adminsha
 		tableNumber = o.TableNumber.Int32
 	}
 
+	total := 0.0
+	for _, item := range itemViews {
+		total += item.Price * float64(item.Quantity)
+	}
+
+	totalPaid := 0.0
+	for _, p := range paymentViews {
+		if p.Status == "paid" {
+			totalPaid += p.Amount
+		}
+	}
+
+	remaining := total - totalPaid
+	if remaining < 0 {
+		remaining = 0
+	}
+
 	return adminshared.OrderDetailView{
 		ID:          o.ID,
 		OrderNumber: o.OrderNumber,
@@ -156,6 +173,9 @@ func (h *OrderHandler) buildDetailView(r *http.Request, orderID int32) (adminsha
 		Notes:       notes,
 		Items:       itemViews,
 		Payments:    paymentViews,
+		Total:       total,
+		TotalPaid:   totalPaid,
+		Remaining:   remaining,
 	}, nil
 }
 
@@ -206,6 +226,25 @@ func (h *OrderHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	status := repository.OrderStatus(r.FormValue("status"))
+
+	// Cancelling an order that already has a paid payment would leave
+	// money taken against an order that says it never happened — block
+	// this and require the payment to be explicitly marked refunded
+	// first, rather than silently moving money on a status change.
+	if status == repository.OrderStatusCancelled {
+		payments, err := h.paymentService.ListPaymentsByOrder(r.Context(), int32(orderID))
+		if err == nil {
+			for _, p := range payments {
+				if p.Status == repository.PaymentStatusPaid {
+					view, _ := h.buildDetailView(r, int32(orderID))
+					w.WriteHeader(http.StatusConflict)
+					_ = order.OrderDetailPage(int32(restaurantID), view, "Cannot cancel: this order has a paid payment. Mark it refunded first, then cancel.").Render(r.Context(), w)
+					return
+				}
+			}
+		}
+	}
+
 	if err := h.foodOrderService.UpdateOrderStatus(r.Context(), int32(orderID), status); err != nil {
 		http.Error(w, "failed to update order status", http.StatusInternalServerError)
 		return
@@ -506,6 +545,79 @@ func (h *OrderHandler) UpdateItemQuantity(w http.ResponseWriter, r *http.Request
 
 	if err := h.itemOrderService.UpdateItemOrderQuantity(r.Context(), int32(itemOrderID), int32(quantity)); err != nil {
 		http.Error(w, "failed to update quantity", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/orders/"+strconv.Itoa(orderID), http.StatusFound)
+}
+
+// CreatePayment handles POST /admin/restaurants/{id}/orders/{orderID}/payments/new
+func (h *OrderHandler) CreatePayment(w http.ResponseWriter, r *http.Request) {
+	restaurantID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "invalid restaurant id", http.StatusBadRequest)
+		return
+	}
+	orderID, err := strconv.Atoi(chi.URLParam(r, "orderID"))
+	if err != nil {
+		http.Error(w, "invalid order id", http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form submission", http.StatusBadRequest)
+		return
+	}
+
+	amount, err := strconv.ParseFloat(r.FormValue("amount"), 64)
+	if err != nil || amount <= 0 {
+		http.Error(w, "a valid amount is required", http.StatusBadRequest)
+		return
+	}
+
+	method := repository.PaymentMethod(r.FormValue("method"))
+	status := repository.PaymentStatus(r.FormValue("status"))
+
+	now := time.Now()
+	if _, err := h.paymentService.InsertPayment(r.Context(), int32(orderID), amount, method, nil, &now, status); err != nil {
+		http.Error(w, "failed to record payment", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/orders/"+strconv.Itoa(orderID), http.StatusFound)
+}
+
+// QuickPayCash handles POST /admin/restaurants/{id}/orders/{orderID}/payments/quick-pay
+//
+// One-click "mark fully paid in cash" — computes the remaining balance
+// server-side (never trusts a client-submitted amount for this action)
+// and records it as a single paid cash payment.
+func (h *OrderHandler) QuickPayCash(w http.ResponseWriter, r *http.Request) {
+	restaurantID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "invalid restaurant id", http.StatusBadRequest)
+		return
+	}
+	orderID, err := strconv.Atoi(chi.URLParam(r, "orderID"))
+	if err != nil {
+		http.Error(w, "invalid order id", http.StatusBadRequest)
+		return
+	}
+
+	view, err := h.buildDetailView(r, int32(orderID))
+	if err != nil {
+		http.Error(w, "failed to load order", http.StatusInternalServerError)
+		return
+	}
+
+	if view.Remaining <= 0 {
+		http.Redirect(w, r, "/admin/restaurants/"+strconv.Itoa(restaurantID)+"/orders/"+strconv.Itoa(orderID), http.StatusFound)
+		return
+	}
+
+	now := time.Now()
+	if _, err := h.paymentService.InsertPayment(r.Context(), int32(orderID), view.Remaining, repository.PaymentMethodCash, nil, &now, repository.PaymentStatusPaid); err != nil {
+		http.Error(w, "failed to record payment", http.StatusInternalServerError)
 		return
 	}
 

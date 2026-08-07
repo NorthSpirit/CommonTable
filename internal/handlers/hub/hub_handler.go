@@ -25,3 +25,9 @@ func (h *HubHandler) Page(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
+
+func (h *HubHandler) ApiDocs(w http.ResponseWriter, r *http.Request) {
+	if err := hub.ApiDocsPage().Render(r.Context(), w); err != nil {
+		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	}
+}

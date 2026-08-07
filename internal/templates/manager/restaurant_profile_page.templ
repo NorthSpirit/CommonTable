@@ -1,0 +1,81 @@
+package manager
+
+templ RestaurantProfilePage(employeeName string, restaurant RestaurantProfileView, errorMessage string, successMessage string) {
+	@Layout(restaurant.Name+" - Profile", employeeName, restaurantProfileContent(restaurant, errorMessage, successMessage))
+}
+
+templ restaurantProfileContent(restaurant RestaurantProfileView, errorMessage string, successMessage string) {
+	<main class="flex-1 p-6 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
+			Restaurant Profile
+		</h2>
+
+		if errorMessage != "" {
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+		}
+		if successMessage != "" {
+			<p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm text-center">{ successMessage }</p>
+		}
+
+		<form method="POST" action="/manager/profile" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Details</legend>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Name</span>
+					<input type="text" name="name" value={ restaurant.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Address</span>
+					<input type="text" name="address" value={ restaurant.Address } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Phone</span>
+					<input type="text" name="phone" value={ restaurant.Phone } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Email</span>
+					<input type="email" name="email" value={ restaurant.Email } class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">New Login Password (leave blank to keep current)</span>
+					<input type="password" name="password" class="p-2 border gms-border-medium rounded-md w-full"/>
+				</label>
+			</fieldset>
+
+			<fieldset class="border p-4 rounded-lg gms-border-medium">
+				<legend class="text-lg font-semibold px-2">Logo &amp; Description</legend>
+
+				<img id="logo-preview" src={ restaurant.LogoURL } alt="Restaurant logo preview" class={ "h-32 w-full object-contain rounded border gms-border-medium mb-4", templ.KV("hidden", restaurant.LogoURL == "") }/>
+				<div id="logo-preview-placeholder" class={ "h-32 w-full flex items-center justify-center rounded border gms-border-medium mb-4", templ.KV("hidden", restaurant.LogoURL != "") }>
+					<p class="text-sm italic opacity-70">No logo set.</p>
+				</div>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Replace Logo</span>
+					<input type="file" name="logo" data-preview-target="logo-preview" accept=".jpg,.jpeg,.png,.webp" class="p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text"/>
+				</label>
+
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Description</span>
+					<textarea name="description" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ restaurant.Description }</textarea>
+				</label>
+
+				<label class="block">
+					<span class="text-sm font-medium mb-1 block">Description (Alt Language)</span>
+					<textarea name="description_alt" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ restaurant.DescriptionAlt }</textarea>
+				</label>
+			</fieldset>
+
+			<div class="lg:col-span-2 flex justify-end">
+				<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+			</div>
+		</form>
+	</main>
+
+	<script src="/assets/jsscripts/image_preview.js"></script>
+}

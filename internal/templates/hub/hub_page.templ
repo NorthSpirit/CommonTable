@@ -19,7 +19,7 @@ templ HubPage() {
 		<body class="min-h-screen flex flex-col items-center justify-center gms-dark-bg gms-light-text p-6">
 			<h1 class="text-3xl font-bold mb-8 gms-title-text">CommonTable</h1>
 
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-3xl">
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full max-w-4xl">
 				<a href="/" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
 					<p class="text-lg font-bold">Customer</p>
 					<p class="text-xs opacity-70 mt-1">Browse restaurants and menus</p>
@@ -32,15 +32,29 @@ templ HubPage() {
 					<p class="text-lg font-bold">Kitchen Board</p>
 					<p class="text-xs opacity-70 mt-1">Order display login</p>
 				</a>
+				<a href="/manager/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+					<p class="text-lg font-bold">Manager</p>
+					<p class="text-xs opacity-70 mt-1">Manager login</p>
+				</a>
 				<a href="/admin/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
 					<p class="text-lg font-bold">Admin</p>
 					<p class="text-xs opacity-70 mt-1">Admin login</p>
 				</a>
+				<a href="/terminal/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+                	<p class="text-lg font-bold">Terminal</p>
+                	<p class="text-xs opacity-70 mt-1">Payment terminal simulation</p>
+                </a>
 			</div>
 
-			<a href="/download/waiter-app.apk" class="mt-4 inline-block gms-content-bg gms-main-text rounded-lg shadow-lg px-6 py-3 text-center gms-hover-bg-light">
-            	<p class="text-sm font-bold">⬇ Download Waiter App (APK)</p>
-            </a>
+
+			<div class="flex flex-col sm:flex-row gap-4 mt-6 w-full max-w-4xl justify-center">
+				<a href="/download/waiter-app.apk" class="inline-block gms-content-bg gms-main-text rounded-lg shadow-lg px-6 py-3 text-center gms-hover-bg-light">
+					<p class="text-sm font-bold">⬇ Download Waiter App (APK)</p>
+				</a>
+				<a href="/api-docs" class="inline-block gms-content-bg gms-main-text rounded-lg shadow-lg px-6 py-3 text-center gms-hover-bg-light">
+					<p class="text-sm font-bold">📖 Waiter API Docs</p>
+				</a>
+			</div>
 
 			<footer class="mt-8 text-center gms-accent-text">
 				<p>&copy; 2026 Mantas "IndomitableWastage" Jurevičius</p>

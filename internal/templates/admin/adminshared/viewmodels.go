@@ -143,6 +143,9 @@ type OrderDetailView struct {
 	Notes       string
 	Items       []OrderDetailItemView
 	Payments    []OrderPaymentView
+	Total       float64
+	TotalPaid   float64
+	Remaining   float64
 }
 
 type OrderDetailItemView struct {
