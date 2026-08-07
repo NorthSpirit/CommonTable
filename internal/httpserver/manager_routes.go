@@ -13,6 +13,7 @@ type ManagerHandlers struct {
 	Employee  *manager.EmployeeHandler
 	Chat      *manager.ChatHandler
 	Profile   *manager.ProfileHandler
+	MyProfile *manager.MyProfileHandler
 	Order     *manager.OrderHandler
 	Menu      *manager.MenuHandler
 	FoodItem  *manager.FoodItemHandler
@@ -45,6 +46,9 @@ func RegisterManagerRoutes(r chi.Router, h ManagerHandlers, authService *authser
 
 			r.Get("/profile", h.Profile.Edit)
 			r.Post("/profile", h.Profile.Update)
+
+			r.Get("/my-profile", h.MyProfile.Edit)
+			r.Post("/my-profile", h.MyProfile.Update)
 
 			r.Route("/orders", func(r chi.Router) {
 				r.Get("/", h.Order.List)

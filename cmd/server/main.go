@@ -63,6 +63,7 @@ func main() {
 	waiterAPIHandlers := container.NewWaiterAPIHandlers(services, pool)
 	managerHandlers := container.NewManagerHandlers(services, pool)
 	hubHandler := hub.NewHubHandler()
+	staffHandlers := container.NewStaffHandlers(services)
 	terminalHandlers := httpserver.TerminalHandlers{Handler: terminal.NewHandler(services.Auth, services.FoodOrder, services.ItemOrder, services.Payment)}
 
 	r := chi.NewRouter()
@@ -79,6 +80,7 @@ func main() {
 	httpserver.RegisterWaiterAPIRoutes(r, waiterAPIHandlers, services.Auth)
 	httpserver.RegisterManagerRoutes(r, managerHandlers, services.Auth)
 	httpserver.RegisterTerminalRoutes(r, terminalHandlers)
+	httpserver.RegisterStaffRoutes(r, staffHandlers, services.Auth)
 
 	r.Handle("/assets/*", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
 	r.Handle("/uploads/*", http.StripPrefix("/uploads", http.FileServer(http.Dir(cfg.UploadsDir))))

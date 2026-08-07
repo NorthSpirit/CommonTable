@@ -17,5 +17,6 @@ func NewManagerHandlers(s *Services, pool *pgxpool.Pool) httpserver.ManagerHandl
 		Order:     manager.NewOrderHandler(pool, s.FoodOrder, s.ItemOrder, s.Payment, s.Table, s.Employee, s.Restaurant, s.FoodMenu, s.ItemMenu),
 		Menu:      manager.NewMenuHandler(s.FoodMenu, s.ItemMenu, s.Restaurant, s.UploadsDir),
 		FoodItem:  manager.NewFoodItemHandler(s.FoodItem, s.FoodMenu, s.FoodAllergen, s.FoodIngredient, s.ItemAllergen, s.ItemMenu, s.IngredientItem, s.UploadsDir),
+		MyProfile: manager.NewMyProfileHandler(s.Employee),
 	}
 }

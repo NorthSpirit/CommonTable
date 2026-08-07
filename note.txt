@@ -74,7 +74,7 @@ FoodItem-Allergen Relationship Stuff: DSHR
 
 Restaurant Stuff: DSHR
     GetRestaurant DSHR
-    GetRestaurantByName DSHR (case-insensitive; chef/kitchen/waiter/manager/terminal login)
+    GetRestaurantByName DSHR (case-insensitive; chef/kitchen/waiter/manager/terminal/staff login)
     GetRestaurantForDisplay DSHR
     ListRestaurants DSHR
     ListRestaurantsForDisplay DSHR
@@ -93,9 +93,9 @@ Employee Stuff: DSHR
     ListActiveEmployeesByRestaurant DSHR
     CountEmployees DSHR
     InsertEmployee DSHR (admin: any role; manager: waiter/chef only)
-    UpdateEmployee DSHR (admin + chef + manager self-service)
+    UpdateEmployee DSHR (admin + chef + manager + waiter self-service)
     SetEmployeeActive DSHR
-    UpdateEmployeePinHash DSHR (admin + chef + manager self-service)
+    UpdateEmployeePinHash DSHR (admin + chef + manager + waiter self-service)
     DeleteEmployee D (unused — soft "toggle active" used instead)
     Employee name uniqueness: case-insensitive, per-restaurant, partial index (active-only)
 
@@ -108,7 +108,7 @@ Table Stuff: DSHR
     ListTablesWithGlobalOrderStatus DSHR (admin global occupancy)
     InsertTable DSHR
     UpdateTable DSHR
-    SetTableStatus DSHR
+    SetTableStatus DSHR (manual floor-status flag, separate from computed occupancy)
     SoftDeleteTable DSHR
     RestoreTable DSHR
     Table number uniqueness: partial index (active-only)
@@ -158,13 +158,13 @@ Idempotency Keys Stuff: DSHR
 Chat Message Stuff: DSHR
     GetChatMessageByID D
     ListMessagesByRestaurant D
-    ListMessagesByRestaurantWithSender DSHR (chef + admin + manager + waiter)
-    ListMessagesByRestaurantAfterID DSHR (polling — chef + admin + manager + waiter)
-    InsertChatMessage DSHR (chef + waiter + manager send; admin read-only)
+    ListMessagesByRestaurantWithSender DSHR (chef + admin + manager + waiter + staff)
+    ListMessagesByRestaurantAfterID DSHR (polling — chef + admin + manager + waiter + staff)
+    InsertChatMessage DSHR (chef + waiter + manager + staff send; admin read-only)
     DeleteChatMessage D
 
 Auth Stuff: SHR
-    VerifyRestaurantPassword SHR (chef + kitchen + waiter + manager + terminal login)
+    VerifyRestaurantPassword SHR (chef + kitchen + waiter + manager + terminal + staff login)
     VerifyEmployeeLogin SHR (role-gated per surface)
     IssueEmployeeToken SHR
     IssueEmployeeTokenWithTTL SHR (waiter sliding-expiry)
@@ -205,7 +205,13 @@ Manager App (web, restaurant-scoped): SHR
     Orders (view/edit/manual-create/take-out, ownership-checked) SHR
     Chat (read + send) SHR
     Restaurant Profile (logo/description/password self-service) SHR
+    My Profile (own contact info + PIN) SHR
     Payments (record, quick-pay, ownership-checked) SHR
+
+Staff App (web, waiter-scoped, profile+chat only): SHR
+    Auth (two-step, cookie session, role-gated to waiter) SHR
+    My Profile (own contact info + PIN) SHR
+    Chat (read + send) SHR
 
 Terminal App (web, device-scoped, not employee-scoped): SHR
     Login (restaurant password only, no employee step) SHR
@@ -227,3 +233,18 @@ S = Service is done
 H = Handler is done
 R = Routing is done
 D = Repo is done
+
+
+═══════════════════════════════════
+MAYBE SOMEDAY (deliberately deferred, not gaps)
+═══════════════════════════════════
+
+- Manager JSON API (mobile/native manager app, mirroring waiterapi's shape)
+- Real card processor integration (Stripe/Square/etc.) — Terminal currently simulates this
+- Admin password recovery via email — currently manual file/hash reset, matches single-operator model
+- Waiter app offline queue / background retry on failed order submission — currently manual retry, made safe by idempotency keys
+- Language toggle in waiter app — button exists, disabled; no i18n system built for Flutter
+- Per-item order editing on waiter's "My Active Orders" — replaced by cancel-and-copy, deliberate simplification
+- Multi-device/session limits — deliberately unrestricted, standard JWT behavior
+- Midnight log-file rotation while server runs continuously (currently: new file only on restart)
+- API docs page is a static snapshot — won't auto-update if new endpoints are added later

@@ -16,47 +16,70 @@ templ HubPage() {
 				a { color: inherit; }
 			</style>
 		</head>
-		<body class="min-h-screen flex flex-col items-center justify-center gms-dark-bg gms-light-text p-6">
+		<body class="min-h-screen flex flex-col items-center gms-dark-bg gms-light-text p-6">
 			<h1 class="text-3xl font-bold mb-8 gms-title-text">CommonTable</h1>
 
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full max-w-4xl">
-				<a href="/" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
-					<p class="text-lg font-bold">Customer</p>
-					<p class="text-xs opacity-70 mt-1">Browse restaurants and menus</p>
-				</a>
-				<a href="/chef/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
-					<p class="text-lg font-bold">Kitchen</p>
-					<p class="text-xs opacity-70 mt-1">Chef login</p>
-				</a>
-				<a href="/kitchen/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
-					<p class="text-lg font-bold">Kitchen Board</p>
-					<p class="text-xs opacity-70 mt-1">Order display login</p>
-				</a>
-				<a href="/manager/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
-					<p class="text-lg font-bold">Manager</p>
-					<p class="text-xs opacity-70 mt-1">Manager login</p>
-				</a>
-				<a href="/admin/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
-					<p class="text-lg font-bold">Admin</p>
-					<p class="text-xs opacity-70 mt-1">Admin login</p>
-				</a>
-				<a href="/terminal/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
-                	<p class="text-lg font-bold">Terminal</p>
-                	<p class="text-xs opacity-70 mt-1">Payment terminal simulation</p>
-                </a>
+			<div class="w-full max-w-4xl space-y-8">
+				<section>
+					<h2 class="text-sm font-bold uppercase tracking-wide opacity-60 mb-3">Public</h2>
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<a href="/" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+							<p class="text-lg font-bold">Customer</p>
+							<p class="text-xs opacity-70 mt-1">Browse restaurants and menus</p>
+						</a>
+						<a href="/terminal/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+							<p class="text-lg font-bold">Terminal</p>
+							<p class="text-xs opacity-70 mt-1">Payment terminal simulation</p>
+						</a>
+					</div>
+				</section>
+
+				<section>
+					<h2 class="text-sm font-bold uppercase tracking-wide opacity-60 mb-3">Restaurant Staff</h2>
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+						<a href="/staff/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+							<p class="text-lg font-bold">Staff</p>
+							<p class="text-xs opacity-70 mt-1">Waiter profile &amp; chat</p>
+						</a>
+						<a href="/chef/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+							<p class="text-lg font-bold">Kitchen</p>
+							<p class="text-xs opacity-70 mt-1">Chef login</p>
+						</a>
+						<a href="/kitchen/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+							<p class="text-lg font-bold">Kitchen Board</p>
+							<p class="text-xs opacity-70 mt-1">Order display login</p>
+						</a>
+						<a href="/manager/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+							<p class="text-lg font-bold">Manager</p>
+							<p class="text-xs opacity-70 mt-1">Manager login</p>
+						</a>
+					</div>
+				</section>
+
+				<section>
+					<h2 class="text-sm font-bold uppercase tracking-wide opacity-60 mb-3">Administration</h2>
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<a href="/admin/login" class="block gms-content-bg gms-main-text rounded-lg shadow-lg p-6 text-center gms-hover-bg-light">
+							<p class="text-lg font-bold">Admin</p>
+							<p class="text-xs opacity-70 mt-1">Admin login</p>
+						</a>
+					</div>
+				</section>
+
+				<section>
+					<h2 class="text-sm font-bold uppercase tracking-wide opacity-60 mb-3">Resources</h2>
+					<div class="flex flex-col sm:flex-row gap-4">
+						<a href="/download/waiter-app.apk" class="flex-1 inline-block gms-content-bg gms-main-text rounded-lg shadow-lg px-6 py-3 text-center gms-hover-bg-light">
+							<p class="text-sm font-bold">⬇ Download Waiter App (APK)</p>
+						</a>
+						<a href="/api-docs" class="flex-1 inline-block gms-content-bg gms-main-text rounded-lg shadow-lg px-6 py-3 text-center gms-hover-bg-light">
+							<p class="text-sm font-bold">📖 Waiter API Docs</p>
+						</a>
+					</div>
+				</section>
 			</div>
 
-
-			<div class="flex flex-col sm:flex-row gap-4 mt-6 w-full max-w-4xl justify-center">
-				<a href="/download/waiter-app.apk" class="inline-block gms-content-bg gms-main-text rounded-lg shadow-lg px-6 py-3 text-center gms-hover-bg-light">
-					<p class="text-sm font-bold">⬇ Download Waiter App (APK)</p>
-				</a>
-				<a href="/api-docs" class="inline-block gms-content-bg gms-main-text rounded-lg shadow-lg px-6 py-3 text-center gms-hover-bg-light">
-					<p class="text-sm font-bold">📖 Waiter API Docs</p>
-				</a>
-			</div>
-
-			<footer class="mt-8 text-center gms-accent-text">
+			<footer class="mt-10 text-center gms-accent-text">
 				<p>&copy; 2026 Mantas "IndomitableWastage" Jurevičius</p>
 			</footer>
 		</body>
