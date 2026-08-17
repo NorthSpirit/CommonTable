@@ -167,7 +167,7 @@ func tableFormContent(isEdit bool, table adminshared.TableView, errorMessage str
 			return templ_7745c5c3_Err
 		}
 		if isEdit {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Status</span> <select name=\"status\" class=\"p-2 border gms-border-medium rounded-md w-full\"><option value=\"free\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Status</span><p class=\"text-xs opacity-70 mb-1\">Manual floor/seating status (e.g. for host use) — separate from live order activity shown on Table Status pages.</p><select name=\"status\" class=\"p-2 border gms-border-medium rounded-md w-full\"><option value=\"free\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

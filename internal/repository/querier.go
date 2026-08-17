@@ -128,6 +128,7 @@ type Querier interface {
 	SoftDeleteFoodItem(ctx context.Context, id int32) error
 	SoftDeleteRestaurant(ctx context.Context, id int32) error
 	SoftDeleteTable(ctx context.Context, id int32) error
+	TableHasActiveOrders(ctx context.Context, tableID pgtype.Int4) (bool, error)
 	UnlinkRestaurantAllergen(ctx context.Context, arg UnlinkRestaurantAllergenParams) error
 	UnlinkRestaurantIngredient(ctx context.Context, arg UnlinkRestaurantIngredientParams) error
 	UpdateAllergen(ctx context.Context, arg UpdateAllergenParams) error

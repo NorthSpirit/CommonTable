@@ -333,6 +333,20 @@ func (q *Queries) SoftDeleteTable(ctx context.Context, id int32) error {
 	return err
 }
 
+const tableHasActiveOrders = `-- name: TableHasActiveOrders :one
+SELECT EXISTS (
+    SELECT 1 FROM food_orders
+    WHERE table_id = $1 AND order_status NOT IN ('delivered', 'cancelled')
+) AS has_active_orders
+`
+
+func (q *Queries) TableHasActiveOrders(ctx context.Context, tableID pgtype.Int4) (bool, error) {
+	row := q.db.QueryRow(ctx, tableHasActiveOrders, tableID)
+	var has_active_orders bool
+	err := row.Scan(&has_active_orders)
+	return has_active_orders, err
+}
+
 const updateTable = `-- name: UpdateTable :exec
 UPDATE tables
 SET number = $2, capacity = $3, section = $4

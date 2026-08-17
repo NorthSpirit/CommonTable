@@ -1,0 +1,98 @@
+/*
+ * =========================================================
+ * Grand Menu Service – Tritanopia-Friendly Colour Scheme CSS
+ * =========================================================
+ */
+
+/* ------------------ Background Colors ------------------ */
+
+.gms-primary-bg {
+    background-color: #009E73; /* Bluish green – safe, high luminance separation */
+}
+
+.gms-dark-bg {
+    background-color: #5C2A1A; /* Deep warm brown-red – strong lightness gap vs primary */
+}
+
+.gms-content-bg {
+    background-color: #F4EDE4; /* Light neutral beige – max contrast with dark text */
+}
+
+/* ------------------ Text Colors ------------------ */
+.gms-light-text {
+    color: #FFFFFF;
+}
+
+.gms-dark-text {
+    color: #1A0A00; /* Near-black warm – WCAG AAA on light backgrounds */
+}
+
+.gms-main-text {
+    color: #1A0A00;
+}
+
+.gms-title-text {
+    color: #0D0500;
+}
+
+@media (max-width: 640px) {
+    .gms-title-text {
+        color: #004D40; /* Dark teal – high contrast, no blue-yellow reliance */
+        text-shadow: none;
+    }
+}
+
+.gms-accent-text,
+.gms-accent-hover-text,
+.gms-accent-hover-text:hover,
+.gms-demo-accent-text {
+    color: #1A0A00;
+}
+
+
+/* ------------------ Hover Backgrounds ------------------ */
+.gms-hover-bg-light:hover {
+    background-color: #00C98A; /* Brighter bluish green – clear lightness jump */
+}
+
+.gms-primary-hover-bg:hover {
+    background-color: #00C98A;
+}
+
+/* ------------------ Borders ------------------ */
+.gms-border-dark,
+.gms-border-medium {
+    border-color: #5C2A1A;
+}
+
+
+/* ------------------ Buttons ------------------ */
+.gms-btn-clear {
+    background-color: #D55E00; /* Vermillion – tritanopia-safe, high contrast vs green */
+    color: #FFFFFF;
+    transition: all 0.3s ease;
+}
+
+.gms-btn-clear:hover {
+    background: radial-gradient(circle at center, #FFB380 0%, #7A1F00 100%);
+    border-color: #000000;
+    color: #000000;
+    transform: translateY(2px);
+    box-shadow: 15px 15px 5px -5px #7A1F00,
+    -15px -15px 5px -5px #FFB380;
+}
+
+.gms-btn-submit {
+    background-color: #009E73; /* Bluish green – distinct from vermillion */
+    color: #FFFFFF;
+    transition: all 0.3s ease;
+}
+
+.gms-btn-submit:hover {
+    background: radial-gradient(circle at center, #66FFCC 0%, #004D40 100%);
+    border-color: #000000;
+    color: #000000;
+    transform: translateY(2px);
+    box-shadow: 15px 15px 5px -5px #004D40,
+    -15px -15px 5px -5px #66FFCC;
+}

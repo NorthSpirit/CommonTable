@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"CommonTable/internal/repository"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type TableService struct {
@@ -143,4 +145,12 @@ func (s *TableService) ListTablesWithGlobalOrderStatus(ctx context.Context) ([]r
 		return nil, fmt.Errorf("list tables with global order status: %w", err)
 	}
 	return tables, nil
+}
+
+func (f *TableService) TableHasActiveOrders(ctx context.Context, tableID int32) (bool, error) {
+	has, err := f.queries.TableHasActiveOrders(ctx, pgtype.Int4{Int32: tableID, Valid: true})
+	if err != nil {
+		return false, fmt.Errorf("check table active orders: %w", err)
+	}
+	return has, nil
 }

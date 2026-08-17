@@ -8,8 +8,13 @@ templ Layout(title string, employeeName string, content templ.Component) {
 			<meta charset="utf-8"/>
 			<link rel="icon" href="data:,"/>
 			<script src="https://cdn.tailwindcss.com"></script>
-			<link id="themeCSS" rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
-			<link id="themeCSSAlt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
+			<link id="theme-default" rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
+            <link id="theme-alt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
+            <link id="theme-dark" rel="stylesheet" href="/assets/css/CTStyleDark.css" disabled/>
+            <link id="theme-highContrast" rel="stylesheet" href="/assets/css/CTStyleHighContrast.css" disabled/>
+            <link id="theme-protanopia" rel="stylesheet" href="/assets/css/CTStyleProtanopia.css" disabled/>
+            <link id="theme-deuteranopia" rel="stylesheet" href="/assets/css/CTStyleDeuteranopia.css" disabled/>
+            <link id="theme-tritanopia" rel="stylesheet" href="/assets/css/CTStyleTritanopia.css" disabled/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<style>
 				html, body { height: 100%; }

@@ -1,3 +1,4 @@
+
 -- name: GetTable :one
 SELECT * FROM tables
 WHERE id = $1 AND deleted_at IS NULL;
@@ -70,3 +71,9 @@ SELECT t.id, t.number, t.capacity, t.status,
 FROM tables t
 WHERE t.deleted_at IS NULL
 ORDER BY t.number;
+
+-- name: TableHasActiveOrders :one
+SELECT EXISTS (
+    SELECT 1 FROM food_orders
+    WHERE table_id = $1 AND order_status NOT IN ('delivered', 'cancelled')
+) AS has_active_orders;

@@ -1,0 +1,110 @@
+/*
+ * =========================================================
+ * Grand Menu Service – Dark Colour Scheme CSS
+ * =========================================================
+ */
+
+/* ------------------ Background Colors ------------------ */
+
+.gms-primary-bg {
+    background-color: #52D332;
+}
+
+.gms-dark-bg {
+    background-color: #064b17;
+}
+
+.gms-content-bg {
+    background-color: #1A1410;
+}
+
+/* ------------------ Text Colors ------------------ */
+.gms-light-text {
+    color: #ffffff;
+}
+
+.gms-dark-text {
+    color: #064b17;
+}
+
+.gms-main-text {
+    color: #F5E6D3;
+}
+
+.gms-title-text {
+    color: #F5E6D3;
+    text-shadow:
+            1px 1px 0 #52D332,
+            -1px 1px 0 #52D332,
+            1px -1px 0 #52D332,
+            -1px -1px 0 #52D332;
+}
+
+@media (max-width: 640px) {
+    .gms-title-text {
+        color: #52D332;
+        text-shadow: none;
+    }
+}
+
+.gms-accent-text {
+    color: #52D332;
+}
+
+.gms-accent-hover-text {
+    color: #52D332;
+}
+
+.gms-accent-hover-text:hover {
+    color: #064b17;
+}
+
+.gms-demo-accent-text {
+    color: #94df7e;
+}
+
+
+/* ------------------ Hover Backgrounds ------------------ */
+.gms-hover-bg-light:hover {
+    background-color: #064b17;
+}
+
+.gms-primary-hover-bg:hover {
+    background-color: #52D332;
+}
+
+/* ------------------ Borders ------------------ */
+.gms-border-dark {
+    border-color: #064b17;
+}
+
+.gms-border-medium {
+    border-color: #F5E6D3;
+}
+
+/* ------------------ Buttons ------------------ */
+.gms-btn-clear {
+    background-color: #064b17;
+    color: #F5E6D3;
+    transition: all 0.3s ease;
+}
+
+.gms-btn-clear:hover {
+    background-color: #52D332;
+    color: #1A1410;
+    transform: translateY(2px);
+    box-shadow: 0 0 12px #FF4444;
+}
+
+.gms-btn-submit {
+    background-color: #52D332;
+    color: #1A1410;
+    transition: all 0.3s ease;
+}
+
+.gms-btn-submit:hover {
+    background-color: #F5E6D3;
+    color: #1A1410;
+    transform: translateY(2px);
+    box-shadow: 0 0 16px #52D332;
+}

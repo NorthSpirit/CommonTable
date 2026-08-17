@@ -1,0 +1,110 @@
+/*
+ * =========================================================
+ * Grand Menu Service – Deuteranopia-Friendly Colour Scheme CSS
+ * =========================================================
+ */
+
+/* ------------------ Background Colors ------------------ */
+
+.gms-primary-bg {
+    background-color: #6F8E4E;
+}
+
+.gms-dark-bg {
+    background-color: #4E6B35;
+}
+
+.gms-content-bg {
+    background-color: #F3F7EE;
+}
+
+/* ------------------ Text Colors ------------------ */
+.gms-light-text {
+    color: #ffffff;
+}
+
+.gms-dark-text {
+    color: #4E6B35;
+}
+
+.gms-main-text {
+    color: #1E2A1E;
+}
+
+.gms-title-text {
+    color: #1E2A1E;
+    text-shadow:
+            1px 1px 0 #6F8E4E,
+            -1px 1px 0 #6F8E4E,
+            1px -1px 0 #6F8E4E,
+            -1px -1px 0 #6F8E4E;
+}
+
+@media (max-width: 640px) {
+    .gms-title-text {
+        color: #4E6B35;
+        text-shadow: none;
+    }
+}
+
+.gms-accent-text {
+    color: #6F8E4E;
+}
+
+.gms-accent-hover-text {
+    color: #6F8E4E;
+}
+
+.gms-accent-hover-text:hover {
+    color: #4E6B35;
+}
+
+.gms-demo-accent-text {
+    color: #6F8E4E;
+}
+
+
+/* ------------------ Hover Backgrounds ------------------ */
+.gms-hover-bg-light:hover {
+    background-color: #6F8E4E;
+}
+
+.gms-primary-hover-bg:hover {
+    background-color: #4E6B35;
+}
+
+/* ------------------ Borders ------------------ */
+.gms-border-dark {
+    border-color: #4E6B35;
+}
+
+.gms-border-medium {
+    border-color: #1E2A1E;
+}
+
+/* ------------------ Buttons ------------------ */
+.gms-btn-clear {
+    background-color: #F3F7EE;
+    color: #1E2A1E;
+    transition: all 0.3s ease;
+}
+
+.gms-btn-clear:hover {
+    background-color: #6F8E4E;
+    color: #ffffff;
+    transform: translateY(2px);
+    box-shadow: 0 0 12px #C94C4C;
+}
+
+.gms-btn-submit {
+    background-color: #4E6B35;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.gms-btn-submit:hover {
+    background-color: #6F8E4E;
+    color: #ffffff;
+    transform: translateY(2px);
+    box-shadow: 0 0 16px #6F8E4E;
+}

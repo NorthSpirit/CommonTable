@@ -90,6 +90,17 @@ func (h *TableHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid table id", http.StatusBadRequest)
 		return
 	}
+
+	hasActive, err := h.tableService.TableHasActiveOrders(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "failed to check table orders", http.StatusInternalServerError)
+		return
+	}
+	if hasActive {
+		http.Error(w, "cannot delete this table — it has an active (unpaid or unfulfilled) order. Resolve the order first.", http.StatusConflict)
+		return
+	}
+
 	if err := h.tableService.DeleteTable(r.Context(), int32(id)); err != nil {
 		http.Error(w, "failed to delete table", http.StatusInternalServerError)
 		return
