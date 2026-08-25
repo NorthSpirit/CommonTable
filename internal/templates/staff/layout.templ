@@ -6,15 +6,15 @@ templ Layout(title string, employeeName string, content templ.Component) {
 		<head>
 			<title>CommonTable Staff - { title }</title>
 			<meta charset="utf-8"/>
-			<link rel="icon" href="data:,"/>
+			<link rel="icon" type="image/png" href="/assets/images/favicon.png"/>
 			<script src="https://cdn.tailwindcss.com"></script>
 			<link id="theme-default" rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
-            <link id="theme-alt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
-            <link id="theme-dark" rel="stylesheet" href="/assets/css/CTStyleDark.css" disabled/>
-            <link id="theme-highContrast" rel="stylesheet" href="/assets/css/CTStyleHighContrast.css" disabled/>
-            <link id="theme-protanopia" rel="stylesheet" href="/assets/css/CTStyleProtanopia.css" disabled/>
-            <link id="theme-deuteranopia" rel="stylesheet" href="/assets/css/CTStyleDeuteranopia.css" disabled/>
-            <link id="theme-tritanopia" rel="stylesheet" href="/assets/css/CTStyleTritanopia.css" disabled/>
+			<link id="theme-alt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
+			<link id="theme-dark" rel="stylesheet" href="/assets/css/CTStyleDark.css" disabled/>
+			<link id="theme-highContrast" rel="stylesheet" href="/assets/css/CTStyleHighContrast.css" disabled/>
+			<link id="theme-protanopia" rel="stylesheet" href="/assets/css/CTStyleProtanopia.css" disabled/>
+			<link id="theme-deuteranopia" rel="stylesheet" href="/assets/css/CTStyleDeuteranopia.css" disabled/>
+			<link id="theme-tritanopia" rel="stylesheet" href="/assets/css/CTStyleTritanopia.css" disabled/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<style>
 				html, body { height: 100%; }
@@ -40,7 +40,7 @@ templ Layout(title string, employeeName string, content templ.Component) {
 							<a href="/staff/profile" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">My Profile</a>
 						</li>
 						<li class="border gms-border-medium w-full md:flex-1">
-							<a href="/staff/chat" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Chat</a>
+							<a id="nav-chat-link" href="/staff/chat" data-poll-url="/staff/chat/messages" data-storage-key="chat_last_read_staff" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Chat</a>
 						</li>
 						<li class="border gms-border-medium w-full md:flex-1">
 							<a href="#" id="MColour" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Palette Swap</a>
@@ -60,6 +60,7 @@ templ Layout(title string, employeeName string, content templ.Component) {
 				</footer>
 			</div>
 
+			<script src="/assets/jsscripts/chat_unread.js"></script>
 			<script src="/assets/jsscripts/colour_swap.js"></script>
 		</body>
 	</html>

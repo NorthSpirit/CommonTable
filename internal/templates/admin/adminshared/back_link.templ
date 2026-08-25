@@ -1,0 +1,8 @@
+package adminshared
+
+templ BackLink(href string, label string) {
+	<a href={ templ.URL(href) } class="inline-flex items-center gap-1 text-sm font-bold gms-main-text opacity-70 hover:opacity-100">
+		<span>&larr;</span>
+		<span>{ label }</span>
+	</a>
+}

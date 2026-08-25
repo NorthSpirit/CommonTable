@@ -15,6 +15,7 @@ type ChefItemListView struct {
 
 type ChefItemDetailView struct {
 	ID           int32
+	MenuID       int32
 	Name         string
 	Description  string
 	Instructions string

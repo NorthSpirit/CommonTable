@@ -19,9 +19,10 @@ func NewAdminHandlers(s *Services, pool *pgxpool.Pool) httpserver.AdminHandlers 
 		Ingredient:     admin.NewIngredientHandler(s.FoodIngredient, s.IngredientItem),
 		Employee:       admin.NewEmployeeHandler(s.Employee, s.Restaurant),
 		Table:          admin.NewTableHandler(s.Table, s.Restaurant),
-		Order:          admin.NewOrderHandler(pool, s.FoodOrder, s.ItemOrder, s.Payment, s.Table, s.Employee, s.Restaurant, s.FoodMenu, s.ItemMenu),
+		Order:          admin.NewOrderHandler(pool, s.FoodOrder, s.ItemOrder, s.Payment, s.Table, s.Employee, s.Restaurant, s.FoodMenu, s.ItemMenu, s.FoodItem),
 		Chat:           admin.NewChatHandler(s.ChatMessage, s.Restaurant),
 		ChangePassword: admin.NewChangePasswordHandler(s.Admin),
 		TableStatus:    admin.NewTableStatusHandler(s.Table, s.Restaurant),
+		Export:         admin.NewExportHandler(s.Restaurant, s.FoodMenu, s.ItemMenu, s.ItemAllergen, s.IngredientItem),
 	}
 }

@@ -7,10 +7,14 @@ templ RestaurantDeleteConfirmPage(restaurant adminshared.RestaurantView, errorMe
 }
 
 templ restaurantDeleteConfirmContent(restaurant adminshared.RestaurantView, errorMessage string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center">
-		<div class="w-full max-w-sm p-6 rounded-lg shadow-lg border gms-border-medium gms-dark-bg gms-light-text">
-			<h2 class="text-xl font-bold mb-4 text-center">Confirm Deletion</h2>
-			<p class="text-sm mb-4 text-center">
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurant.ID), "Back")
+			<h2 class="text-2xl font-bold gms-main-text">Confirm Deletion</h2>
+		</div>
+
+		<div class="w-full lg:w-[65%] mx-auto p-6 rounded-lg shadow-lg border gms-border-medium gms-dark-bg">
+			<p class="gms-demo-accent-text text-sm mb-4">
 				You are about to delete <strong>{ restaurant.Name }</strong>. Its menus and
 				items will be hidden from customers, but order history is preserved.
 				Enter your admin password to confirm.
@@ -22,11 +26,11 @@ templ restaurantDeleteConfirmContent(restaurant adminshared.RestaurantView, erro
 
 			<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/delete") } class="space-y-4">
 				<label class="block">
-					<span class="text-sm font-medium mb-1 block">Admin Password</span>
+					<span class="text-sm font-medium mb-1 block gms-demo-accent-text">Admin Password</span>
 					<input type="password" name="password" required autofocus class="p-2 border rounded-md w-full gms-dark-text"/>
 				</label>
 				<div class="flex justify-end space-x-4 pt-2">
-					<a href={ templ.URL("/admin/restaurants") } class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium">
+					<a href={ templ.URL("/admin/restaurants") } class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 						Cancel
 					</a>
 					<input type="submit" value="Delete Restaurant" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-clear border gms-border-medium"/>

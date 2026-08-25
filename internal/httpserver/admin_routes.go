@@ -22,6 +22,7 @@ type AdminHandlers struct {
 	TableStatus    *admin.TableStatusHandler
 	Chat           *admin.ChatHandler
 	ChangePassword *admin.ChangePasswordHandler
+	Export         *admin.ExportHandler
 }
 
 func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservices.AdminService) {
@@ -46,6 +47,7 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Get("/{id}/chat", h.Chat.Page)
 				r.Get("/{id}/chat/messages", h.Chat.Poll)
 				r.Get("/{id}/table-status", h.TableStatus.Page)
+				r.Get("/{id}/export", h.Export.Export)
 				r.Get("/{id}/edit", h.Restaurant.EditForm)
 				r.Post("/{id}/edit", h.Restaurant.Update)
 				r.Get("/{id}/delete", h.Restaurant.DeleteConfirm)
@@ -91,6 +93,7 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 					r.Post("/{orderID}/items/{itemOrderID}/edit", h.Order.UpdateItemQuantity)
 					r.Post("/{orderID}/payments/new", h.Order.CreatePayment)
 					r.Post("/{orderID}/payments/quick-pay", h.Order.QuickPayCash)
+					r.Post("/{orderID}/items/add", h.Order.AddItem)
 				})
 			})
 

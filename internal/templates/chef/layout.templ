@@ -6,7 +6,7 @@ templ Layout(title string, employeeName string, content templ.Component) {
 		<head>
 			<title>CommonTable Kitchen - { title }</title>
 			<meta charset="utf-8"/>
-			<link rel="icon" href="data:,"/>
+			<link rel="icon" type="image/png" href="/assets/images/favicon.png"/>
 			<script src="https://cdn.tailwindcss.com"></script>
 			<link id="themeCSS" rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
 			<link id="themeCSSAlt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
@@ -30,7 +30,18 @@ templ Layout(title string, employeeName string, content templ.Component) {
 				</header>
 
 				<nav class="border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg">
-					<ul class="list-none m-0 w-full flex flex-col md:flex-row md:justify-center md:items-stretch text-center">
+					<div class="md:hidden w-full">
+						<button id="menu-toggle" class="px-4 py-1 w-full flex items-center justify-between gms-main-text gms-hover-bg-light rounded">
+							<div class="flex items-center space-x-2">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+								</svg>
+								<span class="text-base font-bold tracking-wider">Menu</span>
+							</div>
+						</button>
+					</div>
+
+					<ul id="menu-items" class="hidden md:flex list-none m-0 w-full flex-col md:flex-row md:justify-center md:items-stretch text-center">
 						<li class="border gms-border-medium w-full md:flex-1">
 							<a href="/chef/menus" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Menus</a>
 						</li>
@@ -38,7 +49,7 @@ templ Layout(title string, employeeName string, content templ.Component) {
 							<a href="/chef/profile" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">My Profile</a>
 						</li>
 						<li class="border gms-border-medium w-full md:flex-1">
-                        	<a href="/chef/chat" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Chat</a>
+                        	<a id="nav-chat-link" href="/chef/chat" data-poll-url="/chef/chat/messages" data-storage-key="chat_last_read_chef" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Chat</a>
                         </li>
 						<li class="border gms-border-medium w-full md:flex-1">
 							<a href="#" id="MColour" class="block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light">Palette Swap</a>
@@ -54,10 +65,12 @@ templ Layout(title string, employeeName string, content templ.Component) {
 				</div>
 
 				<footer class="gms-dark-bg gms-light-text p-4 text-center gms-accent-text">
-                	<p>&copy; 2026 Mantas "IndomitableWastage" Jurevičius</p>
-                </footer>
+					<p>&copy; 2026 Mantas "IndomitableWastage" Jurevičius</p>
+				</footer>
 			</div>
 
+			<script src="/assets/jsscripts/hamburger.js"></script>
+			<script src="/assets/jsscripts/chat_unread.js"></script>
 			<script src="/assets/jsscripts/colour_swap.js"></script>
 		</body>
 	</html>

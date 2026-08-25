@@ -1,7 +1,6 @@
 package main
 
 import (
-	"CommonTable/internal/handlers/terminal"
 	"context"
 	"log"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"CommonTable/internal/container"
 	"CommonTable/internal/discovery"
 	"CommonTable/internal/handlers/hub"
+	"CommonTable/internal/handlers/terminal"
 	"CommonTable/internal/httpserver"
 	"CommonTable/internal/logging"
 	"CommonTable/internal/repository"
@@ -62,8 +62,8 @@ func main() {
 	kitchenHandlers := container.NewKitchenHandlers(services)
 	waiterAPIHandlers := container.NewWaiterAPIHandlers(services, pool)
 	managerHandlers := container.NewManagerHandlers(services, pool)
-	hubHandler := hub.NewHubHandler()
 	staffHandlers := container.NewStaffHandlers(services)
+	hubHandler := hub.NewHubHandler()
 	terminalHandlers := httpserver.TerminalHandlers{Handler: terminal.NewHandler(services.Auth, services.FoodOrder, services.ItemOrder, services.Payment)}
 
 	r := chi.NewRouter()
@@ -79,8 +79,8 @@ func main() {
 	httpserver.RegisterKitchenRoutes(r, kitchenHandlers, services.Auth)
 	httpserver.RegisterWaiterAPIRoutes(r, waiterAPIHandlers, services.Auth)
 	httpserver.RegisterManagerRoutes(r, managerHandlers, services.Auth)
-	httpserver.RegisterTerminalRoutes(r, terminalHandlers)
 	httpserver.RegisterStaffRoutes(r, staffHandlers, services.Auth)
+	httpserver.RegisterTerminalRoutes(r, terminalHandlers)
 
 	r.Handle("/assets/*", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
 	r.Handle("/uploads/*", http.StripPrefix("/uploads", http.FileServer(http.Dir(cfg.UploadsDir))))
@@ -88,18 +88,20 @@ func main() {
 	r.Get("/download/waiter-app.apk", hub.ServeAPK("./assets/downloads/waiter_app.apk"))
 	r.Get("/api/discover", hub.Discover)
 	r.Get("/api-docs", hubHandler.ApiDocs)
-	/*
-		r.Get("/debug/crash", func(w http.ResponseWriter, r *http.Request) {
-			panic("intentional test crash")
-		})
-	*/
-	// UDP LAN discovery — lets clients find this server without a
-	// hardcoded IP. Irrelevant/unused once deployed behind a real
-	// hostname, but harmless to leave running either way.
-	discovery.StartResponder(41241)
+	r.Get("/api-docs/export", hubHandler.ExportDocs)
 
-	log.Printf("listening on %s", httpPort)
-	discovery.PrintLANAddresses()
+	// UDP LAN discovery — lets clients find this server without a
+	// hardcoded IP. Only runs in LAN mode; a hosted deployment behind a
+	// real domain has no use for it, and there's no local subnet to
+	// broadcast on anyway.
+	if cfg.DeploymentMode == "lan" {
+		discovery.StartResponder(41241)
+		log.Printf("listening on %s (LAN mode)", httpPort)
+		discovery.PrintLANAddresses()
+	} else {
+		log.Printf("listening on %s (hosted mode, public URL: %s)", httpPort, cfg.PublicBaseURL)
+	}
+
 	if err := http.ListenAndServe(httpPort, r); err != nil {
 		log.Fatalf("server error: %v", err)
 	}

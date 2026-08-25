@@ -22,13 +22,16 @@ func itemFormAction(restaurantID int32, menuID int32, isEdit bool, itemID int32)
 }
 
 templ foodItemFormContent(restaurantID int32, menuID int32, isEdit bool, item adminshared.FoodItemView, allergens []adminshared.AllergenCheckboxView, menus []adminshared.MenuCheckboxView, ingredientOptions []adminshared.IngredientOptionView, errorMessage string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
-			{ itemFormTitle(isEdit) }
-		</h2>
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurantID)+"/menus/"+adminshared.Itoa(menuID), "Back")
+			<h2 class="text-2xl font-bold gms-main-text">
+				{ itemFormTitle(isEdit) }
+			</h2>
+		</div>
 
 		if errorMessage != "" {
-			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm">{ errorMessage }</p>
 		}
 
 		<form method="POST" action={ itemFormAction(restaurantID, menuID, isEdit, item.ID) } enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -124,17 +127,17 @@ templ foodItemFormContent(restaurantID int32, menuID int32, isEdit bool, item ad
 				<fieldset class="border p-4 rounded-lg gms-border-medium lg:col-span-2">
 					<legend class="text-lg font-semibold px-2">Ingredients</legend>
 
-					<div id="ingredient-rows" class="max-h-64 overflow-y-auto border gms-border-medium rounded mb-4">
+					<div class="max-h-64 overflow-y-auto mb-4">
 						<table class="w-full text-sm">
 							<thead>
-								<tr class="border-b gms-border-medium">
+								<tr class="border-b-2 gms-border-medium">
 									<th class="text-left p-2">Ingredient</th>
-									<th class="text-left p-2">Amount</th>
-									<th class="text-left p-2">Measurement</th>
-									<th class="p-2"></th>
+									<th class="text-left p-2 w-32">Amount</th>
+									<th class="text-left p-2 w-40">Measurement</th>
+									<th class="p-2 w-24"></th>
 								</tr>
 							</thead>
-							<tbody id="ingredient-tbody">
+							<tbody id="ingredient-tbody" class="divide-y gms-border-medium">
 								for _, ing := range item.Ingredients {
 									<tr>
 										<td class="p-2">
@@ -142,45 +145,45 @@ templ foodItemFormContent(restaurantID int32, menuID int32, isEdit bool, item ad
 											<input type="hidden" name="ingredient_id" value={ adminshared.Itoa(ing.IngredientID) }/>
 										</td>
 										<td class="p-2">
-											<input type="number" step="0.01" min="0" name="ingredient_amount" value={ adminshared.FormatPrice(ing.Amount) } class="p-1 border gms-border-medium rounded w-24"/>
+											<input type="number" step="0.01" min="0" name="ingredient_amount" value={ adminshared.FormatPrice(ing.Amount) } class="p-2 border gms-border-medium rounded-md w-full"/>
 										</td>
 										<td class="p-2">
-											<input type="text" name="ingredient_measurement" value={ ing.Measurement } class="p-1 border gms-border-medium rounded w-32"/>
+											<input type="text" name="ingredient_measurement" value={ ing.Measurement } class="p-2 border gms-border-medium rounded-md w-full"/>
 										</td>
 										<td class="p-2">
-											<button type="submit" name="remove_ingredient" value={ adminshared.Itoa(ing.IngredientID) } formnovalidate class="px-2 py-1 text-xs font-bold rounded gms-btn-clear border gms-border-medium">
+											<button type="submit" name="remove_ingredient" value={ adminshared.Itoa(ing.IngredientID) } formnovalidate class="w-full px-2 py-1 text-xs font-bold rounded-md gms-btn-clear border gms-border-medium">
 												Remove
 											</button>
 										</td>
 									</tr>
 								}
 							</tbody>
+							<tfoot>
+								<tr class="border-t-2 gms-border-medium">
+									<td class="p-2">
+										<select name="new_ingredient_id" class="p-2 border gms-border-medium rounded-md w-full">
+											<option value="">-- Add ingredient --</option>
+											for _, opt := range ingredientOptions {
+												<option value={ adminshared.Itoa(opt.ID) }>{ opt.Name }</option>
+											}
+										</select>
+									</td>
+									<td class="p-2">
+										<input type="number" step="0.01" min="0" name="new_ingredient_amount" class="p-2 border gms-border-medium rounded-md w-full"/>
+									</td>
+									<td class="p-2">
+										<input type="text" name="new_ingredient_measurement" placeholder="e.g. g, ml, pcs" class="p-2 border gms-border-medium rounded-md w-full"/>
+									</td>
+									<td class="p-2">
+										<button type="submit" name="add_ingredient" value="1" formnovalidate class="w-full px-2 py-1 text-xs font-bold rounded-md gms-btn-submit border gms-border-medium">
+											Add
+										</button>
+									</td>
+								</tr>
+							</tfoot>
 						</table>
 					</div>
-
-					<div class="flex gap-2 items-end flex-wrap">
-						<label class="block">
-							<span class="text-xs font-medium mb-1 block">Add Ingredient</span>
-							<select name="new_ingredient_id" class="p-2 border gms-border-medium rounded-md">
-								<option value="">-- Select --</option>
-								for _, opt := range ingredientOptions {
-									<option value={ adminshared.Itoa(opt.ID) }>{ opt.Name }</option>
-								}
-							</select>
-						</label>
-						<label class="block">
-							<span class="text-xs font-medium mb-1 block">Amount</span>
-							<input type="number" step="0.01" min="0" name="new_ingredient_amount" class="p-2 border gms-border-medium rounded-md w-24"/>
-						</label>
-						<label class="block">
-							<span class="text-xs font-medium mb-1 block">Measurement</span>
-							<input type="text" name="new_ingredient_measurement" placeholder="e.g. g, ml, pcs" class="p-2 border gms-border-medium rounded-md w-32"/>
-						</label>
-						<button type="submit" name="add_ingredient" value="1" formnovalidate class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
-							Add
-						</button>
-					</div>
-					<p class="text-xs opacity-70 mt-2">Adding or removing an ingredient saves immediately and reloads this form.</p>
+					<p class="text-xs opacity-70">Adding or removing an ingredient saves immediately and reloads this form.</p>
 				</fieldset>
 			}
 

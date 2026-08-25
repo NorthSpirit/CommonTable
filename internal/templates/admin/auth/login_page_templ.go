@@ -60,7 +60,7 @@ func loginPageContent(errorMessage string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2\">Admin Login</h2><p class=\"gms-main-text mb-6 text-center\">Please enter your credentials to access the admin panel.</p><div id=\"login-form\" class=\"mx-auto w-full max-w-sm p-6 gms-dark-bg gms-light-text rounded-lg shadow-xl border gms-border-medium\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4\">Admin Login</h2><div id=\"login-form\" class=\"w-full lg:w-[65%] mx-auto p-6 gms-dark-bg rounded-lg shadow-xl border gms-border-medium\"><p class=\"gms-demo-accent-text mb-4 text-center text-sm\">Please enter your credentials to access the admin panel.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -72,7 +72,7 @@ func loginPageContent(errorMessage string) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/auth/login_page.templ`, Line: 16, Col: 90}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/auth/login_page.templ`, Line: 17, Col: 90}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -83,7 +83,7 @@ func loginPageContent(errorMessage string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"POST\" action=\"/admin/login\" class=\"space-y-4\"><label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Username:</span> <input type=\"text\" name=\"username\" required autofocus class=\"p-2 border rounded-md w-full gms-dark-text\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Password:</span><div class=\"flex gap-2\"><input id=\"password-field\" type=\"password\" name=\"password\" required class=\"p-2 border rounded-md w-full gms-dark-text\"> <button type=\"button\" id=\"toggle-password\" class=\"px-3 rounded-md border gms-border-medium gms-content-bg gms-dark-text gms-hover-bg-light text-xs whitespace-nowrap\">Show</button></div></label><div class=\"flex justify-end space-x-4 pt-2\"><input type=\"reset\" value=\"Clear\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-clear border gms-border-medium\"> <input type=\"submit\" value=\"Log In\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium\"></div></form></div></main><script src=\"/assets/jsscripts/toggle_password.js\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"POST\" action=\"/admin/login\" class=\"space-y-4\"><label class=\"block\"><span class=\"text-sm font-medium mb-1 block gms-demo-accent-text\">Username:</span> <input type=\"text\" name=\"username\" required autofocus class=\"p-2 border rounded-md w-full gms-dark-text\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block gms-demo-accent-text\">Password:</span><div class=\"flex gap-2\"><input id=\"password-field\" type=\"password\" name=\"password\" required class=\"p-2 border rounded-md w-full gms-dark-text\"> <button type=\"button\" id=\"toggle-password\" class=\"px-3 rounded-md border gms-border-medium gms-content-bg gms-dark-text gms-hover-bg-light text-xs whitespace-nowrap\">Show</button></div></label><div class=\"flex justify-end space-x-4 pt-2\"><input type=\"reset\" value=\"Clear\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-clear border gms-border-medium\"> <input type=\"submit\" value=\"Log In\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium\"></div></form></div></main><script src=\"/assets/jsscripts/toggle_password.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

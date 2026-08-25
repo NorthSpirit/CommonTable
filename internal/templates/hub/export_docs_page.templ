@@ -1,0 +1,155 @@
+package hub
+
+templ ExportDocsPage() {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>CommonTable - Menu Export</title>
+<meta charset="utf-8"/>
+<link rel="icon" type="image/png" href="/assets/images/favicon.png"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<link id="themeCSS" rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
+<link id="themeCSSAlt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+html, body { height: 100%; }
+:root { font-family: 'Lora', serif; }
+a { color: inherit; }
+code { font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="min-h-screen flex flex-col gms-dark-bg">
+<header class="gms-dark-bg gms-light-text p-2 shadow-md border-b-4 gms-border-dark">
+<div class="container mx-auto text-center py-4">
+<h1 class="gms-title-text lg:text-3xl sm:text-2xl font-bold mb-1">CommonTable</h1>
+<p class="text-sm gms-demo-accent-text">Menu Export Reference</p>
+</div>
+</header>
+
+<nav class="border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex gms-content-bg">
+<a href="/hub" class="flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light">&larr; Back to Hub</a>
+<a href="#" id="MColour" class="flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light border-l-2 gms-border-medium">Palette Swap</a>
+</nav>
+
+<main class="flex-1 px-6 py-6 gms-dark-bg">
+<div class="w-full lg:w-[65%] mx-auto">
+<p class="text-sm gms-light-text mb-6">
+Any restaurant's menu content can be exported as a single JSON file — useful for building a custom, bespoke storefront outside of CommonTable's own customer page. The export is a read-only snapshot; nothing here can be used to write data back.
+</p>
+
+<div class="gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6">
+<h2 class="text-lg font-bold mb-2">Getting an export</h2>
+<p class="text-sm mb-2">
+Requires an admin session (this endpoint lives under <code>/admin</code>, same auth as the rest of the admin panel). Given a restaurant's ID:
+</p>
+<code class="block text-sm font-bold p-2 bg-black bg-opacity-10 rounded">GET /admin/restaurants/{"{id}"}/export</code>
+<p class="text-sm mt-2">
+Returns a single JSON document. No numeric IDs are included anywhere in the response — items, menus, ingredients, and allergens are all identified by name, not database key, so the export is safe to hand to an outside party without exposing internal structure.
+</p>
+</div>
+
+<div class="gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6">
+<h2 class="text-lg font-bold mb-2">Notes</h2>
+<ul class="list-disc pl-5 text-sm space-y-1">
+<li>Soft-deleted items are never included.</li>
+<li>Bilingual fields (<code>name_alt</code>, <code>description_alt</code>) are omitted entirely when blank — check for their presence rather than assuming they exist.</li>
+<li>Arrays (<code>menus</code>, <code>items</code>, <code>allergens</code>, <code>ingredients</code>) are always present, even when empty — safe to iterate without a null check.</li>
+<li><code>image_url</code> is a relative path against this CommonTable server; the file itself is not embedded in the export.</li>
+<li><code>is_available</code> reflects live kitchen/chef state at the moment of export, not a permanent property of the item.</li>
+</ul>
+</div>
+
+@fieldGroup("Restaurant", []field{
+{"name", "string", "Restaurant's display name."},
+{"description", "string", "English description. Omitted if blank."},
+{"description_alt", "string", "Alternate-language description. Omitted if blank."},
+{"menus", "array", "List of Menu objects (below). Always present, possibly empty."},
+})
+
+@fieldGroup("Menu", []field{
+{"name", "string", "Menu's display name."},
+{"name_alt", "string", "Alternate-language name. Omitted if blank."},
+{"description", "string", "Omitted if blank."},
+{"description_alt", "string", "Omitted if blank."},
+{"image_url", "string", "Relative path to the menu's image. Omitted if none set."},
+{"items", "array", "List of Item objects (below). Always present, possibly empty."},
+})
+
+@fieldGroup("Item", []field{
+{"name", "string", "Item's display name."},
+{"name_alt", "string", "Omitted if blank."},
+{"description", "string", "Omitted if blank."},
+{"description_alt", "string", "Omitted if blank."},
+{"price", "number", "Decimal price, e.g. 8.50."},
+{"image_url", "string", "Omitted if none set."},
+{"is_available", "boolean", "Current availability, as set by kitchen staff."},
+{"allergens", "array of strings", "Allergen names. Always present, possibly empty."},
+{"ingredients", "array", "List of Ingredient objects (below). Always present, possibly empty."},
+})
+
+@fieldGroup("Ingredient", []field{
+{"name", "string", "Ingredient's name."},
+{"amount", "number", "Quantity used. Omitted if zero/unset."},
+{"measurement", "string", "Unit label (e.g. \"g\", \"units\"). Omitted if blank."},
+})
+
+<div class="mb-6">
+<h2 class="text-lg font-bold gms-light-text mb-2">Example</h2>
+<pre class="gms-content-bg gms-main-text rounded-lg shadow-lg p-4 text-xs overflow-x-auto"><code>{ exampleJSON }</code></pre>
+</div>
+</div>
+</main>
+
+<footer class="gms-dark-bg gms-light-text p-4 text-center gms-accent-text">
+<p>&copy; 2026 Mantas "IndomitableWastage" Jurevičius</p>
+</footer>
+</div>
+
+<script src="/assets/jsscripts/colour_swap.js"></script>
+</body>
+</html>
+}
+
+type field struct {
+	Name        string
+	Type        string
+	Description string
+}
+
+templ fieldGroup(title string, fields []field) {
+<div class="mb-6">
+<h2 class="text-lg font-bold gms-light-text mb-2">{ title }</h2>
+<div class="gms-content-bg gms-main-text rounded-lg shadow-lg divide-y gms-border-medium">
+for _, f := range fields {
+<div class="p-3 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
+<code class="text-sm font-bold w-40 shrink-0">{ f.Name }</code>
+<span class="text-xs gms-dark-text w-32 shrink-0 italic">{ f.Type }</span>
+<span class="text-xs gms-dark-text">{ f.Description }</span>
+</div>
+}
+</div>
+</div>
+}
+
+const exampleJSON = `{
+  "name": "IndieBurger",
+  "description": "Handmade burgers.",
+  "menus": [
+    {
+      "name": "Lunch Menu",
+      "image_url": "/uploads/menus/2.jpg",
+      "items": [
+        {
+          "name": "Cheeseburger",
+          "price": 8.5,
+          "is_available": true,
+          "allergens": ["Gluten", "Dairy"],
+          "ingredients": [
+            { "name": "Beef Patty", "amount": 150, "measurement": "g" }
+          ]
+        }
+      ]
+    }
+  ]
+}`

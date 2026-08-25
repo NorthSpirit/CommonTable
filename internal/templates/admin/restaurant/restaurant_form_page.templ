@@ -21,16 +21,19 @@ func formAction(isEdit bool, id int32) templ.SafeURL {
 }
 
 templ restaurantFormContent(isEdit bool, restaurant adminshared.RestaurantView, errorMessage string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
-			{ formTitle(isEdit) }
-		</h2>
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@adminshared.BackLink("/admin/restaurants", "Back")
+			<h2 class="text-2xl font-bold gms-main-text">
+				{ formTitle(isEdit) }
+			</h2>
+		</div>
 
 		if errorMessage != "" {
-			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm">{ errorMessage }</p>
 		}
 
-		<form method="POST" action={ formAction(isEdit, restaurant.ID) } enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+		<form method="POST" action={ formAction(isEdit, restaurant.ID) } enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full items-start">
 			<fieldset class="border p-4 rounded-lg gms-border-medium">
 				<legend class="text-lg font-semibold px-2">Details</legend>
 
@@ -55,14 +58,14 @@ templ restaurantFormContent(isEdit bool, restaurant adminshared.RestaurantView, 
 				</label>
 
 				<label class="block mb-4">
-                	<span class="text-sm font-medium mb-1 block">Description (English)</span>
-                	<textarea name="description" rows="4" class="p-2 border gms-border-medium rounded-md w-full">{ restaurant.Description }</textarea>
-                </label>
+					<span class="text-sm font-medium mb-1 block">Description (English)</span>
+					<textarea name="description" rows="4" class="p-2 border gms-border-medium rounded-md w-full">{ restaurant.Description }</textarea>
+				</label>
 
-                <label class="block mb-4">
-                	<span class="text-sm font-medium mb-1 block">Description (Alt Language, optional)</span>
-                	<textarea name="description_alt" rows="4" class="p-2 border gms-border-medium rounded-md w-full">{ restaurant.DescriptionAlt }</textarea>
-                </label>
+				<label class="block mb-4">
+					<span class="text-sm font-medium mb-1 block">Description (Alt Language, optional)</span>
+					<textarea name="description_alt" rows="4" class="p-2 border gms-border-medium rounded-md w-full">{ restaurant.DescriptionAlt }</textarea>
+				</label>
 
 				if isEdit {
 					<label class="block">

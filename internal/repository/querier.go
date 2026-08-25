@@ -63,6 +63,7 @@ type Querier interface {
 	GetRestaurant(ctx context.Context, id int32) (Restaurant, error)
 	GetRestaurantByName(ctx context.Context, lower string) (Restaurant, error)
 	GetRestaurantForDisplay(ctx context.Context, arg GetRestaurantForDisplayParams) (GetRestaurantForDisplayRow, error)
+	GetRestaurantForExport(ctx context.Context, id int32) (GetRestaurantForExportRow, error)
 	GetTable(ctx context.Context, id int32) (Table, error)
 	LinkRestaurantAllergen(ctx context.Context, arg LinkRestaurantAllergenParams) error
 	LinkRestaurantIngredient(ctx context.Context, arg LinkRestaurantIngredientParams) error

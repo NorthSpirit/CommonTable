@@ -133,7 +133,8 @@ Food Order Stuff: DSHR
     UpdateFoodOrderNotes DSHR
     DeleteFoodOrder DS
     table_id made nullable — take-out order support (waiter + admin + manager)
-    Cancel-blocked-if-paid guard (admin + manager)
+    Cancel-blocked-if-paid guard (admin + manager, fail-closed on payment-lookup error)
+    AddItemToOrder on pending orders (admin) — closes the add/edit/remove asymmetry gap
 
 Item-Order Relationship Stuff: DSHR
     AddItemToOrder (with name/description snapshot) DSHR
@@ -162,6 +163,8 @@ Chat Message Stuff: DSHR
     ListMessagesByRestaurantAfterID DSHR (polling — chef + admin + manager + waiter + staff)
     InsertChatMessage DSHR (chef + waiter + manager + staff send; admin read-only)
     DeleteChatMessage D
+    Own-message instant display (awaited re-poll after send, no more 3s wait)
+    Unread badge on nav "Chat" link (chef/manager/staff) — localStorage-tracked, 5s poll, clears on visiting chat
 
 Auth Stuff: SHR
     VerifyRestaurantPassword SHR (chef + kitchen + waiter + manager + terminal + staff login)
@@ -187,6 +190,10 @@ Kitchen Board Stuff: SHR
     Board (live order display) SHR
     Poll (JSON, 4s interval) SHR
     UpdateStatus (status progression) SHR
+
+Menu Export: SHR
+    Export (JSON, ID-stripped, empty-array-not-null, self-contained per restaurant) — admin, restaurant-scoped
+    Export field-reference docs page (/api-docs/export), linked from Hub
 
 Waiter API (JSON, mobile app): SHR
     Auth (two-step, sliding-expiry, saved-credentials support) SHR
@@ -248,3 +255,5 @@ MAYBE SOMEDAY (deliberately deferred, not gaps)
 - Multi-device/session limits — deliberately unrestricted, standard JWT behavior
 - Midnight log-file rotation while server runs continuously (currently: new file only on restart)
 - API docs page is a static snapshot — won't auto-update if new endpoints are added later
+- XML export format (JSON-only currently — deliberate scope call, JSON covers the realistic consumer base)
+- Full browser push notifications for chat (closed-tab alerts) — current unread-badge only works while a tab is open; genuinely urgent kitchen comms are expected to stay verbal, not routed through chat

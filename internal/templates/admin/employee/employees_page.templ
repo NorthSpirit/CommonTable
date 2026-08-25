@@ -7,17 +7,20 @@ templ EmployeesPage(restaurantID int32, restaurantName string, employees []admin
 }
 
 templ employeesPageContent(restaurantID int32, restaurantName string, employees []adminshared.EmployeeView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
-			<h2 class="text-2xl font-bold gms-main-text">{ restaurantName } - Employees</h2>
-			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees/new") } class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
-				+ New Employee
-			</a>
-		</div>
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+    	<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4">
+    		<div class="flex items-center gap-4">
+    			@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurantID), "Back")
+    			<h2 class="text-2xl font-bold gms-main-text">{ restaurantName } - Employees</h2>
+    		</div>
+    		<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees/new") } class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+    			+ New Employee
+    		</a>
+    	</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			for _, employee := range employees {
-				<div class={ "border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", !employee.IsActive) }>
+				<div class={ "flex flex-col min-h-[160px] border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", !employee.IsActive) }>
 					<div class="flex justify-between items-start">
 						<h3 class="text-lg font-bold gms-main-text">{ employee.Name }</h3>
 						if !employee.IsActive {
@@ -32,8 +35,8 @@ templ employeesPageContent(restaurantID int32, restaurantName string, employees 
 						<p class="text-xs opacity-70">{ employee.PhoneNumber }</p>
 					}
 
-					<div class="flex gap-2 mt-3">
-						<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees/" + adminshared.Itoa(employee.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+					<div class="flex gap-2 mt-auto pt-3">
+						<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees/" + adminshared.Itoa(employee.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 							Edit
 						</a>
 						<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/employees/" + adminshared.Itoa(employee.ID) + "/toggle-active") }>

@@ -1,0 +1,222 @@
+═══════════════════════════════════
+COMMONTABLE — USE CASE / ACTOR REFERENCE
+═══════════════════════════════════
+
+ACTORS (User Types)
+═══════════════════════════════════
+
+Unregistered User (Restaurant Guest)
+Waiter
+Chef
+Manager
+Admin
+Kitchen Board (device, not a person)
+Payment Terminal (device, not a person)
+
+
+═══════════════════════════════════
+UNREGISTERED USER (Restaurant Guest)
+═══════════════════════════════════
+No login required — public web access only.
+
+Can:
+    - Browse the list of restaurants in the food hall
+    - View a restaurant's profile (description, logo, contact info)
+    - Browse a restaurant's menus
+    - View individual food items (description, price, image)
+    - View an item's listed ingredients
+    - View an item's listed allergens
+    - Switch site language (EN / alt language)
+    - Switch colour palette (Main / Alt)
+
+Cannot:
+    - Place an order
+    - See prices update in real time / see live availability changes
+      without a page refresh
+    - Contact the restaurant directly (no customer-facing chat)
+
+
+═══════════════════════════════════
+WAITER
+═══════════════════════════════════
+Logs in via the mobile app (restaurant name + password, then own name
++ PIN) or via the lightweight "Staff" web login for profile/chat only.
+
+Can (mobile app):
+    - Log in and stay logged in via sliding-expiry session
+    - Browse the restaurant's menus and items
+    - Search all items by name
+    - View full item detail (description, ingredients, allergens, price)
+    - Pin up to 15 "quick items" for fast repeat ordering
+    - Unpin / reorder quick items
+    - Pick a table, or select Take-Out (no table)
+    - Build a cart and submit an order
+    - Append items to an already-open order at the same table
+    - View their own currently-active orders
+    - Cancel an order, but only while it's still "pending"
+    - Cancel-and-copy: cancel an order and refill the cart with its
+      items for quick resubmission
+    - Read and send restaurant chat messages
+    - See which tables currently have an active order (from this
+      restaurant's perspective)
+    - Change their palette / (non-functional) language toggle
+
+Can (Staff web login):
+    - Update their own contact info (email, phone)
+    - Change their own PIN
+    - Read and send restaurant chat messages
+
+Cannot:
+    - Edit menus, items, ingredients, or allergens
+    - See other restaurants sharing the same physical tables
+    - Edit an order once the kitchen has started preparing it
+    - Manage other employees
+    - Access payment/financial data
+    - Log into chef, manager, kitchen board, or admin surfaces
+
+
+═══════════════════════════════════
+CHEF
+═══════════════════════════════════
+Logs in via restaurant name + password, then own name + PIN (web).
+Same credentials can also access the Kitchen Board.
+
+Can:
+    - Browse the restaurant's menus and items
+    - View full item detail (description, ingredients, allergens)
+    - Edit an item's preparation instructions
+    - Mark an item available / unavailable ("86'd") in real time
+    - Update their own contact info and PIN (My Profile)
+    - Read and send restaurant chat messages
+    - Log into the Kitchen Board (same credentials)
+    - Progress an order's status on the Kitchen Board
+      (pending → preparing → ready → delivered)
+    - Change palette
+
+Cannot:
+    - Create, delete, or rename menus or items
+    - Edit price, images, or bilingual name/description text
+    - Assign/remove allergens or ingredients from an item
+    - Manage employees
+    - View or touch payment/financial data
+    - Manually create or edit an order's contents
+
+
+═══════════════════════════════════
+MANAGER
+═══════════════════════════════════
+Logs in via restaurant name + password, then own name + PIN — a
+distinct, more privileged role than waiter/chef, scoped to their own
+restaurant only. Can also use the mobile waiter app under the same
+credentials (waiter-or-manager gate).
+
+Can:
+    - Everything a Waiter can do via the mobile app (same role gate)
+    - View a dashboard summary for their own restaurant
+    - Create, edit employees — waiter and chef roles only
+      (cannot create another manager — privilege escalation blocked)
+    - Toggle an employee active/inactive
+    - Create, edit, delete menus
+    - Create, edit food items — name, price, image, description,
+      instructions, availability
+    - Assign existing allergens to an item (cannot create new allergens)
+    - Assign ingredients to an item, including inline "search or
+      create" for ingredients that don't exist yet in the catalog
+    - View, manually create, and edit orders for their own restaurant,
+      including take-out orders
+    - Add/remove/edit items on a still-pending order
+    - Record a payment (cash/card/other), including one-click
+      "mark fully paid in cash"
+    - Change a payment's status (pending/paid/failed/refunded)
+    - Cannot cancel an order that already has a paid payment without
+      first marking that payment refunded
+    - Edit the restaurant's own profile — name, address, phone, email,
+      logo, bilingual description, login password
+    - Update their own contact info and PIN (My Profile, separate from
+      restaurant profile)
+    - Read and send restaurant chat messages
+    - See an unread-message badge on the Chat nav link from any page
+
+Cannot:
+    - Create a second manager for the same restaurant
+    - See or manage other restaurants
+    - Create new allergens (select-only from admin's catalog)
+    - Manage cooperative-wide settings (homepage content, coop-wide
+      restaurant list, tables, ingredient/allergen master catalog)
+
+
+═══════════════════════════════════
+ADMIN
+═══════════════════════════════════
+Coop-wide oversight — separate credential system (username/password,
+not restaurant-scoped), one shared admin account.
+
+Can:
+    - View coop-wide dashboard (counts across all restaurants)
+    - Edit the public homepage's welcome text and images (bilingual,
+      basic markup)
+    - Create, edit, soft-delete, and restore restaurants
+      (delete is password-gated re-auth)
+    - View a restaurant's menus, items, employees, orders, chat,
+      and table-occupancy status
+    - Create, edit employees for any restaurant, any role including
+      manager
+    - Create, edit, delete food ingredients (shared catalog)
+    - Create, edit, delete allergens (shared catalog)
+    - See "where is this ingredient/allergen used" across all items
+    - Create, edit, soft-delete, restore physical tables
+      (shared across the whole food hall, not restaurant-owned)
+    - Manually set a table's floor/seating status (free/occupied/
+      reserved) — separate from computed live order-occupancy
+    - View table occupancy from a single restaurant's perspective, or
+      globally across all restaurants sharing that table
+    - View, manually create, and edit any restaurant's orders
+    - Add/remove/edit items on a still-pending order
+    - Record payments, change payment status, one-click quick-pay
+    - Read (but not send) restaurant chat — read-only by design
+    - Change their own admin password
+    - Export any restaurant's full menu (JSON, ID-stripped) for
+      third-party storefront builders
+    - Reference the export's field documentation
+
+Cannot:
+    - Send chat messages (read-only, intentionally — admin isn't a
+      restaurant staff member)
+    - Recover a lost admin password without direct server file access
+      (no email-based recovery)
+
+
+═══════════════════════════════════
+KITCHEN BOARD (device, not a person)
+═══════════════════════════════════
+A shared physical display in the kitchen. Logged in once per shift by
+a chef or manager; not tied to a single person's ongoing session.
+
+Can:
+    - Show all active orders for one restaurant, live
+    - Progress an order through pending → preparing → ready →
+      delivered
+    - Auto-refresh every few seconds without manual reload
+
+Cannot:
+    - Edit order contents, items, or prices
+    - Access chat, employee management, or any other surface
+    - Be logged into by a waiter (chef/manager only)
+
+
+═══════════════════════════════════
+PAYMENT TERMINAL (device, not a person)
+═══════════════════════════════════
+A simulated card-payment device — logs in with the restaurant's own
+password only, no individual employee step (same category as Kitchen
+Board: belongs to the restaurant, not a specific staff member).
+
+Can:
+    - List orders that currently have a remaining balance
+    - Simulate a card tap — approve or decline
+    - Record the resulting payment automatically
+
+Cannot:
+    - Edit orders, menus, or anything unrelated to payment
+    - Process a real card transaction (this is a documented simulation
+      standing in for a future real processor integration)

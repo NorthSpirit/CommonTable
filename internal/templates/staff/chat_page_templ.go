@@ -142,7 +142,7 @@ func chatPageContent(messages []ChatMessageView) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><form id=\"chat-form\" method=\"POST\" action=\"/staff/chat/send\" class=\"flex gap-2\"><input type=\"text\" id=\"chat-input\" name=\"message\" required autocomplete=\"off\" placeholder=\"Type a message...\" class=\"p-2 border gms-border-medium rounded-md w-full\"> <button type=\"submit\" class=\"px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium whitespace-nowrap\">Send</button></form></main><script src=\"/assets/jsscripts/chat_poll.js\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><form id=\"chat-form\" method=\"POST\" action=\"/staff/chat/send\" class=\"flex gap-2\"><input type=\"text\" id=\"chat-input\" name=\"message\" data-validate=\"generic\" required autocomplete=\"off\" placeholder=\"Type a message...\" class=\"p-2 border gms-border-medium rounded-md w-full\"> <button type=\"submit\" class=\"px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium whitespace-nowrap\">Send</button></form></main><script src=\"/assets/jsscripts/whitelist_blacklist_chars.js\"></script><script src=\"/assets/jsscripts/form_validation.js\"></script><script src=\"/assets/jsscripts/chat_poll.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

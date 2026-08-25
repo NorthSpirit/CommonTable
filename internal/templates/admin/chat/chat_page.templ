@@ -3,27 +3,33 @@ package chat
 import "CommonTable/internal/templates/admin/adminshared"
 
 templ ChatPage(restaurantID int32, restaurantName string, messages []adminshared.ChatMessageView) {
-	@adminshared.Layout(restaurantName+" - Chat", chatPageContent(restaurantID, messages))
+	@adminshared.Layout(restaurantName+" - Chat", chatPageContent(restaurantID, restaurantName, messages))
 }
 
-templ chatPageContent(restaurantID int32, messages []adminshared.ChatMessageView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto w-full">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Restaurant Chat</h2>
+templ chatPageContent(restaurantID int32, restaurantName string, messages []adminshared.ChatMessageView) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurantID), "Back to "+restaurantName)
+			<h2 class="text-2xl font-bold gms-main-text">Restaurant Chat</h2>
+		</div>
 
-		<div id="chat-messages" data-last-id={ lastMessageID(messages) } data-poll-url={ "/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/chat/messages" } class="border gms-border-medium rounded-lg p-4 h-96 overflow-y-auto space-y-2">
-			for _, m := range messages {
-				<div class="text-sm gms-main-text" data-message-id={ adminshared.Itoa(m.ID) }>
-					<span class="font-bold">{ m.SenderName }</span>
-					<span class="opacity-60">({ m.SentAt }):</span>
-					{ " " + m.Message }
-				</div>
-			}
-			if len(messages) == 0 {
-				<p class="text-center italic opacity-70">No messages yet.</p>
-			}
+		<div class="max-w-3xl mx-auto w-full">
+			<div id="chat-messages" data-last-id={ lastMessageID(messages) } data-poll-url={ "/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/chat/messages" } class="gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2">
+				for _, m := range messages {
+					<div class="text-sm gms-light-text" data-message-id={ adminshared.Itoa(m.ID) }>
+						<span class="font-bold">{ m.SenderName }</span>
+						<span class="opacity-70">({ m.SentAt }):</span>
+						{ " " + m.Message }
+					</div>
+				}
+				if len(messages) == 0 {
+					<p class="text-center italic gms-demo-accent-text">No messages yet.</p>
+				}
+			</div>
 		</div>
 	</main>
 
+	<script src="/assets/jsscripts/chat_height.js"></script>
 	<script src="/assets/jsscripts/chat_poll.js"></script>
 }
 

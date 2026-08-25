@@ -20,7 +20,7 @@
 
 /* ------------------ Text Colors ------------------ */
 .gms-light-text {
-    color: #FFFFFF;
+    color: #412009;
 }
 
 .gms-dark-text {
@@ -89,6 +89,15 @@
 }
 
 .gms-btn-submit:hover {
+    background: radial-gradient(circle at center, #0044ff 0%, #33ff00 100%);
+    border-color: #000000;
+    color: #000000;
+    transform: translateY(2px);
+    box-shadow: 15px 15px 5px -5px #33ff00,
+    -15px -15px 5px -5px #0044ff;
+}
+
+.gms-dashboard-highlight:hover {
     background: radial-gradient(circle at center, #0044ff 0%, #33ff00 100%);
     border-color: #000000;
     color: #000000;

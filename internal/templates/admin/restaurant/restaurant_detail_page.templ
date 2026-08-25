@@ -21,20 +21,26 @@ templ restaurantDetailContent(restaurant adminshared.RestaurantView) {
 				}
 			</div>
 		</div>
-		<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/employees") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2">
-        	Manage Employees
-        </a>
-		<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/menus") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
-			Manage Menus
-		</a>
-		<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/chat") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2">
-        	View Chat
-        </a>
-        <a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/orders") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2">
-        	View Orders
-        </a>
-        <a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/table-status") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium ml-2">
-        	Table Status
-        </a>
+
+		<div class="flex flex-wrap gap-2">
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/employees") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				Manage Employees
+			</a>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/menus") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				Manage Menus
+			</a>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/orders") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				View Orders
+			</a>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/table-status") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				Table Status
+			</a>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/chat") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+				View Chat
+			</a>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/export") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+            	Export Menu (JSON)
+            </a>
+		</div>
 	</main>
 }

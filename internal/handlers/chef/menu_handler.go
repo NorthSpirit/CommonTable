@@ -109,49 +109,37 @@ func (h *MenuHandler) MenuDetail(w http.ResponseWriter, r *http.Request) {
 		views = append(views, view)
 	}
 
-	if err := chef.ChefMenuDetailPage(menu.Name, claims.Name, views).Render(r.Context(), w); err != nil {
+	if err := chef.ChefMenuDetailPage(int32(menuID), menu.Name, claims.Name, views).Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
 
-// ItemDetail handles GET /chef/items/{itemID}
-// ItemDetail handles GET /chef/items/{itemID}
-func (h *MenuHandler) ItemDetail(w http.ResponseWriter, r *http.Request) {
-	claims := claimsFromContext(r.Context())
-
-	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
+// buildItemDetailView loads and assembles the full item detail view —
+// shared by ItemDetail and UpdateInstructions so both stay in sync
+// rather than maintaining two independent copies of this logic.
+func (h *MenuHandler) buildItemDetailView(r *http.Request, menuID int32, itemID int32) (chef.ChefItemDetailView, error) {
+	item, err := h.foodItemService.GetFoodItemForDisplay(r.Context(), itemID, "en")
 	if err != nil {
-		http.Error(w, "invalid item id", http.StatusBadRequest)
-		return
+		return chef.ChefItemDetailView{}, err
 	}
 
-	item, err := h.foodItemService.GetFoodItemForDisplay(r.Context(), int32(itemID), "en")
+	ingredients, err := h.ingredientItemService.ListIngredientsForItem(r.Context(), itemID)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			http.NotFound(w, r)
-			return
-		}
-		http.Error(w, "failed to load item", http.StatusInternalServerError)
-		return
+		return chef.ChefItemDetailView{}, err
 	}
 
-	ingredients, err := h.ingredientItemService.ListIngredientsForItem(r.Context(), int32(itemID))
+	allergens, err := h.itemAllergenService.ListAllergensForItem(r.Context(), itemID)
 	if err != nil {
-		http.Error(w, "failed to load ingredients", http.StatusInternalServerError)
-		return
-	}
-
-	allergens, err := h.itemAllergenService.ListAllergensForItem(r.Context(), int32(itemID))
-	if err != nil {
-		http.Error(w, "failed to load allergens", http.StatusInternalServerError)
-		return
+		return chef.ChefItemDetailView{}, err
 	}
 
 	view := chef.ChefItemDetailView{
 		ID:           item.ID,
+		MenuID:       menuID,
 		Name:         item.Name,
 		Description:  item.Description,
 		Instructions: item.Instructions,
+		IsAvailable:  item.IsAvailable,
 	}
 	if item.ImageUrl.Valid {
 		view.ImageURL = item.ImageUrl.String
@@ -170,15 +158,48 @@ func (h *MenuHandler) ItemDetail(w http.ResponseWriter, r *http.Request) {
 		view.Allergens = append(view.Allergens, a.Name)
 	}
 
+	return view, nil
+}
+
+// ItemDetail handles GET /chef/menus/{menuID}/items/{itemID}
+func (h *MenuHandler) ItemDetail(w http.ResponseWriter, r *http.Request) {
+	claims := claimsFromContext(r.Context())
+
+	menuID, err := strconv.Atoi(chi.URLParam(r, "menuID"))
+	if err != nil {
+		http.Error(w, "invalid menu id", http.StatusBadRequest)
+		return
+	}
+	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
+	if err != nil {
+		http.Error(w, "invalid item id", http.StatusBadRequest)
+		return
+	}
+
+	view, err := h.buildItemDetailView(r, int32(menuID), int32(itemID))
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		http.Error(w, "failed to load item", http.StatusInternalServerError)
+		return
+	}
+
 	if err := chef.ChefItemDetailPage(claims.Name, view, "").Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
 
-// UpdateInstructions handles POST /chef/items/{itemID}/instructions
+// UpdateInstructions handles POST /chef/menus/{menuID}/items/{itemID}/instructions
 func (h *MenuHandler) UpdateInstructions(w http.ResponseWriter, r *http.Request) {
 	claims := claimsFromContext(r.Context())
 
+	menuID, err := strconv.Atoi(chi.URLParam(r, "menuID"))
+	if err != nil {
+		http.Error(w, "invalid menu id", http.StatusBadRequest)
+		return
+	}
 	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
 	if err != nil {
 		http.Error(w, "invalid item id", http.StatusBadRequest)
@@ -201,7 +222,7 @@ func (h *MenuHandler) UpdateInstructions(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	item, err := h.foodItemService.GetFoodItemForDisplay(r.Context(), int32(itemID), "en")
+	view, err := h.buildItemDetailView(r, int32(menuID), int32(itemID))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			http.NotFound(w, r)
@@ -211,48 +232,18 @@ func (h *MenuHandler) UpdateInstructions(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	ingredients, err := h.ingredientItemService.ListIngredientsForItem(r.Context(), int32(itemID))
-	if err != nil {
-		http.Error(w, "failed to load ingredients", http.StatusInternalServerError)
-		return
-	}
-
-	allergens, err := h.itemAllergenService.ListAllergensForItem(r.Context(), int32(itemID))
-	if err != nil {
-		http.Error(w, "failed to load allergens", http.StatusInternalServerError)
-		return
-	}
-
-	view := chef.ChefItemDetailView{
-		ID:           item.ID,
-		Name:         item.Name,
-		Description:  item.Description,
-		Instructions: item.Instructions,
-	}
-	if item.ImageUrl.Valid {
-		view.ImageURL = item.ImageUrl.String
-	}
-	for _, ing := range ingredients {
-		ingView := chef.ChefIngredientView{Name: ing.Name}
-		if ing.Measurement.Valid {
-			ingView.Measurement = ing.Measurement.String
-		}
-		if ing.Amount.Valid {
-			ingView.Amount = ing.Amount.Float64
-		}
-		view.Ingredients = append(view.Ingredients, ingView)
-	}
-	for _, a := range allergens {
-		view.Allergens = append(view.Allergens, a.Name)
-	}
-
 	if err := chef.ChefItemDetailPage(claims.Name, view, "Instructions saved.").Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
 
-// ToggleAvailability handles POST /chef/items/{itemID}/availability
+// ToggleAvailability handles POST /chef/menus/{menuID}/items/{itemID}/availability
 func (h *MenuHandler) ToggleAvailability(w http.ResponseWriter, r *http.Request) {
+	menuID, err := strconv.Atoi(chi.URLParam(r, "menuID"))
+	if err != nil {
+		http.Error(w, "invalid menu id", http.StatusBadRequest)
+		return
+	}
 	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
 	if err != nil {
 		http.Error(w, "invalid item id", http.StatusBadRequest)
@@ -271,5 +262,5 @@ func (h *MenuHandler) ToggleAvailability(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	http.Redirect(w, r, "/chef/items/"+strconv.Itoa(itemID), http.StatusFound)
+	http.Redirect(w, r, "/chef/menus/"+strconv.Itoa(menuID)+"/items/"+strconv.Itoa(itemID), http.StatusFound)
 }

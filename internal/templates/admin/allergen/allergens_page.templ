@@ -7,29 +7,29 @@ templ AllergensAdminPage(allergens []adminshared.AllergenAdminView) {
 }
 
 templ allergensAdminPageContent(allergens []adminshared.AllergenAdminView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4">
 			<h2 class="text-2xl font-bold gms-main-text">Allergens</h2>
-			<a href="/admin/allergens/new" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+			<a href="/admin/allergens/new" class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 				+ New Allergen
 			</a>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			for _, allergen := range allergens {
-				<div class="border gms-border-medium rounded-lg shadow p-4">
+				<div class="flex flex-col min-h-[140px] border gms-border-medium rounded-lg shadow p-4">
 					<h3 class="text-lg font-bold gms-main-text">{ allergen.Name }</h3>
 					<p class="text-xs opacity-70">Code: { allergen.Code }</p>
 					if allergen.Description != "" {
 						<p class="text-sm gms-main-text mt-1">{ allergen.Description }</p>
 					}
-					<div class="flex gap-2 mt-3">
-						<a href={ templ.URL("/admin/allergens/" + adminshared.Itoa(allergen.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+					<div class="flex gap-2 mt-auto pt-3">
+						<a href={ templ.URL("/admin/allergens/" + adminshared.Itoa(allergen.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 							Edit
 						</a>
-						<a href={ templ.URL("/admin/allergens/" + adminshared.Itoa(allergen.ID) + "/usage") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
-                        	Used In
-                        </a>
+						<a href={ templ.URL("/admin/allergens/" + adminshared.Itoa(allergen.ID) + "/usage") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+							Used In
+						</a>
 						<form method="POST" action={ templ.URL("/admin/allergens/" + adminshared.Itoa(allergen.ID) + "/delete") } onsubmit="return confirm('Delete this allergen? This removes it from any items/restaurants currently using it.');">
 							<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">Delete</button>
 						</form>

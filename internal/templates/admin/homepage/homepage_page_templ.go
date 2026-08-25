@@ -60,19 +60,19 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2\">Homepage Content</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4\">Homepage Content</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if successMessage != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"mb-4 p-2 rounded bg-green-100 text-green-800 text-sm text-center\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"mb-4 p-2 rounded bg-green-100 text-green-800 text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(successMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 14, Col: 95}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 14, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -83,7 +83,7 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"POST\" action=\"/admin/homepage\" enctype=\"multipart/form-data\" class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 w-full\"><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Welcome Text</legend><div class=\"mb-4 p-3 rounded-lg border gms-border-medium text-sm\"><p class=\"font-semibold mb-1\">Formatting guide:</p><ul class=\"list-disc pl-5 space-y-0.5\"><li><code># Heading</code> — large heading</li><li><code>## Subheading</code> — smaller heading</li><li><code>**bold text**</code> and <code>__underlined text__</code></li><li><code>---</code> on its own line — visual spacer</li><li><code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"POST\" action=\"/admin/homepage\" enctype=\"multipart/form-data\" class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 w-full\"><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Welcome Text</legend><div class=\"mb-4 p-3 rounded-lg gms-dark-bg gms-light-text text-sm\"><p class=\"font-semibold mb-1 gms-demo-accent-text\">Formatting guide</p><ul class=\"list-disc pl-5 space-y-0.5 opacity-90\"><li><code># Heading</code> — large heading</li><li><code>## Subheading</code> — smaller heading</li><li><code>**bold text**</code> and <code>__underlined text__</code></li><li><code>---</code> on its own line — visual spacer</li><li><code>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

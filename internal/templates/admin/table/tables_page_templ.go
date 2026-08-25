@@ -60,7 +60,7 @@ func tablesPageContent(tables []adminshared.TableView, restaurants []adminshared
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text\"><div class=\"flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2\"><h2 class=\"text-2xl font-bold gms-main-text\">Tables</h2><a href=\"/admin/tables/new\" class=\"px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">+ New Table</a></div><form method=\"GET\" action=\"/admin/tables\" class=\"mb-6 flex items-center gap-2\"><label class=\"text-sm font-medium\">View occupancy for:</label> <select name=\"restaurant_id\" onchange=\"this.form.submit()\" class=\"p-2 border gms-border-medium rounded-md\"><option value=\"\">— All restaurants (global) —</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><div class=\"flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4\"><h2 class=\"text-2xl font-bold gms-main-text\">Tables</h2><a href=\"/admin/tables/new\" class=\"inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">+ New Table</a></div><form method=\"GET\" action=\"/admin/tables\" class=\"mb-6 flex items-center gap-2\"><label class=\"text-sm font-medium\">View occupancy for:</label> <select name=\"restaurant_id\" onchange=\"this.form.submit()\" class=\"p-2 border gms-border-medium rounded-md\"><option value=\"\">— All restaurants (global) —</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -111,7 +111,7 @@ func tablesPageContent(tables []adminshared.TableView, restaurants []adminshared
 			return templ_7745c5c3_Err
 		}
 		for _, t := range tables {
-			var templ_7745c5c3_Var5 = []any{"border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", t.IsDeleted)}
+			var templ_7745c5c3_Var5 = []any{"flex flex-col min-h-[140px] border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", t.IsDeleted)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -224,7 +224,7 @@ func tablesPageContent(tables []adminshared.TableView, restaurants []adminshared
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"flex gap-2 mt-3\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"flex gap-2 mt-auto pt-3\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -260,7 +260,7 @@ func tablesPageContent(tables []adminshared.TableView, restaurants []adminshared
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" class=\"px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium\">Edit</a><form method=\"POST\" action=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" class=\"px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium\">Edit</a><form method=\"POST\" action=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

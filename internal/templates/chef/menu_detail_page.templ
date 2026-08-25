@@ -1,20 +1,23 @@
 package chef
 
-templ ChefMenuDetailPage(menuName string, employeeName string, items []ChefItemListView) {
-	@Layout(menuName, employeeName, chefMenuDetailContent(menuName, items))
+templ ChefMenuDetailPage(menuID int32, menuName string, employeeName string, items []ChefItemListView) {
+	@Layout(menuName, employeeName, chefMenuDetailContent(menuID, menuName, items))
 }
 
-templ chefMenuDetailContent(menuName string, items []ChefItemListView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">{ menuName }</h2>
+templ chefMenuDetailContent(menuID int32, menuName string, items []ChefItemListView) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@BackLink("/chef/menus", "Back")
+			<h2 class="text-2xl font-bold gms-main-text">{ menuName }</h2>
+		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, item := range items {
-				<a href={ templ.URL("/chef/items/" + itoa(item.ID)) } class={ "block gms-hover-bg-light border gms-border-medium rounded-lg shadow-lg overflow-hidden", templ.KV("opacity-50", !item.IsAvailable) }>
-					<div class="h-32 w-full bg-gray-200 flex items-center justify-center relative">
+				<a href={ templ.URL("/chef/menus/" + itoa(menuID) + "/items/" + itoa(item.ID)) } class={ "block gms-hover-bg-light border gms-border-medium rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl", templ.KV("opacity-50", !item.IsAvailable) }>
+					<div class="h-32 w-full gms-dark-bg flex items-center justify-center relative">
 						if item.ImageURL != "" {
 							<img src={ item.ImageURL } alt={ item.Name } class="h-full w-full object-cover"/>
 						} else {
-							<div class="text-gray-500 italic">No Image</div>
+							<div class="gms-light-text opacity-70 italic">No Image</div>
 						}
 						if !item.IsAvailable {
 							<div class="absolute top-1 right-1 px-2 py-0.5 text-xs font-bold rounded bg-yellow-500 text-black">UNAVAILABLE</div>

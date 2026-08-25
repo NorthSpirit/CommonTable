@@ -21,16 +21,19 @@ func tableFormAction(isEdit bool, id int32) templ.SafeURL {
 }
 
 templ tableFormContent(isEdit bool, table adminshared.TableView, errorMessage string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
-			{ tableFormTitle(isEdit) }
-		</h2>
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@adminshared.BackLink("/admin/tables", "Back")
+			<h2 class="text-2xl font-bold gms-main-text">
+				{ tableFormTitle(isEdit) }
+			</h2>
+		</div>
 
 		if errorMessage != "" {
-			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm w-full lg:w-[65%] mx-auto">{ errorMessage }</p>
 		}
 
-		<form method="POST" action={ tableFormAction(isEdit, table.ID) } class="max-w-lg">
+		<form method="POST" action={ tableFormAction(isEdit, table.ID) } class="w-full lg:w-[65%] mx-auto">
 			<fieldset class="border p-4 rounded-lg gms-border-medium">
 				<legend class="text-lg font-semibold px-2">Details</legend>
 
@@ -50,16 +53,16 @@ templ tableFormContent(isEdit bool, table adminshared.TableView, errorMessage st
 				</label>
 
 				if isEdit {
-                	<label class="block">
-                		<span class="text-sm font-medium mb-1 block">Status</span>
-                		<p class="text-xs opacity-70 mb-1">Manual floor/seating status (e.g. for host use) — separate from live order activity shown on Table Status pages.</p>
-                		<select name="status" class="p-2 border gms-border-medium rounded-md w-full">
-                			<option value="free" selected?={ table.Status == "free" }>Free</option>
-                			<option value="occupied" selected?={ table.Status == "occupied" }>Occupied</option>
-                			<option value="reserved" selected?={ table.Status == "reserved" }>Reserved</option>
-                		</select>
-                	</label>
-                }
+					<label class="block">
+						<span class="text-sm font-medium mb-1 block">Status</span>
+						<p class="text-xs opacity-70 mb-1">Manual floor/seating status (e.g. for host use) — separate from live order activity shown on Table Status pages.</p>
+						<select name="status" class="p-2 border gms-border-medium rounded-md w-full">
+							<option value="free" selected?={ table.Status == "free" }>Free</option>
+							<option value="occupied" selected?={ table.Status == "occupied" }>Occupied</option>
+							<option value="reserved" selected?={ table.Status == "reserved" }>Reserved</option>
+						</select>
+					</label>
+				}
 			</fieldset>
 
 			<div class="flex justify-end mt-4">

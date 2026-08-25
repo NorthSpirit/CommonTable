@@ -9,58 +9,60 @@ templ RestaurantsPage(restaurants []adminshared.RestaurantView) {
 }
 
 templ restaurantsPageContent(restaurants []adminshared.RestaurantView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4">
 			<h2 class="text-2xl font-bold gms-main-text">Restaurants</h2>
-			<a href="/admin/restaurants/new" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+			<a href="/admin/restaurants/new" class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 				+ New Restaurant
 			</a>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, restaurant := range restaurants {
-				<div class={ "block border gms-border-medium rounded-lg shadow-lg overflow-hidden", templ.KV("opacity-50", restaurant.IsDeleted) }>
-					<div class="h-32 w-full bg-gray-200 flex items-center justify-center relative">
-						if restaurant.LogoURL != "" {
-							<img src={ restaurant.LogoURL } alt={ restaurant.Name } class="h-full w-full object-cover"/>
-						} else {
-							<div class="text-gray-500 italic">No Logo</div>
-						}
-						if restaurant.IsDeleted {
-							<div class="absolute top-1 right-1 px-2 py-0.5 text-xs font-bold rounded bg-red-600 text-white">DELETED</div>
-						}
-					</div>
-					<div class="p-4">
-						<h3 class="text-xl font-bold mb-1 gms-main-text">{ restaurant.Name }</h3>
-						if restaurant.Address != "" {
-							<p class="gms-main-text text-sm">{ restaurant.Address }</p>
-						}
-						if restaurant.Phone != "" {
-							<p class="gms-main-text text-sm">{ restaurant.Phone }</p>
-						}
-						if restaurant.Email != "" {
-							<p class="gms-main-text text-sm">{ restaurant.Email }</p>
-						}
-
-						<div class="flex gap-2 mt-3">
-							<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID)) } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
-								View
-							</a>
-							<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
-								Edit
-							</a>
-							if restaurant.IsDeleted {
-								<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/restore") }>
-									<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
-										Restore
-									</button>
-								</form>
-							} else {
-								<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/delete") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
-									Delete
-								</a>
+				<div class={ "flex flex-col min-h-[180px] gap-4 border gms-border-medium rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl p-4", templ.KV("opacity-50", restaurant.IsDeleted) }>
+					<div class="flex items-center gap-4">
+						<div class="flex-1 min-w-0">
+							<h3 class="text-xl font-bold gms-main-text truncate">{ restaurant.Name }</h3>
+							if restaurant.Address != "" {
+								<p class="gms-main-text text-sm opacity-80 truncate">{ restaurant.Address }</p>
+							}
+							if restaurant.Phone != "" {
+								<p class="gms-main-text text-sm opacity-80">{ restaurant.Phone }</p>
+							}
+							if restaurant.Email != "" {
+								<p class="gms-main-text text-sm opacity-80 truncate">{ restaurant.Email }</p>
 							}
 						</div>
+						<div class="w-24 h-24 shrink-0 gms-dark-bg border gms-border-medium rounded flex items-center justify-center relative">
+							if restaurant.LogoURL != "" {
+								<img src={ restaurant.LogoURL } alt={ restaurant.Name } class="w-full h-full object-contain p-1"/>
+							} else {
+								<div class="gms-light-text opacity-70 text-xs italic text-center">No Logo</div>
+							}
+							if restaurant.IsDeleted {
+								<div class="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] font-bold rounded bg-red-600 text-white">DELETED</div>
+							}
+						</div>
+					</div>
+
+					<div class="flex gap-2 flex-wrap mt-auto">
+						<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID)) } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+							View
+						</a>
+						<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+							Edit
+						</a>
+						if restaurant.IsDeleted {
+							<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/restore") }>
+								<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+									Restore
+								</button>
+							</form>
+						} else {
+							<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/delete") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+								Delete
+							</a>
+						}
 					</div>
 				</div>
 			}

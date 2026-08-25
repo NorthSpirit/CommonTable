@@ -1,0 +1,27 @@
+package kitchen
+
+templ AuthLayout(title string, content templ.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>CommonTable Kitchen - { title }</title>
+			<meta charset="utf-8"/>
+			<link rel="icon" href="data:,"/>
+			<script src="https://cdn.tailwindcss.com"></script>
+			<link id="themeCSS" rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
+			<link id="themeCSSAlt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<style>
+				html, body { height: 100%; }
+				:root { font-family: 'Lora', serif; }
+				a { color: inherit; }
+			</style>
+		</head>
+		<body>
+			<div class="min-h-screen flex flex-col gms-dark-bg">
+				@content
+			</div>
+			<script src="/assets/jsscripts/colour_swap.js"></script>
+		</body>
+	</html>
+}

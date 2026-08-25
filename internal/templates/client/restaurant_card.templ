@@ -13,12 +13,12 @@ templ RestaurantCard(restaurant shared.RestaurantView, locale string) {
 				<p class="gms-main-text text-sm mt-1 line-clamp-2">{ restaurant.Description }</p>
 			}
 		</div>
-		<div class="w-24 h-24 shrink-0 bg-gray-200 rounded flex items-center justify-center">
-			if restaurant.LogoURL != "" {
-				<img src={ restaurant.LogoURL } alt={ restaurant.Name } class="w-full h-full object-contain p-1"/>
-			} else {
-				<div class="text-gray-500 text-xs italic text-center">No Logo</div>
-			}
-		</div>
+		<div class="w-24 h-24 shrink-0 gms-dark-bg border gms-border-medium rounded flex items-center justify-center">
+        	if restaurant.LogoURL != "" {
+        		<img src={ restaurant.LogoURL } alt={ restaurant.Name } class="w-full h-full object-contain p-1"/>
+        	} else {
+        		<div class="gms-light-text opacity-70 text-xs italic text-center">No Logo</div>
+        	}
+        </div>
 	</a>
 }

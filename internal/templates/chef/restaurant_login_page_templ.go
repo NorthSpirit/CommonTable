@@ -58,7 +58,7 @@ func restaurantLoginContent(errorMessage string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text flex flex-col items-center justify-center\"><div class=\"w-full max-w-sm p-6 rounded-lg shadow-lg border gms-border-medium gms-dark-bg gms-light-text\"><h2 class=\"text-xl font-bold mb-4 text-center\">Restaurant Log In</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4\">Restaurant Log In</h2><div class=\"w-full lg:w-[65%] mx-auto p-6 rounded-lg shadow-lg border gms-border-medium gms-dark-bg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -81,7 +81,7 @@ func restaurantLoginContent(errorMessage string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"POST\" action=\"/chef/login\" class=\"space-y-4\"><label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Restaurant Name</span> <input type=\"text\" name=\"restaurant_name\" required autofocus class=\"p-2 border rounded-md w-full gms-dark-text\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Restaurant Password</span> <input type=\"password\" name=\"password\" required class=\"p-2 border rounded-md w-full gms-dark-text\"></label> <button type=\"submit\" class=\"w-full px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">Continue</button></form></div></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"POST\" action=\"/chef/login\" class=\"space-y-4\"><label class=\"block\"><span class=\"text-sm font-medium mb-1 block gms-demo-accent-text\">Restaurant Name</span> <input type=\"text\" name=\"restaurant_name\" required autofocus class=\"p-2 border rounded-md w-full gms-dark-text\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block gms-demo-accent-text\">Restaurant Password</span> <input type=\"password\" name=\"password\" required class=\"p-2 border rounded-md w-full gms-dark-text\"></label> <button type=\"submit\" class=\"w-full px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">Continue</button></form></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

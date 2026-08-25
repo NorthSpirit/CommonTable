@@ -22,11 +22,13 @@ type Config struct {
 	AltLanguageLabel string
 	TranslationsDir  string
 	UploadsDir       string
+
+	DeploymentMode string
+	PublicBaseURL  string
 }
 
 func Load() (*Config, error) {
-	// Loading .env is optional — in production you'd typically set real
-	// env vars instead of shipping a .env file, so don't fail if it's missing.
+	// Fall back in case .env is flawed
 	_ = godotenv.Load()
 
 	dbString := os.Getenv("GOOSE_DBSTRING")
@@ -78,6 +80,11 @@ func Load() (*Config, error) {
 		uploadsDir = "./uploads"
 	}
 
+	deploymentMode := os.Getenv("DEPLOYMENT_MODE")
+	if deploymentMode == "" {
+		deploymentMode = "lan" // Default
+	}
+
 	return &Config{
 		DBString:          dbString,
 		AdminUsername:     adminUsername,
@@ -87,5 +94,7 @@ func Load() (*Config, error) {
 		AltLanguageLabel:  altLanguageLabel,
 		TranslationsDir:   translationsDir,
 		UploadsDir:        uploadsDir,
+		DeploymentMode:    deploymentMode,
+		PublicBaseURL:     os.Getenv("PUBLIC_BASE_URL"),
 	}, nil
 }

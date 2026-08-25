@@ -3,20 +3,25 @@ package order
 import "CommonTable/internal/templates/admin/adminshared"
 
 templ TableStatusPage(restaurantID int32, restaurantName string, tables []adminshared.TableStatusView) {
-	@adminshared.Layout(restaurantName+" - Table Status", tableStatusContent(tables))
+	@adminshared.Layout(restaurantName+" - Table Status", tableStatusContent(restaurantID, restaurantName, tables))
 }
 
-templ tableStatusContent(tables []adminshared.TableStatusView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Table Status</h2>
-		<p class="text-center text-sm opacity-70 mb-6">Occupied/free from this restaurant's perspective — other restaurants sharing the same tables may see a different status.</p>
+templ tableStatusContent(restaurantID int32, restaurantName string, tables []adminshared.TableStatusView) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-2 border-b-2 gms-border-medium pb-4">
+			@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurantID), "Back to "+restaurantName)
+			<h2 class="text-2xl font-bold gms-main-text">Table Status</h2>
+		</div>
+		<p class="text-sm opacity-70 mb-6 mt-2">Occupied/free from this restaurant's perspective — other restaurants sharing the same tables may see a different status.</p>
 
 		<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 			for _, t := range tables {
-				<div class={ "border-2 rounded-lg p-4 text-center", templ.KV("border-red-500 bg-red-50", t.Occupied), templ.KV("border-green-500 bg-green-50", !t.Occupied) }>
-					<p class="text-lg font-bold">Table { adminshared.Itoa(t.Number) }</p>
+				<div class="border gms-border-medium rounded-lg shadow p-4 text-center">
+					<p class="text-lg font-bold gms-main-text">Table { adminshared.Itoa(t.Number) }</p>
 					<p class="text-xs opacity-70">Capacity { adminshared.Itoa(t.Capacity) }</p>
-					<p class="text-sm font-bold mt-1">{ occupiedLabel(t.Occupied) }</p>
+					<span class={ "inline-block mt-2 px-2 py-0.5 text-xs font-bold rounded", templ.KV("bg-red-600 text-white", t.Occupied), templ.KV("bg-green-600 text-white", !t.Occupied) }>
+						{ occupiedLabel(t.Occupied) }
+					</span>
 				</div>
 			}
 		</div>

@@ -5,14 +5,14 @@ templ MenusPage(restaurantName string, employeeName string, menus []ChefMenuView
 }
 
 templ menusPageContent(menus []ChefMenuView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Menus</h2>
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">Menus</h2>
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, menu := range menus {
-				<a href={ templ.URL("/chef/menus/" + itoa(menu.ID)) } class="block gms-hover-bg-light border gms-border-medium rounded-lg shadow p-4">
+				<a href={ templ.URL("/chef/menus/" + itoa(menu.ID)) } class="block gms-hover-bg-light border gms-border-medium rounded-lg shadow p-4 transition-all duration-300 hover:shadow-xl">
 					<h3 class="text-xl font-bold gms-main-text">{ menu.Name }</h3>
 					if menu.Description != "" {
-						<p class="text-sm gms-main-text mt-1">{ menu.Description }</p>
+						<p class="text-sm gms-main-text opacity-80 mt-1">{ menu.Description }</p>
 					}
 				</a>
 			}

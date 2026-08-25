@@ -104,10 +104,19 @@ func (h *AuthHandler) EmployeeLogin(w http.ResponseWriter, r *http.Request) {
 
 	// This is the enforcement point for "a chef/manager can't log into
 	// the waiter web page" — the credentials may be perfectly valid, but
-	// only the waiter role is allowed through here.
-	if string(dbEmployee.Role) != "waiter" {
+	// only the waiter role is allowed through here. The message points
+	// them at the right front door instead of just refusing.
+	role := string(dbEmployee.Role)
+	if role != "waiter" {
 		w.WriteHeader(http.StatusForbidden)
-		_ = stafftmpl.EmployeeLoginPage(int32(restaurantID), restaurant.Name, "This page is for waiters only.").Render(r.Context(), w)
+		message := "This page is for waiters only."
+		switch role {
+		case "chef":
+			message = "This login is for waiters. Chefs should sign in at /chef/login."
+		case "manager":
+			message = "This login is for waiters. Managers should sign in at /manager/login."
+		}
+		_ = stafftmpl.EmployeeLoginPage(int32(restaurantID), restaurant.Name, message).Render(r.Context(), w)
 		return
 	}
 

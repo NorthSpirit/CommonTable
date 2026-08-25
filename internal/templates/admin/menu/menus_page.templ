@@ -7,17 +7,20 @@ templ MenusPage(restaurantID int32, restaurantName string, menus []adminshared.M
 }
 
 templ menusPageContent(restaurantID int32, restaurantName string, menus []adminshared.MenuView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
-			<h2 class="text-2xl font-bold gms-main-text">{ restaurantName } - Menus</h2>
-			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/new") } class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4">
+			<div class="flex items-center gap-4">
+				@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurantID), "Back to "+restaurantName)
+				<h2 class="text-2xl font-bold gms-main-text">{ restaurantName } - Menus</h2>
+			</div>
+			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/new") } class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 				+ New Menu
 			</a>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, menu := range menus {
-				<div class="border gms-border-medium rounded-lg shadow-lg overflow-hidden">
+				<div class="flex flex-col border gms-border-medium rounded-lg shadow-lg overflow-hidden">
 					<div class="h-32 w-full bg-gray-200 flex items-center justify-center">
 						if menu.ImageURL != "" {
 							<img src={ menu.ImageURL } alt={ menu.Name } class="h-full w-full object-cover"/>
@@ -25,13 +28,13 @@ templ menusPageContent(restaurantID int32, restaurantName string, menus []admins
 							<div class="text-gray-500 italic">No Image</div>
 						}
 					</div>
-					<div class="p-4">
+					<div class="flex flex-col flex-1 p-4">
 						<h3 class="text-lg font-bold gms-main-text">{ menu.Name }</h3>
-						<div class="flex gap-2 mt-3">
+						<div class="flex gap-2 mt-auto pt-3">
 							<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID)) } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 								View Items
 							</a>
-							<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+							<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 								Edit
 							</a>
 							<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID) + "/delete") } onsubmit="return confirm('Delete this menu? Items on it are unaffected.');">

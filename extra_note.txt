@@ -1,0 +1,116 @@
+═══════════════════════════════════
+1.2. FUNKCINIAI REIKALAVIMAI (galutinė sistema)
+═══════════════════════════════════
+lentelė — Funkciniai sistemos reikalavimai (CommonTable)
+
+ID     Funkcinis reikalavimas
+FR1    Sistemos administratorius turi turėti galimybę kurti ir modifikuoti
+       ingredientus bendrame sąraše.
+FR2    Administratorius (ir restorano vadybininkas) turi galėti priskirti
+       daug ingredientų vienam patiekalui bei vieną ingredientą
+       daugeliui patiekalų.
+FR3    Priskiriant ingredientą patiekalui, turi būti galima laisvai
+       nurodyti mato vienetą (pvz. g, ml, vnt.) ir kiekį.
+FR4    Sistema turi turėti galimybę saugoti kiekvieno patiekalo kainą
+       individualiai.
+FR5    (Iš dalies įgyvendinta / pakeista — žr. pastabą below) Kaina
+       saugoma kaip vienas laukas be atskiro PVM su/be laukų atskyrimo;
+       PVM logika liko dokumentuota kaip ateities išplėtimas, ne kaip
+       realiai veikiantis dviejų kainų atskyrimas.
+FR6    Administratorius ir restorano vadybininkas turi turėti galimybę
+       kurti valgiaraščius, į juos įtraukti ar iš jų pašalinti
+       patiekalus.
+FR7    Galutinis vartotojas (neregistruotas svečias) turi turėti
+       galimybę peržiūrėti visus restorano valgiaraščius bei juose
+       esančius patiekalus be prisijungimo.
+FR8    Sistema turi užtikrinti, kad prie valdymo panelių (administratoriaus,
+       vadybininko, virėjo, virtuvės ekrano) gali prisijungti tik
+       autorizuoti naudotojai, atskirtomis teisėmis pagal rolę.
+FR9    Sistema turi leisti padavėjui (mobiliąja programėle) sudaryti ir
+       pateikti užsakymą, pasirenkant staliuką arba užsakymą išsinešti.
+FR10   Sistema turi leisti virtuvės personalui matyti aktyvius užsakymus
+       realiu laiku ir keisti jų būseną (laukiama → ruošiama → paruošta
+       → pristatyta).
+FR11   Sistema turi leisti virėjui pažymėti patiekalą kaip
+       laikinai neprieinamą (ir vėl prieinamą), realiu laiku.
+FR12   Sistema turi leisti registruoti mokėjimus (grynaisiais/kortele/
+       kitaip) prie užsakymo bei sekti apmokėtą ir likusią sumą.
+FR13   Sistema turi leisti restorano personalui (padavėjams, virėjams,
+       vadybininkams) bendrauti bendru pokalbių kanalu.
+FR14   Sistema turi leisti eksportuoti restorano valgiaraščio duomenis
+       (JSON formatu) trečiųjų šalių kūrėjams, be vidinių identifikatorių.
+FR15   Sistema turi leisti vadybininkui valdyti savo restorano darbuotojus
+       (padavėjus, virėjus), bet ne kurti kitus vadybininkus.
+FR16   Sistema turi automatiškai aptikti serverį vietiniame tinkle
+       (LAN), kad mobilioji programėlė nereikalautų rankinio IP adreso
+       įvedimo.
+
+
+═══════════════════════════════════
+1.3. NEFUNKCINIAI REIKALAVIMAI (galutinė sistema)
+═══════════════════════════════════
+lentelė — Nefunkciniai sistemos reikalavimai (CommonTable)
+
+ID      Nefunkcinis reikalavimas
+NFR1    Serverio back-end dalis parašyta naudojant Go (GoLang)
+        programavimo kalbą. ✓ Įgyvendinta be pakeitimų.
+NFR2    Sistemos duomenys saugomi naudojant PostgreSQL duomenų bazę.
+        ✓ Įgyvendinta be pakeitimų.
+NFR3    Sistema saugo paveikslėlius failų sistemoje, o duomenų bazėje —
+        tik jų adresus (nuorodas). ✓ Įgyvendinta be pakeitimų.
+NFR4    (Pakeista) Vietoje pilno spalvinio neutralumo bet kokiam
+        deltonizmui, sistema siūlo dvi rankomis suderintas spalvų
+        paletes (Main / Alt); specializuotos deltonizmui pritaikytos
+        paletės buvo išbandytos, bet atmestos kaip nepakankamai
+        patikrintos — žr. pastabą below.
+NFR5    (Pakeista) Vietoje kaskadinio duomenų trynimo naudojamas
+        "minkštas" trynimas (soft delete, `deleted_at` laukas) daugumai
+        esybių — istoriniai duomenys (užsakymai, mokėjimai) išsaugomi
+        net ištrynus susijusį restoraną ar patiekalą.
+NFR6    Sistema palaiko tiek JSON (API) sąsają (padavėjo mobiliajai
+        programėlei bei duomenų eksportui), tiek žmogui pritaikytą
+        grafinę sąsają per naršyklę (administratoriui, vadybininkui,
+        virėjui, virtuvės ekranui, klientams). ✓ Įgyvendinta be
+        pakeitimų.
+NFR7    (Nauja) Sistema turi apsaugoti nuo pasikartojančių užsakymų
+        pateikimo dėl tinklo klaidų (idempotency keys mechanizmas).
+NFR8    (Nauja) Sistema turi veikti vietiniame tinkle (LAN) be
+        interneto ryšio, su galimybe vėliau perjungti į viešai
+        pasiekiamą (hosted) diegimo režimą be kodo pakeitimų.
+NFR9    (Nauja) Sistemos veikimas neturi nutrūkti dėl vieno užklausos
+        apdorojimo klaidos (panic recovery middleware).
+
+
+═══════════════════════════════════
+PASTABOS DĖL NUKRYPIMŲ NUO PRADINĖS SPECIFIKACIJOS
+═══════════════════════════════════
+
+FR5 / PVM atskyrimas — pradinėje specifikacijoje numatytas kainos
+atskyrimas su/be PVM nebuvo pilnai įgyvendintas praktiškai veikiančia
+forma. Tai buvo sąmoningas apimties sprendimas, nes realaus mokėjimų
+procesoriaus integracija apskritai liko simuliuota (žr. Terminal
+modulį) — PVM logikos pridėjimas be realaus mokėjimo srauto būtų
+buvęs nepilnas ir klaidinantis. Rekomenduojama kaip ateities darbas.
+
+NFR4 / prieinamumas — pradinis reikalavimas buvo platesnis (bet koks
+deltonizmas). Sistema buvo praplėsta iki šešių palečių (numatytoji,
+alternatyvi, tamsi, aukšto kontrasto, protanopijos, deuteranopijos,
+tritanopijos), tačiau po praktinio išbandymo administratorius nusprendė
+palikti tik dvi rankomis suderintas paletes, kadangi specializuotos
+paletės nebuvo validuotos su realiais spalvos suvokimo sutrikimų
+turinčiais naudotojais ir galėjo suteikti klaidingą prieinamumo
+įspūdį. Vietoj to, viena iš paliktų palečių (Alt) sąmoningai naudoja
+dvispalvį (dual-tone) šešėlio efektą sąsajos elementams — sprendimas,
+užtikrinantis, kad interaktyvumo signalas liktų atpažįstamas net
+naudotojui, nesugebančiam atskirti dviejų konkrečių spalvų, nes
+kryptis/šešėlio forma suteikia papildomą, nuo spalvos nepriklausomą
+signalą.
+
+NFR5 / kaskadinis trynimas — pradinis reikalavimas numatė kaskadinį
+susijusių duomenų trynimą. Sistemoje pasirinkta priešinga, sąmoninga
+strategija — "minkštas" trynimas daugumai verslo esybių (restoranai,
+patiekalai, staliukai, darbuotojai), nes realiame maitinimo versle
+istoriniai užsakymų ir mokėjimų duomenys negali dingti ištrynus,
+pavyzdžiui, laikinai neveikiantį restoraną ar patiekalą. Tai geriau
+atitinka realaus pasaulio reikalavimus nei pažodinis kaskadinis
+trynimas, nors formaliai nukrypsta nuo pradinės specifikacijos raidės.

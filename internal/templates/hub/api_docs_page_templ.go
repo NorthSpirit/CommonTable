@@ -29,7 +29,7 @@ func ApiDocsPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><title>CommonTable - Waiter API</title><meta charset=\"utf-8\"><link rel=\"icon\" href=\"data:,\"><script src=\"https://cdn.tailwindcss.com\"></script><link rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\r\n\t\t\t\thtml, body { height: 100%; }\r\n\t\t\t\t:root { font-family: 'Lora', serif; }\r\n\t\t\t\ta { color: inherit; }\r\n\t\t\t\tcode { font-family: monospace; }\r\n\t\t\t</style></head><body class=\"min-h-screen gms-dark-bg gms-light-text p-6\"><div class=\"max-w-3xl mx-auto\"><a href=\"/hub\" class=\"text-sm underline opacity-80\">&larr; Back to Hub</a><h1 class=\"text-2xl font-bold mt-2 mb-1\">Waiter API</h1><p class=\"text-sm opacity-70 mb-6\">Reference for building a client against the waiter-facing JSON API. This is what the official waiter app itself talks to.</p><div class=\"gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6\"><h2 class=\"text-lg font-bold mb-2\">Authentication</h2><p class=\"text-sm mb-2\">Login is two-step: verify the restaurant, then verify the employee within it. The employee step returns a bearer token, sent as <code>Authorization: Bearer &lt;token&gt;</code> on every subsequent request.</p><p class=\"text-sm\">Tokens use a sliding expiry: every authenticated response may include an <code>X-Refreshed-Token</code> header — store and use whichever token was most recently received. An unused session lapses after roughly one hour.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><title>CommonTable - Waiter API</title><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/png\" href=\"/assets/images/favicon.png\"><script src=\"https://cdn.tailwindcss.com\"></script><link id=\"themeCSS\" rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><link id=\"themeCSSAlt\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAlt.css\" disabled><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\r\n\t\t\t\thtml, body { height: 100%; }\r\n\t\t\t\t:root { font-family: 'Lora', serif; }\r\n\t\t\t\ta { color: inherit; }\r\n\t\t\t\tcode { font-family: monospace; }\r\n\t\t\t</style></head><body><div class=\"min-h-screen flex flex-col gms-dark-bg\"><header class=\"gms-dark-bg gms-light-text p-2 shadow-md border-b-4 gms-border-dark\"><div class=\"container mx-auto text-center\"><h1 class=\"gms-title-text lg:text-4xl sm:text-3xl font-bold mb-1\">CommonTable</h1><p class=\"text-sm gms-demo-accent-text\">Waiter API Reference</p></div></header><nav class=\"border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex gms-content-bg\"><a href=\"/hub\" class=\"flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light\">&larr; Back to Hub</a> <a href=\"#\" id=\"MColour\" class=\"flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light border-l-2 gms-border-medium\">Palette Swap</a></nav><main class=\"flex-1 px-6 py-6 gms-dark-bg\"><div class=\"w-full lg:w-[65%] mx-auto\"><p class=\"text-sm gms-light-text mb-6\">Reference for building a client against the waiter-facing JSON API. This is what the official waiter app itself talks to.</p><div class=\"gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6\"><h2 class=\"text-lg font-bold mb-2\">Authentication</h2><p class=\"text-sm mb-2\">Login is two-step: verify the restaurant, then verify the employee within it. The employee step returns a bearer token, sent as <code>Authorization: Bearer &lt;token&gt;</code> on every subsequent request.</p><p class=\"text-sm\">Tokens use a sliding expiry: every authenticated response may include an <code>X-Refreshed-Token</code> header — store and use whichever token was most recently received. An unused session lapses after roughly one hour.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -81,14 +81,14 @@ func ApiDocsPage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"text-xs opacity-60 mt-8 text-center\"><p>All requests/responses are JSON. Errors return ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"text-xs gms-demo-accent-text mt-8 text-center\"><p>All requests/responses are JSON. Errors return ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("{")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 75, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 88, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -101,13 +101,13 @@ func ApiDocsPage() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("}")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 75, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 88, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " with a 4xx/5xx status.</p></div></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " with a 4xx/5xx status.</p></div></div></main><footer class=\"gms-dark-bg gms-light-text p-4 text-center gms-accent-text\"><p>&copy; 2026 Mantas \"IndomitableWastage\" Jurevičius</p></footer></div><script src=\"/assets/jsscripts/colour_swap.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -143,14 +143,14 @@ func endpointGroup(title string, endpoints []endpoint) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"mb-6\"><h2 class=\"text-lg font-bold mb-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"mb-6\"><h2 class=\"text-lg font-bold gms-light-text mb-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 91, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 112, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -190,7 +190,7 @@ func endpointGroup(title string, endpoints []endpoint) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(e.Method)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 95, Col: 100}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 116, Col: 100}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -203,7 +203,7 @@ func endpointGroup(title string, endpoints []endpoint) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(e.Path)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 96, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 117, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -214,19 +214,19 @@ func endpointGroup(title string, endpoints []endpoint) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if e.AuthRequired {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span class=\"text-xs opacity-50\">(auth required)</span> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span class=\"text-xs gms-dark-text\">(auth required)</span> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span class=\"text-xs opacity-70 sm:ml-auto\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span class=\"text-xs gms-dark-text sm:ml-auto\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(e.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 100, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/api_docs_page.templ`, Line: 121, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {

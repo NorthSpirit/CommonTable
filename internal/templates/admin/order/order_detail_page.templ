@@ -2,140 +2,170 @@ package order
 
 import "CommonTable/internal/templates/admin/adminshared"
 
-templ OrderDetailPage(restaurantID int32, order adminshared.OrderDetailView, errorMessage string) {
-	@adminshared.Layout("Order #"+adminshared.Itoa(order.OrderNumber), orderDetailContent(restaurantID, order, errorMessage))
+templ OrderDetailPage(restaurantID int32, order adminshared.OrderDetailView, menuItemOptions []adminshared.MenuItemOptionView, errorMessage string) {
+	@adminshared.Layout("Order #"+adminshared.Itoa(order.OrderNumber), orderDetailContent(restaurantID, order, menuItemOptions, errorMessage))
 }
 
-templ orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, errorMessage string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto">
-		<h2 class="text-2xl font-bold mb-2 gms-main-text text-center">Order #{ adminshared.Itoa(order.OrderNumber) } <span class="text-sm font-normal opacity-60">(ID { adminshared.Itoa(order.ID) })</span></h2>
-		<p class="text-center text-sm opacity-70 mb-6">{ formatTableLabel(order.TableNumber) } — { order.WaiterName } — { order.CreatedAt }</p>
-
-		if errorMessage != "" {
-			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
-		}
-
-		<div class="border gms-border-medium rounded-lg p-4 mb-6">
-			<h3 class="font-semibold mb-2">Items</h3>
-			<ul class="text-sm divide-y gms-border-medium">
-				for _, item := range order.Items {
-					<li class="py-2">
-						<div class="flex justify-between items-center">
-							<span>{ adminshared.Itoa(item.Quantity) }x { item.Name }
-								if item.Notes != "" {
-									<span class="block text-xs opacity-70">{ item.Notes }</span>
-								}
-							</span>
-							<span>€{ adminshared.FormatPrice(item.Price) }</span>
-						</div>
-						if order.Status == "pending" {
-							<div class="flex gap-2 mt-1">
-								<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/items/" + adminshared.Itoa(item.ID) + "/edit") } class="flex gap-1 items-center">
-									<input type="number" name="quantity" min="1" value={ adminshared.Itoa(item.Quantity) } class="p-1 border gms-border-medium rounded w-16 text-xs"/>
-									<button type="submit" class="px-2 py-1 text-xs font-bold rounded gms-btn-clear border gms-border-medium">Update</button>
-								</form>
-								<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/items/" + adminshared.Itoa(item.ID) + "/delete") } onsubmit="return confirm('Remove this item?');">
-									<button type="submit" class="px-2 py-1 text-xs font-bold rounded gms-btn-clear border gms-border-medium">Remove</button>
-								</form>
-							</div>
-						}
-					</li>
-				}
-				if len(order.Items) == 0 {
-					<li class="py-2 italic opacity-70">No items.</li>
-				}
-			</ul>
-		</div>
-
-		<div class="border gms-border-medium rounded-lg p-4 mb-6">
-			<h3 class="font-semibold mb-2">Payments</h3>
-			<ul class="text-sm divide-y gms-border-medium mb-3">
-				for _, p := range order.Payments {
-					<li class="py-2">
-						<div class="flex justify-between items-center mb-2">
-							<span>{ p.Method }</span>
-							<span>€{ adminshared.FormatPrice(p.Amount) }</span>
-						</div>
-						<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/" + adminshared.Itoa(p.ID)) } class="flex gap-2 items-center">
-							<select name="status" class="p-1 border gms-border-medium rounded-md text-xs">
-								<option value="pending" selected?={ p.Status == "pending" }>Pending</option>
-								<option value="paid" selected?={ p.Status == "paid" }>Paid</option>
-								<option value="failed" selected?={ p.Status == "failed" }>Failed</option>
-								<option value="refunded" selected?={ p.Status == "refunded" }>Refunded</option>
-							</select>
-							<button type="submit" class="px-2 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
-								Update
-							</button>
-						</form>
-					</li>
-				}
-				if len(order.Payments) == 0 {
-					<li class="py-2 italic opacity-70">No payments recorded.</li>
-				}
-			</ul>
-
-			<div class="pt-3 border-t gms-border-medium">
-				<p class="text-sm mb-2">
-					Total: €{ adminshared.FormatPrice(order.Total) } — Paid: €{ adminshared.FormatPrice(order.TotalPaid) } —
-					<span class="font-bold">Remaining: €{ adminshared.FormatPrice(order.Remaining) }</span>
-				</p>
-
-				if order.Remaining > 0 {
-					<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/quick-pay") } class="mb-3">
-						<button type="submit" class="px-3 py-2 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
-							💵 Mark Fully Paid (Cash) — €{ adminshared.FormatPrice(order.Remaining) }
-						</button>
-					</form>
-				}
-
-				<details>
-					<summary class="text-xs opacity-70 cursor-pointer mb-2">Or record a different amount / method</summary>
-					<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/new") } class="flex flex-wrap gap-2 items-end">
-						<label class="text-xs">
-							<span class="block mb-1">Amount (€)</span>
-							<input type="number" step="0.01" min="0.01" name="amount" value={ adminshared.FormatPrice(order.Remaining) } required class="p-1 border gms-border-medium rounded w-24"/>
-						</label>
-						<label class="text-xs">
-							<span class="block mb-1">Method</span>
-							<select name="method" class="p-1 border gms-border-medium rounded">
-								<option value="cash">Cash</option>
-								<option value="card">Card</option>
-								<option value="other">Other</option>
-							</select>
-						</label>
-						<label class="text-xs">
-							<span class="block mb-1">Status</span>
-							<select name="status" class="p-1 border gms-border-medium rounded">
-								<option value="paid">Paid</option>
-								<option value="pending">Pending</option>
-							</select>
-						</label>
-						<button type="submit" class="px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
-							Record Payment
-						</button>
-					</form>
-				</details>
+templ orderDetailContent(restaurantID int32, order adminshared.OrderDetailView, menuItemOptions []adminshared.MenuItemOptionView, errorMessage string) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-2 border-b-2 gms-border-medium pb-4">
+			@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurantID)+"/orders", "Back")
+			<div>
+				<h2 class="text-2xl font-bold gms-main-text">Order #{ adminshared.Itoa(order.OrderNumber) } <span class="text-sm font-normal opacity-60">(ID { adminshared.Itoa(order.ID) })</span></h2>
+				<p class="text-sm opacity-70">{ formatTableLabel(order.TableNumber) } — { order.WaiterName } — { order.CreatedAt }</p>
 			</div>
 		</div>
 
-		<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID)) } class="border gms-border-medium rounded-lg p-4">
-			<h3 class="font-semibold mb-2">Edit</h3>
-			<label class="block mb-4">
-				<span class="text-sm font-medium mb-1 block">Status</span>
-				<select name="status" class="p-2 border gms-border-medium rounded-md w-full">
-					<option value="pending" selected?={ order.Status == "pending" }>Pending</option>
-					<option value="preparing" selected?={ order.Status == "preparing" }>Preparing</option>
-					<option value="ready" selected?={ order.Status == "ready" }>Ready</option>
-					<option value="delivered" selected?={ order.Status == "delivered" }>Delivered</option>
-					<option value="cancelled" selected?={ order.Status == "cancelled" }>Cancelled</option>
-				</select>
-			</label>
-			<label class="block mb-4">
-				<span class="text-sm font-medium mb-1 block">Notes</span>
-				<textarea name="notes" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ order.Notes }</textarea>
-			</label>
-			<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
-		</form>
+		if errorMessage != "" {
+			<p class="my-4 p-2 rounded bg-red-100 text-red-800 text-sm">{ errorMessage }</p>
+		}
+
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+			<div class="border gms-border-medium rounded-lg p-4 h-fit">
+				<h3 class="font-semibold mb-2">Items</h3>
+				<ul class="text-sm divide-y gms-border-medium mb-3">
+					for _, item := range order.Items {
+						<li class="py-2">
+							<div class="flex justify-between items-center">
+								<span>{ adminshared.Itoa(item.Quantity) }x { item.Name }
+									if item.Notes != "" {
+										<span class="block text-xs opacity-70">{ item.Notes }</span>
+									}
+								</span>
+								<span>€{ adminshared.FormatPrice(item.Price) }</span>
+							</div>
+							if order.Status == "pending" {
+								<div class="flex gap-2 mt-1">
+									<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/items/" + adminshared.Itoa(item.ID) + "/edit") } class="flex gap-1 items-center">
+										<input type="number" name="quantity" min="1" value={ adminshared.Itoa(item.Quantity) } class="p-1 border gms-border-medium rounded w-16 text-xs"/>
+										<button type="submit" class="px-2 py-1 text-xs font-bold rounded gms-btn-submit border gms-border-medium">Update</button>
+									</form>
+									<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/items/" + adminshared.Itoa(item.ID) + "/delete") } onsubmit="return confirm('Remove this item?');">
+										<button type="submit" class="px-2 py-1 text-xs font-bold rounded gms-btn-clear border gms-border-medium">Remove</button>
+									</form>
+								</div>
+							}
+						</li>
+					}
+					if len(order.Items) == 0 {
+						<li class="py-2 italic opacity-70">No items.</li>
+					}
+				</ul>
+
+				if order.Status == "pending" {
+					<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/items/add") } class="flex flex-wrap gap-2 items-end pt-3 border-t gms-border-medium">
+						<label class="text-xs">
+							<span class="block mb-1">Item</span>
+							<select name="item_id" required class="p-1 border gms-border-medium rounded text-sm">
+								<option value="">-- Select --</option>
+								for _, opt := range menuItemOptions {
+									<option value={ adminshared.Itoa(opt.ID) }>{ opt.Name } — €{ adminshared.FormatPrice(opt.Price) }</option>
+								}
+							</select>
+						</label>
+						<label class="text-xs">
+							<span class="block mb-1">Qty</span>
+							<input type="number" name="quantity" min="1" value="1" class="p-1 border gms-border-medium rounded w-16 text-sm"/>
+						</label>
+						<button type="submit" class="px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+							Add Item
+						</button>
+					</form>
+				}
+			</div>
+
+			<div class="flex flex-col gap-6">
+				<div class="border gms-border-medium rounded-lg p-4">
+					<h3 class="font-semibold mb-2">Payments</h3>
+					<ul class="text-sm divide-y gms-border-medium mb-3">
+						for _, p := range order.Payments {
+							<li class="py-2">
+								<div class="flex justify-between items-center mb-2">
+									<span>{ p.Method }</span>
+									<span>€{ adminshared.FormatPrice(p.Amount) }</span>
+								</div>
+								<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/" + adminshared.Itoa(p.ID)) } class="flex gap-2 items-center">
+									<select name="status" class="p-1 border gms-border-medium rounded-md text-xs">
+										<option value="pending" selected?={ p.Status == "pending" }>Pending</option>
+										<option value="paid" selected?={ p.Status == "paid" }>Paid</option>
+										<option value="failed" selected?={ p.Status == "failed" }>Failed</option>
+										<option value="refunded" selected?={ p.Status == "refunded" }>Refunded</option>
+									</select>
+									<button type="submit" class="px-2 py-1 text-xs font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+										Update
+									</button>
+								</form>
+							</li>
+						}
+						if len(order.Payments) == 0 {
+							<li class="py-2 italic opacity-70">No payments recorded.</li>
+						}
+					</ul>
+
+					<div class="pt-3 border-t gms-border-medium">
+						<p class="text-sm mb-2">
+							Total: €{ adminshared.FormatPrice(order.Total) } — Paid: €{ adminshared.FormatPrice(order.TotalPaid) } —
+							<span class="font-bold">Remaining: €{ adminshared.FormatPrice(order.Remaining) }</span>
+						</p>
+
+						if order.Remaining > 0 {
+							<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/quick-pay") } class="mb-3">
+								<button type="submit" class="px-3 py-2 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+									💵 Mark Fully Paid (Cash) — €{ adminshared.FormatPrice(order.Remaining) }
+								</button>
+							</form>
+						}
+
+						<details>
+							<summary class="text-xs opacity-70 cursor-pointer mb-2">Or record a different amount / method</summary>
+							<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID) + "/payments/new") } class="flex flex-wrap gap-2 items-end">
+								<label class="text-xs">
+									<span class="block mb-1">Amount (€)</span>
+									<input type="number" step="0.01" min="0.01" name="amount" value={ adminshared.FormatPrice(order.Remaining) } required class="p-1 border gms-border-medium rounded w-24"/>
+								</label>
+								<label class="text-xs">
+									<span class="block mb-1">Method</span>
+									<select name="method" class="p-1 border gms-border-medium rounded">
+										<option value="cash">Cash</option>
+										<option value="card">Card</option>
+										<option value="other">Other</option>
+									</select>
+								</label>
+								<label class="text-xs">
+									<span class="block mb-1">Status</span>
+									<select name="status" class="p-1 border gms-border-medium rounded">
+										<option value="paid">Paid</option>
+										<option value="pending">Pending</option>
+									</select>
+								</label>
+								<button type="submit" class="px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+									Record Payment
+								</button>
+							</form>
+						</details>
+					</div>
+				</div>
+
+				<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(order.ID)) } class="border gms-border-medium rounded-lg p-4">
+					<h3 class="font-semibold mb-2">Edit</h3>
+					<label class="block mb-4">
+						<span class="text-sm font-medium mb-1 block">Status</span>
+						<select name="status" class="p-2 border gms-border-medium rounded-md w-full">
+							<option value="pending" selected?={ order.Status == "pending" }>Pending</option>
+							<option value="preparing" selected?={ order.Status == "preparing" }>Preparing</option>
+							<option value="ready" selected?={ order.Status == "ready" }>Ready</option>
+							<option value="delivered" selected?={ order.Status == "delivered" }>Delivered</option>
+							<option value="cancelled" selected?={ order.Status == "cancelled" }>Cancelled</option>
+						</select>
+					</label>
+					<label class="block mb-4">
+						<span class="text-sm font-medium mb-1 block">Notes</span>
+						<textarea name="notes" rows="3" class="p-2 border gms-border-medium rounded-md w-full">{ order.Notes }</textarea>
+					</label>
+					<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+				</form>
+			</div>
+		</div>
 	</main>
 }
 

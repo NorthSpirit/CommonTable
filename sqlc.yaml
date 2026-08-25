@@ -11,6 +11,7 @@ sql:
       - "./queries/chat_messages"
       - "./queries/homepage"
       - "./queries/idempotency_keys"
+      - "./queries/export"
     schema: "./migrations"
     gen:
       go:
