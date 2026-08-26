@@ -58,7 +58,7 @@ func ordersPageContent(orders []OrderListItemView) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text\"><div class=\"flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2\"><h2 class=\"text-2xl font-bold gms-main-text\">Orders</h2><a href=\"/manager/orders/new\" class=\"px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">+ New Order</a></div><div class=\"border gms-border-medium rounded-lg overflow-hidden\"><table class=\"w-full text-sm\"><thead><tr class=\"gms-dark-bg gms-light-text\"><th class=\"text-left p-2\">ID</th><th class=\"text-left p-2\">Order #</th><th class=\"text-left p-2\">Table</th><th class=\"text-left p-2\">Waiter</th><th class=\"text-left p-2\">Status</th><th class=\"text-left p-2\">Created</th><th class=\"p-2\"></th></tr></thead> <tbody class=\"divide-y gms-border-medium\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><div class=\"flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4\"><h2 class=\"text-2xl font-bold gms-main-text\">Orders</h2><a href=\"/manager/orders/new\" class=\"inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">+ New Order</a></div><div class=\"border gms-border-medium rounded-lg overflow-hidden\"><table class=\"w-full text-sm\"><thead><tr class=\"gms-dark-bg gms-light-text\"><th class=\"text-left p-2\">ID</th><th class=\"text-left p-2\">Order #</th><th class=\"text-left p-2\">Table</th><th class=\"text-left p-2\">Waiter</th><th class=\"text-left p-2\">Status</th><th class=\"text-left p-2\">Created</th><th class=\"p-2\"></th></tr></thead> <tbody class=\"divide-y gms-border-medium\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -154,7 +154,7 @@ func ordersPageContent(orders []OrderListItemView) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium\">View</a></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-submit border gms-border-medium\">View</a></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -236,6 +236,29 @@ func (h *OrderHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	status := repository.OrderStatus(r.FormValue("status"))
 
+	current, err := h.foodOrderService.GetFoodOrder(r.Context(), int32(orderID))
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Once cancelled, an order is terminal — no food was prepared, no
+	// kitchen time was spent, and its order number/timestamp represent
+	// that cancelled attempt. "Un-cancelling" it back to pending would
+	// misrepresent that history; a genuinely new attempt should be a
+	// new order (the waiter app's cancel-and-copy flow already covers
+	// this), not a resurrected one.
+	if current.OrderStatus == repository.OrderStatusCancelled && status != repository.OrderStatusCancelled {
+		view, _ := h.buildDetailView(r, int32(orderID))
+		_, _, itemOptions, optErr := h.loadFormOptions(r, int32(restaurantID))
+		if optErr != nil {
+			itemOptions = nil
+		}
+		w.WriteHeader(http.StatusConflict)
+		_ = order.OrderDetailPage(int32(restaurantID), view, itemOptions, "This order is cancelled and cannot be reopened. Create a new order instead.").Render(r.Context(), w)
+		return
+	}
+
 	// Cancelling an order that already has a paid payment would leave
 	// money taken against an order that says it never happened — block
 	// this and require the payment to be explicitly marked refunded
@@ -289,6 +312,21 @@ func (h *OrderHandler) UpdatePaymentStatus(w http.ResponseWriter, r *http.Reques
 	paymentID, err := strconv.Atoi(chi.URLParam(r, "paymentID"))
 	if err != nil {
 		http.Error(w, "invalid payment id", http.StatusBadRequest)
+		return
+	}
+
+	current, err := h.paymentService.GetPaymentByID(r.Context(), int32(paymentID))
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// A refund is a real, physical event — once recorded, the payment
+	// is terminal. Allowing it to be flipped back to paid/pending would
+	// make the system claim money is present that has already been
+	// returned to the customer.
+	if current.Status == repository.PaymentStatusRefunded {
+		http.Error(w, "a refunded payment cannot be changed", http.StatusConflict)
 		return
 	}
 
@@ -579,6 +617,16 @@ func (h *OrderHandler) CreatePayment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	order, err := h.foodOrderService.GetFoodOrder(r.Context(), int32(orderID))
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	if order.OrderStatus == repository.OrderStatusCancelled {
+		http.Error(w, "cannot record a payment against a cancelled order", http.StatusConflict)
+		return
+	}
+
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "invalid form submission", http.StatusBadRequest)
 		return
@@ -616,6 +664,16 @@ func (h *OrderHandler) QuickPayCash(w http.ResponseWriter, r *http.Request) {
 	orderID, err := strconv.Atoi(chi.URLParam(r, "orderID"))
 	if err != nil {
 		http.Error(w, "invalid order id", http.StatusBadRequest)
+		return
+	}
+
+	order, err := h.foodOrderService.GetFoodOrder(r.Context(), int32(orderID))
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	if order.OrderStatus == repository.OrderStatusCancelled {
+		http.Error(w, "cannot record a payment against a cancelled order", http.StatusConflict)
 		return
 	}
 

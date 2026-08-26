@@ -38,7 +38,9 @@ type ItemDetailView struct {
 	Description  string
 	Instructions string
 	ImageURL     string
+	Price        float64
 	Allergens    []string
+	Ingredients  []string
 }
 
 type HomepageView struct {

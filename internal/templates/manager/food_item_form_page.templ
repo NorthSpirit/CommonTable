@@ -20,13 +20,16 @@ func itemFormAction(menuID int32, isEdit bool, itemID int32) templ.SafeURL {
 }
 
 templ foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens []AllergenCheckboxView, ingredientOptions []IngredientOptionView, itemIngredients []ItemIngredientView, errorMessage string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
-			{ itemFormTitle(isEdit) }
-		</h2>
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@BackLink("/manager/menus/"+itoa(menuID), "Back")
+			<h2 class="text-2xl font-bold gms-main-text">
+				{ itemFormTitle(isEdit) }
+			</h2>
+		</div>
 
 		if errorMessage != "" {
-			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm">{ errorMessage }</p>
 		}
 
 		<form method="POST" action={ itemFormAction(menuID, isEdit, item.ID) } enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -118,17 +121,17 @@ templ foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergen
 			<fieldset class="border p-4 rounded-lg gms-border-medium mt-6">
 				<legend class="text-lg font-semibold px-2">Ingredients</legend>
 
-				<div class="max-h-64 overflow-y-auto border gms-border-medium rounded mb-4">
+				<div class="max-h-64 overflow-y-auto mb-4">
 					<table class="w-full text-sm">
 						<thead>
-							<tr class="border-b gms-border-medium">
+							<tr class="border-b-2 gms-border-medium">
 								<th class="text-left p-2">Ingredient</th>
-								<th class="text-left p-2">Amount</th>
-								<th class="text-left p-2">Measurement</th>
-								<th class="p-2"></th>
+								<th class="text-left p-2 w-32">Amount</th>
+								<th class="text-left p-2 w-40">Measurement</th>
+								<th class="p-2 w-24"></th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody class="divide-y gms-border-medium">
 							for _, ing := range itemIngredients {
 								<tr>
 									<td class="p-2">{ ing.Name }</td>
@@ -136,7 +139,7 @@ templ foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergen
 									<td class="p-2">{ ing.Measurement }</td>
 									<td class="p-2">
 										<form method="POST" action={ templ.URL("/manager/menus/" + itoa(menuID) + "/items/" + itoa(item.ID) + "/ingredients/" + itoa(ing.IngredientID) + "/remove") }>
-											<button type="submit" class="px-2 py-1 text-xs font-bold rounded gms-btn-clear border gms-border-medium">Remove</button>
+											<button type="submit" class="w-full px-2 py-1 text-xs font-bold rounded-md gms-btn-clear border gms-border-medium">Remove</button>
 										</form>
 									</td>
 								</tr>

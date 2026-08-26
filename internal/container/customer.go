@@ -10,6 +10,6 @@ func NewCustomerHandlers(s *Services) httpserver.CustomerHandlers {
 		Home:       customer.NewHomeHandler(s.Homepage, s.Restaurant),
 		Restaurant: customer.NewRestaurantHandler(s.Restaurant, s.FoodMenu, s.FoodItem),
 		Menu:       customer.NewMenuHandler(s.FoodMenu, s.FoodItem, s.Restaurant),
-		Item:       customer.NewItemHandler(s.FoodItem, s.ItemAllergen, s.Restaurant),
+		Item:       customer.NewItemHandler(s.FoodItem, s.ItemAllergen, s.IngredientItem, s.ItemMenu, s.Restaurant),
 	}
 }

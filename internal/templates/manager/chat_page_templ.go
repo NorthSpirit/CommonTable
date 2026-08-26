@@ -58,32 +58,32 @@ func chatPageContent(messages []ChatMessageView) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto w-full\"><h2 class=\"text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2\">Restaurant Chat</h2><div id=\"chat-messages\" data-last-id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4\">Restaurant Chat</h2><div class=\"max-w-3xl mx-auto w-full\"><div id=\"chat-messages\" data-last-id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(lastMessageID(messages))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 11, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 12, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-poll-url=\"/manager/chat/messages\" class=\"border gms-border-medium rounded-lg p-4 mb-4 h-96 overflow-y-auto space-y-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-poll-url=\"/manager/chat/messages\" class=\"gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2 mb-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, m := range messages {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"text-sm gms-main-text\" data-message-id=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"text-sm gms-light-text\" data-message-id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(itoa(m.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 13, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 14, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 			if templ_7745c5c3_Err != nil {
@@ -96,20 +96,20 @@ func chatPageContent(messages []ChatMessageView) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(m.SenderName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 14, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 15, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span> <span class=\"opacity-60\">(")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span> <span class=\"opacity-70\">(")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(m.SentAt)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 15, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 16, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -122,7 +122,7 @@ func chatPageContent(messages []ChatMessageView) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(" " + m.Message)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 16, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/chat_page.templ`, Line: 17, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -133,7 +133,13 @@ func chatPageContent(messages []ChatMessageView) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><form id=\"chat-form\" method=\"POST\" action=\"/manager/chat/send\" class=\"flex gap-2\"><input type=\"text\" id=\"chat-input\" name=\"message\" data-validate=\"generic\" required autocomplete=\"off\" placeholder=\"Type a message...\" class=\"p-2 border gms-border-medium rounded-md w-full\"> <button type=\"submit\" class=\"px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium whitespace-nowrap\">Send</button></form></main><script src=\"/assets/jsscripts/whitelist_blacklist_chars.js\"></script><script src=\"/assets/jsscripts/form_validation.js\"></script><script src=\"/assets/jsscripts/chat_poll.js\"></script>")
+		if len(messages) == 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"text-center italic gms-demo-accent-text\">No messages yet.</p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><form id=\"chat-form\" method=\"POST\" action=\"/manager/chat/send\" class=\"flex gap-2\"><input type=\"text\" id=\"chat-input\" name=\"message\" data-validate=\"generic\" required autocomplete=\"off\" placeholder=\"Type a message...\" class=\"p-2 border gms-border-medium rounded-md w-full\"> <button type=\"submit\" class=\"px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium whitespace-nowrap\">Send</button></form></div></main><script src=\"/assets/jsscripts/whitelist_blacklist_chars.js\"></script><script src=\"/assets/jsscripts/form_validation.js\"></script><script src=\"/assets/jsscripts/chat_height.js\"></script><script src=\"/assets/jsscripts/chat_poll.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

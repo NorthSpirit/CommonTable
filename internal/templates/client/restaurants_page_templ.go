@@ -63,14 +63,14 @@ func restaurantsPageContent(locale string, restaurants []shared.RestaurantView) 
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(shared.T(locale, "restaurants_title"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/restaurants_page.templ`, Line: 14, Col: 137}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/restaurants_page.templ`, Line: 14, Col: 125}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

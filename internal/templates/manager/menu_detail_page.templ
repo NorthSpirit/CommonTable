@@ -5,22 +5,25 @@ templ MenuDetailPage(employeeName string, menu MenuView, items []FoodItemView) {
 }
 
 templ menuDetailContent(menu MenuView, items []FoodItemView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
-			<h2 class="text-2xl font-bold gms-main-text">{ menu.Name }</h2>
-			<a href={ templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/new") } class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4">
+			<div class="flex items-center gap-4">
+				@BackLink("/manager/menus", "Back")
+				<h2 class="text-2xl font-bold gms-main-text">{ menu.Name }</h2>
+			</div>
+			<a href={ templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/new") } class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 				+ New Item
 			</a>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, item := range items {
-				<div class={ "border gms-border-medium rounded-lg shadow-lg overflow-hidden", templ.KV("opacity-50", item.IsDeleted) }>
-					<div class="h-32 w-full bg-gray-200 flex items-center justify-center relative">
+				<div class={ "flex flex-col border gms-border-medium rounded-lg shadow-lg overflow-hidden", templ.KV("opacity-50", item.IsDeleted) }>
+					<div class="h-32 w-full gms-dark-bg flex items-center justify-center relative">
 						if item.ImageURL != "" {
 							<img src={ item.ImageURL } alt={ item.Name } class="h-full w-full object-cover"/>
 						} else {
-							<div class="text-gray-500 italic">No Image</div>
+							<div class="gms-light-text opacity-70 italic">No Image</div>
 						}
 						if item.IsDeleted {
 							<div class="absolute top-1 right-1 px-2 py-0.5 text-xs font-bold rounded bg-red-600 text-white">DELETED</div>
@@ -28,16 +31,16 @@ templ menuDetailContent(menu MenuView, items []FoodItemView) {
 							<div class="absolute top-1 right-1 px-2 py-0.5 text-xs font-bold rounded bg-yellow-500 text-black">UNAVAILABLE</div>
 						}
 					</div>
-					<div class="p-4">
+					<div class="flex flex-col flex-1 p-4">
 						<h3 class="text-lg font-bold gms-main-text">{ item.Name }</h3>
 						<p class="text-sm opacity-70">€{ formatPrice(item.Price) }</p>
-						<div class="flex gap-2 mt-3">
+						<div class="flex gap-2 mt-auto pt-3">
 							if item.IsDeleted {
 								<form method="POST" action={ templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/" + itoa(item.ID) + "/restore") }>
 									<button type="submit" class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">Restore</button>
 								</form>
 							} else {
-								<a href={ templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/" + itoa(item.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+								<a href={ templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/" + itoa(item.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 									Edit
 								</a>
 								<form method="POST" action={ templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/" + itoa(item.ID) + "/delete") } onsubmit="return confirm('Delete this item?');">

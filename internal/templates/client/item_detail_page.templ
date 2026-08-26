@@ -1,43 +1,60 @@
 package client
 
 import (
+	"CommonTable/internal/templates/helpers"
 	"CommonTable/internal/templates/layout"
 	"CommonTable/internal/templates/shared"
 )
 
-templ ItemDetailPage(locale string, branding shared.BrandingView, item shared.ItemDetailView) {
-	@layout.Layout(item.Name, &branding, locale, itemDetailPageContent(item))
+templ ItemDetailPage(locale string, branding shared.BrandingView, menuID int32, item shared.ItemDetailView) {
+	@layout.Layout(item.Name, &branding, locale, itemDetailPageContent(locale, menuID, item))
 }
 
-templ itemDetailPageContent(item shared.ItemDetailView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto">
-		if item.ImageURL != "" {
-			<img src={ item.ImageURL } alt={ item.Name } class="w-full max-h-80 object-cover rounded-lg border gms-border-medium mb-4"/>
-		}
-		<h2 class="text-3xl font-bold mb-2 gms-main-text">{ item.Name }</h2>
-		if item.Description != "" {
-			<p class="gms-main-text mb-4">{ item.Description }</p>
-		}
-		if item.Instructions != "" {
-			<div class="mb-4">
-				<h3 class="text-lg font-semibold mb-1 gms-main-text">Preparation Notes</h3>
-				<p class="gms-main-text">{ item.Instructions }</p>
-			</div>
-		}
-		<div class="mb-4">
-			<h3 class="text-lg font-semibold mb-1 gms-main-text">Allergens</h3>
-			if len(item.Allergens) == 0 {
-				<p class="gms-main-text italic">No known allergens listed.</p>
-			} else {
-				<ul class="list-disc pl-5 gms-main-text">
-					for _, allergen := range item.Allergens {
-						<li>{ allergen }</li>
-					}
-				</ul>
-			}
+templ itemDetailPageContent(locale string, menuID int32, item shared.ItemDetailView) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@BackLink(helpers.WithLang("/menus/"+helpers.Itoa(menuID), locale), "Back")
+			<h2 class="text-2xl font-bold gms-main-text">{ item.Name }</h2>
 		</div>
-		<a href="javascript:history.back()" class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-clear border gms-border-medium">
-			Back
-		</a>
+
+		<div class="w-full lg:w-[65%] mx-auto">
+			if item.ImageURL != "" {
+				<img src={ item.ImageURL } alt={ item.Name } class="w-full max-h-80 object-cover rounded-lg border gms-border-medium mb-4"/>
+			}
+
+			<p class="text-2xl font-bold gms-main-text mb-2">€{ helpers.FormatPrice(item.Price) }</p>
+
+			if item.Description != "" {
+				<p class="gms-main-text opacity-80 mb-6">{ item.Description }</p>
+			}
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+				<div class="border gms-border-medium rounded-lg p-4">
+					<h3 class="text-lg font-semibold mb-2 gms-main-text">Ingredients</h3>
+					if len(item.Ingredients) == 0 {
+						<p class="gms-main-text italic opacity-70">No ingredients listed.</p>
+					} else {
+						<ul class="list-disc pl-5 gms-main-text">
+							for _, ing := range item.Ingredients {
+								<li>{ ing }</li>
+							}
+						</ul>
+					}
+				</div>
+
+				<div class="border gms-border-medium rounded-lg p-4">
+					<h3 class="text-lg font-semibold mb-2 gms-main-text">Allergens</h3>
+					if len(item.Allergens) == 0 {
+						<p class="gms-main-text italic opacity-70">No known allergens listed.</p>
+					} else {
+						<ul class="list-disc pl-5 gms-main-text">
+							for _, allergen := range item.Allergens {
+								<li>{ allergen }</li>
+							}
+						</ul>
+					}
+				</div>
+			</div>
+		</div>
 	</main>
 }

@@ -31,6 +31,7 @@ type OrderHandler struct {
 	restaurantService *restaurantservices.RestaurantService
 	foodMenuService   *foodservices.FoodMenuService
 	itemMenuService   *foodrelationshipservices.ItemMenuService
+	foodItemService   *foodservices.FoodItemService
 }
 
 func NewOrderHandler(
@@ -43,11 +44,13 @@ func NewOrderHandler(
 	restaurantService *restaurantservices.RestaurantService,
 	foodMenuService *foodservices.FoodMenuService,
 	itemMenuService *foodrelationshipservices.ItemMenuService,
+	foodItemService *foodservices.FoodItemService,
 ) *OrderHandler {
 	return &OrderHandler{
 		pool: pool, foodOrderService: foodOrderService, itemOrderService: itemOrderService,
 		paymentService: paymentService, tableService: tableService, employeeService: employeeService,
 		restaurantService: restaurantService, foodMenuService: foodMenuService, itemMenuService: itemMenuService,
+		foodItemService: foodItemService,
 	}
 }
 
@@ -207,7 +210,13 @@ func (h *OrderHandler) Detail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := managertmpl.OrderDetailPage(claims.Name, view, "").Render(r.Context(), w); err != nil {
+	_, _, itemOptions, err := h.loadFormOptions(r, claims.RestaurantID)
+	if err != nil {
+		http.Error(w, "failed to load items", http.StatusInternalServerError)
+		return
+	}
+
+	if err := managertmpl.OrderDetailPage(claims.Name, view, itemOptions, "").Render(r.Context(), w); err != nil {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
@@ -238,6 +247,47 @@ func (h *OrderHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	status := repository.OrderStatus(r.FormValue("status"))
+
+	// Once cancelled, an order is terminal — no food was prepared, no
+	// kitchen time was spent, and its order number/timestamp represent
+	// that cancelled attempt. "Un-cancelling" it back to pending would
+	// misrepresent that history; a genuinely new attempt should be a
+	// new order, not a resurrected one.
+	if order.OrderStatus == repository.OrderStatusCancelled && status != repository.OrderStatusCancelled {
+		view, _ := h.buildDetailView(r, int32(orderID))
+		_, _, itemOptions, optErr := h.loadFormOptions(r, claims.RestaurantID)
+		if optErr != nil {
+			itemOptions = nil
+		}
+		w.WriteHeader(http.StatusConflict)
+		_ = managertmpl.OrderDetailPage(claims.Name, view, itemOptions, "This order is cancelled and cannot be reopened. Create a new order instead.").Render(r.Context(), w)
+		return
+	}
+
+	// Cancelling an order that already has a paid payment would leave
+	// money taken against an order that says it never happened — block
+	// this and require the payment to be explicitly marked refunded
+	// first, rather than silently moving money on a status change.
+	if status == repository.OrderStatusCancelled {
+		payments, err := h.paymentService.ListPaymentsByOrder(r.Context(), int32(orderID))
+		if err != nil {
+			http.Error(w, "failed to verify payment status before cancelling", http.StatusInternalServerError)
+			return
+		}
+		for _, p := range payments {
+			if p.Status == repository.PaymentStatusPaid {
+				view, _ := h.buildDetailView(r, int32(orderID))
+				_, _, itemOptions, optErr := h.loadFormOptions(r, claims.RestaurantID)
+				if optErr != nil {
+					itemOptions = nil
+				}
+				w.WriteHeader(http.StatusConflict)
+				_ = managertmpl.OrderDetailPage(claims.Name, view, itemOptions, "Cannot cancel: this order has a paid payment. Mark it refunded first, then cancel.").Render(r.Context(), w)
+				return
+			}
+		}
+	}
+
 	if err := h.foodOrderService.UpdateOrderStatus(r.Context(), int32(orderID), status); err != nil {
 		http.Error(w, "failed to update order status", http.StatusInternalServerError)
 		return
@@ -274,6 +324,21 @@ func (h *OrderHandler) UpdatePaymentStatus(w http.ResponseWriter, r *http.Reques
 	}
 	if order.RestaurantID != claims.RestaurantID {
 		http.NotFound(w, r)
+		return
+	}
+
+	current, err := h.paymentService.GetPaymentByID(r.Context(), int32(paymentID))
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	// A refund is a real, physical event — once recorded, the payment
+	// is terminal. Allowing it to be flipped back to paid/pending would
+	// make the system claim money is present that has already been
+	// returned to the customer.
+	if current.Status == repository.PaymentStatusRefunded {
+		http.Error(w, "a refunded payment cannot be changed", http.StatusConflict)
 		return
 	}
 
@@ -554,6 +619,10 @@ func (h *OrderHandler) CreatePayment(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	if order.OrderStatus == repository.OrderStatusCancelled {
+		http.Error(w, "cannot record a payment against a cancelled order", http.StatusConflict)
+		return
+	}
 
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "invalid form submission", http.StatusBadRequest)
@@ -597,6 +666,10 @@ func (h *OrderHandler) QuickPayCash(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	if order.OrderStatus == repository.OrderStatusCancelled {
+		http.Error(w, "cannot record a payment against a cancelled order", http.StatusConflict)
+		return
+	}
 
 	view, err := h.buildDetailView(r, int32(orderID))
 	if err != nil {
@@ -612,6 +685,64 @@ func (h *OrderHandler) QuickPayCash(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 	if _, err := h.paymentService.InsertPayment(r.Context(), int32(orderID), view.Remaining, repository.PaymentMethodCash, nil, &now, repository.PaymentStatusPaid); err != nil {
 		http.Error(w, "failed to record payment", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/manager/orders/"+strconv.Itoa(orderID), http.StatusFound)
+}
+
+// AddItem handles POST /manager/orders/{orderID}/items/add
+func (h *OrderHandler) AddItem(w http.ResponseWriter, r *http.Request) {
+	claims := claimsFromContext(r.Context())
+
+	orderID, err := strconv.Atoi(chi.URLParam(r, "orderID"))
+	if err != nil {
+		http.Error(w, "invalid order id", http.StatusBadRequest)
+		return
+	}
+
+	order, err := h.foodOrderService.GetFoodOrder(r.Context(), int32(orderID))
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	if order.RestaurantID != claims.RestaurantID {
+		http.NotFound(w, r)
+		return
+	}
+	if order.OrderStatus != repository.OrderStatusPending {
+		http.Error(w, "order is already being prepared and can no longer be edited", http.StatusConflict)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form submission", http.StatusBadRequest)
+		return
+	}
+
+	itemID, err := strconv.Atoi(r.FormValue("item_id"))
+	if err != nil || itemID == 0 {
+		http.Redirect(w, r, "/manager/orders/"+strconv.Itoa(orderID), http.StatusFound)
+		return
+	}
+	quantity, err := strconv.Atoi(r.FormValue("quantity"))
+	if err != nil || quantity <= 0 {
+		quantity = 1
+	}
+
+	item, err := h.foodItemService.GetFoodItemByID(r.Context(), int32(itemID))
+	if err != nil {
+		http.Error(w, "item not found", http.StatusBadRequest)
+		return
+	}
+
+	price := 0.0
+	if p, perr := helpers.NumericToFloat64(item.Price); perr == nil && p != nil {
+		price = *p
+	}
+
+	if _, err := h.itemOrderService.AddItemToOrder(r.Context(), int32(orderID), int32(itemID), int32(quantity), price, nil, nil); err != nil {
+		http.Error(w, "failed to add item", http.StatusInternalServerError)
 		return
 	}
 

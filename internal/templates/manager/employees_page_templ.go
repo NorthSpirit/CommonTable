@@ -58,12 +58,12 @@ func employeesPageContent(employees []EmployeeView) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text\"><div class=\"flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2\"><h2 class=\"text-2xl font-bold gms-main-text\">Employees</h2><a href=\"/manager/employees/new\" class=\"px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">+ New Employee</a></div><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><div class=\"flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4\"><h2 class=\"text-2xl font-bold gms-main-text\">Employees</h2><a href=\"/manager/employees/new\" class=\"inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">+ New Employee</a></div><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, e := range employees {
-			var templ_7745c5c3_Var3 = []any{"border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", !e.IsActive)}
+			var templ_7745c5c3_Var3 = []any{"flex flex-col min-h-[160px] border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", !e.IsActive)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -159,7 +159,7 @@ func employeesPageContent(employees []EmployeeView) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex gap-2 mt-3\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex gap-2 mt-auto pt-3\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -172,7 +172,7 @@ func employeesPageContent(employees []EmployeeView) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium\">Edit</a><form method=\"POST\" action=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" class=\"px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium\">Edit</a><form method=\"POST\" action=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

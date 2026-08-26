@@ -52,18 +52,21 @@ func toMenuItemView(item repository.ListMenuItemsForDisplayRow) shared.MenuItemV
 	return view
 }
 
-func toItemDetailView(item repository.GetFoodItemForDisplayRow, allergens []repository.ListAllergensForItemDisplayRow) shared.ItemDetailView {
+func toItemDetailView(item repository.GetFoodItemForDisplayRow, allergens []repository.ListAllergensForItemDisplayRow, ingredients []repository.ListIngredientsForItemRow, price float64) shared.ItemDetailView {
 	view := shared.ItemDetailView{
-		ID:           item.ID,
-		Name:         item.Name,
-		Description:  item.Description,
-		Instructions: item.Instructions,
+		ID:          item.ID,
+		Name:        item.Name,
+		Description: item.Description,
+		Price:       price,
 	}
 	if item.ImageUrl.Valid {
 		view.ImageURL = item.ImageUrl.String
 	}
 	for _, a := range allergens {
 		view.Allergens = append(view.Allergens, a.Name)
+	}
+	for _, ing := range ingredients {
+		view.Ingredients = append(view.Ingredients, ing.Name)
 	}
 	return view
 }

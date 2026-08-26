@@ -5,29 +5,35 @@ templ ChatPage(restaurantName string, employeeName string, messages []ChatMessag
 }
 
 templ chatPageContent(messages []ChatMessageView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text max-w-3xl mx-auto w-full">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">Restaurant Chat</h2>
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">Restaurant Chat</h2>
 
-		<div id="chat-messages" data-last-id={ lastMessageID(messages) } data-poll-url="/manager/chat/messages" class="border gms-border-medium rounded-lg p-4 mb-4 h-96 overflow-y-auto space-y-2">
-			for _, m := range messages {
-				<div class="text-sm gms-main-text" data-message-id={ itoa(m.ID) }>
-					<span class="font-bold">{ m.SenderName }</span>
-					<span class="opacity-60">({ m.SentAt }):</span>
-					{ " " + m.Message }
-				</div>
-			}
+		<div class="max-w-3xl mx-auto w-full">
+			<div id="chat-messages" data-last-id={ lastMessageID(messages) } data-poll-url="/manager/chat/messages" class="gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2 mb-4">
+				for _, m := range messages {
+					<div class="text-sm gms-light-text" data-message-id={ itoa(m.ID) }>
+						<span class="font-bold">{ m.SenderName }</span>
+						<span class="opacity-70">({ m.SentAt }):</span>
+						{ " " + m.Message }
+					</div>
+				}
+				if len(messages) == 0 {
+					<p class="text-center italic gms-demo-accent-text">No messages yet.</p>
+				}
+			</div>
+
+			<form id="chat-form" method="POST" action="/manager/chat/send" class="flex gap-2">
+				<input type="text" id="chat-input" name="message" data-validate="generic" required autocomplete="off" placeholder="Type a message..." class="p-2 border gms-border-medium rounded-md w-full"/>
+				<button type="submit" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium whitespace-nowrap">
+					Send
+				</button>
+			</form>
 		</div>
-
-		<form id="chat-form" method="POST" action="/manager/chat/send" class="flex gap-2">
-			<input type="text" id="chat-input" name="message" data-validate="generic" required autocomplete="off" placeholder="Type a message..." class="p-2 border gms-border-medium rounded-md w-full"/>
-			<button type="submit" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium whitespace-nowrap">
-				Send
-			</button>
-		</form>
 	</main>
 
 	<script src="/assets/jsscripts/whitelist_blacklist_chars.js"></script>
 	<script src="/assets/jsscripts/form_validation.js"></script>
+	<script src="/assets/jsscripts/chat_height.js"></script>
 	<script src="/assets/jsscripts/chat_poll.js"></script>
 }
 

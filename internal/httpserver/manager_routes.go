@@ -59,6 +59,7 @@ func RegisterManagerRoutes(r chi.Router, h ManagerHandlers, authService *authser
 				r.Post("/{orderID}/payments/{paymentID}", h.Order.UpdatePaymentStatus)
 				r.Post("/{orderID}/items/{itemOrderID}/delete", h.Order.RemoveItem)
 				r.Post("/{orderID}/items/{itemOrderID}/edit", h.Order.UpdateItemQuantity)
+				r.Post("/{orderID}/items/add", h.Order.AddItem)
 				r.Post("/{orderID}/payments/new", h.Order.CreatePayment)
 				r.Post("/{orderID}/payments/quick-pay", h.Order.QuickPayCash)
 			})

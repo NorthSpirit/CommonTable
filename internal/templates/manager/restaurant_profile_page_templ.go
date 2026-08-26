@@ -58,19 +58,19 @@ func restaurantProfileContent(restaurant RestaurantProfileView, errorMessage str
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2\">Restaurant Profile</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4\">Restaurant Profile</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if errorMessage != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"mb-4 p-2 rounded bg-red-100 text-red-800 text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/restaurant_profile_page.templ`, Line: 14, Col: 89}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/restaurant_profile_page.templ`, Line: 14, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -82,14 +82,14 @@ func restaurantProfileContent(restaurant RestaurantProfileView, errorMessage str
 			}
 		}
 		if successMessage != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"mb-4 p-2 rounded bg-green-100 text-green-800 text-sm text-center\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"mb-4 p-2 rounded bg-green-100 text-green-800 text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(successMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/restaurant_profile_page.templ`, Line: 17, Col: 95}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/restaurant_profile_page.templ`, Line: 17, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -100,7 +100,7 @@ func restaurantProfileContent(restaurant RestaurantProfileView, errorMessage str
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form method=\"POST\" action=\"/manager/profile\" enctype=\"multipart/form-data\" class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl mx-auto\"><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Details</legend> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Name</span> <input type=\"text\" name=\"name\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form method=\"POST\" action=\"/manager/profile\" enctype=\"multipart/form-data\" class=\"grid grid-cols-1 lg:grid-cols-2 gap-6\"><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Details</legend> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Name</span> <input type=\"text\" name=\"name\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

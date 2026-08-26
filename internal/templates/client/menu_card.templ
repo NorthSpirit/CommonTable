@@ -7,11 +7,11 @@ import (
 
 templ MenuCard(menu shared.MenuView, locale string) {
 	<a href={ templ.URL(helpers.WithLang("/menus/"+helpers.Itoa(menu.ID), locale)) } class="block gms-hover-bg-light border gms-border-medium rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-		<div class="h-32 w-full bg-gray-200 flex items-center justify-center relative">
+		<div class="h-32 w-full gms-dark-bg flex items-center justify-center relative">
 			if menu.ImageURL != "" {
 				<img src={ menu.ImageURL } alt={ menu.Name } class="h-full w-full object-cover"/>
 			} else {
-				<div class="text-gray-500 italic">No Image Available</div>
+				<div class="gms-light-text opacity-70 italic">No Image Available</div>
 			}
 		</div>
 		<div class="p-4">

@@ -31,20 +31,49 @@ func EmployeeLoginPage(restaurantID int32, restaurantName string, errorMessage s
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><title>CommonTable Staff - Log In</title><meta charset=\"utf-8\"><script src=\"https://cdn.tailwindcss.com\"></script><link rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head><body class=\"min-h-screen flex flex-col items-center justify-center gms-dark-bg gms-light-text p-6\"><div class=\"w-full max-w-sm p-6 rounded-lg shadow-lg border gms-border-medium gms-content-bg gms-main-text\"><h2 class=\"text-xl font-bold mb-1 text-center\">")
+		templ_7745c5c3_Err = Layout("Log In", "", employeeLoginContent(restaurantID, restaurantName, errorMessage)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(restaurantName)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/employee_login_page.templ`, Line: 17, Col: 67}
+		return nil
+	})
+}
+
+func employeeLoginContent(restaurantID int32, restaurantName string, errorMessage string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><h2 class=\"text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2><p class=\"text-sm mb-4 text-center opacity-80\">Waiter login — profile &amp; chat only</p>")
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(restaurantName)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/employee_login_page.templ`, Line: 11, Col: 102}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Staff Log In</h2><div class=\"w-full lg:w-[65%] mx-auto p-6 rounded-lg shadow-lg border gms-border-medium gms-dark-bg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -53,12 +82,12 @@ func EmployeeLoginPage(restaurantID int32, restaurantName string, errorMessage s
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/employee_login_page.templ`, Line: 20, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/employee_login_page.templ`, Line: 15, Col: 90}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -71,16 +100,16 @@ func EmployeeLoginPage(restaurantID int32, restaurantName string, errorMessage s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(strconv.Itoa(int(restaurantID)))
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(strconv.Itoa(int(restaurantID)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/employee_login_page.templ`, Line: 23, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/employee_login_page.templ`, Line: 19, Col: 85}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Your Name</span> <input type=\"text\" name=\"employee_name\" required autofocus class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">PIN / Password</span> <input type=\"password\" name=\"password\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <button type=\"submit\" class=\"w-full px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">Log In</button></form></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block gms-demo-accent-text\">Your Name</span> <input type=\"text\" name=\"employee_name\" required autofocus class=\"p-2 border rounded-md w-full gms-dark-text\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block gms-demo-accent-text\">PIN / Password</span> <input type=\"password\" name=\"password\" required class=\"p-2 border rounded-md w-full gms-dark-text\"></label> <button type=\"submit\" class=\"w-full px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">Log In</button></form></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

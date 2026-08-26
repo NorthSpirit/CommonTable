@@ -1,19 +1,23 @@
 package client
 
 import (
+	"CommonTable/internal/templates/helpers"
 	"CommonTable/internal/templates/layout"
 	"CommonTable/internal/templates/shared"
 )
 
-templ MenuItemsPage(locale string, branding shared.BrandingView, menuName string, items []shared.MenuItemView) {
-	@layout.Layout(menuName, &branding, locale, menuItemsPageContent(locale, menuName, items))
+templ MenuItemsPage(locale string, branding shared.BrandingView, restaurantID int32, menuName string, items []shared.MenuItemView) {
+	@layout.Layout(menuName, &branding, locale, menuItemsPageContent(locale, restaurantID, menuName, items))
 }
 
-templ menuItemsPageContent(locale string, menuName string, items []shared.MenuItemView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
-			{ menuName }
-		</h2>
+templ menuItemsPageContent(locale string, restaurantID int32, menuName string, items []shared.MenuItemView) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@BackLink(helpers.WithLang("/restaurants/"+helpers.Itoa(restaurantID), locale), "Back")
+			<h2 class="text-2xl font-bold gms-main-text">
+				{ menuName }
+			</h2>
+		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, item := range items {
 				@FoodItemCard(item, locale)

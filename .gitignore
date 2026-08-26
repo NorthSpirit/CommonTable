@@ -38,3 +38,7 @@ waiter_app/build/
 waiter_app/.dart_tool/
 
 logs/
+
+# Personal working notes — not part of the actual project source
+use_case_ref.txt
+extra_note.txt

@@ -1,14 +1,70 @@
 package manager
 
-templ DashboardPage(restaurantName string, employeeName string) {
-	@Layout(restaurantName+" - Dashboard", employeeName, dashboardContent(restaurantName))
+import "strconv"
+
+templ DashboardPage(restaurantName string, employeeName string, stats DashboardStats) {
+	@Layout(restaurantName+" - Dashboard", employeeName, dashboardContent(restaurantName, stats))
 }
 
-templ dashboardContent(restaurantName string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text flex items-center justify-center">
-		<div class="text-center">
-			<h2 class="text-2xl font-bold mb-2">Welcome, { restaurantName } Manager</h2>
-			<p class="opacity-70">Menu/employee/order management sections coming next.</p>
+type DashboardStats struct {
+	Menus     int64
+	FoodItems int64
+	Employees int64
+	Orders    int64
+}
+
+templ dashboardContent(restaurantName string, stats DashboardStats) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">Welcome, { restaurantName } Manager</h2>
+
+		<div class="w-full lg:w-[65%] mx-auto">
+			<a href="/manager/orders" class="block gms-dark-bg gms-light-text rounded-lg shadow-lg p-6 mb-8 border gms-border-medium transition-all duration-300 hover:shadow-xl">
+				<div class="flex items-center justify-between">
+					<div>
+						<p class="text-sm uppercase tracking-wide gms-light-text opacity-80">Orders</p>
+						<p class="text-4xl font-bold mt-1">{ formatCount(stats.Orders) }</p>
+					</div>
+					<span class="text-2xl gms-light-text opacity-80">→</span>
+				</div>
+			</a>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<section class="border gms-border-medium rounded-lg overflow-hidden">
+					<h3 class="text-sm font-bold uppercase tracking-wide px-4 py-2 gms-dark-bg gms-light-text">Menu Content</h3>
+					<div class="divide-y gms-border-medium">
+						@statRow("Menus", stats.Menus, "/manager/menus")
+						@statRow("Food Items", stats.FoodItems, "")
+					</div>
+				</section>
+
+				<section class="border gms-border-medium rounded-lg overflow-hidden">
+					<h3 class="text-sm font-bold uppercase tracking-wide px-4 py-2 gms-dark-bg gms-light-text">Team</h3>
+					<div class="divide-y gms-border-medium">
+						@statRow("Employees", stats.Employees, "/manager/employees")
+					</div>
+				</section>
+			</div>
 		</div>
 	</main>
+}
+
+templ statRow(label string, count int64, href string) {
+	if href != "" {
+		<a href={ templ.URL(href) } class="flex items-center justify-between px-4 py-3 gms-hover-bg-light">
+			<span class="text-sm">{ label }</span>
+			<span class="flex items-center gap-2">
+				<span class="text-lg font-bold gms-main-text">{ formatCount(count) }</span>
+				<span class="opacity-60">→</span>
+			</span>
+		</a>
+	} else {
+		<div class="flex items-center justify-between px-4 py-3">
+			<span class="text-sm opacity-80">{ label }</span>
+			<span class="text-lg font-bold gms-main-text">{ formatCount(count) }</span>
+		</div>
+	}
+}
+
+func formatCount(count int64) string {
+	return strconv.FormatInt(count, 10)
 }

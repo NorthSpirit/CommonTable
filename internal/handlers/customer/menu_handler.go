@@ -71,7 +71,7 @@ func (h *MenuHandler) Items(w http.ResponseWriter, r *http.Request) {
 
 	branding := toBrandingView(restaurant)
 
-	if err := client.MenuItemsPage(locale, branding, menu.Name, views).Render(r.Context(), w); err != nil {
+	if err := client.MenuItemsPage(locale, branding, menu.RestaurantID, menu.Name, views).Render(r.Context(), w); err != nil {
 		renderServerError(w, r)
 	}
 }

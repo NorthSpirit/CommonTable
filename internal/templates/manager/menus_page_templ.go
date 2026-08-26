@@ -58,12 +58,12 @@ func menusPageContent(menus []MenuView) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 p-6 gms-content-bg gms-main-text\"><div class=\"flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2\"><h2 class=\"text-2xl font-bold gms-main-text\">Menus</h2><a href=\"/manager/menus/new\" class=\"px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">+ New Menu</a></div><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"flex-1 px-6 py-4 gms-content-bg gms-main-text\"><div class=\"flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4\"><h2 class=\"text-2xl font-bold gms-main-text\">Menus</h2><a href=\"/manager/menus/new\" class=\"inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium\">+ New Menu</a></div><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, m := range menus {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"border gms-border-medium rounded-lg shadow-lg overflow-hidden\"><div class=\"h-32 w-full bg-gray-200 flex items-center justify-center\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"flex flex-col border gms-border-medium rounded-lg shadow-lg overflow-hidden\"><div class=\"h-32 w-full gms-dark-bg flex items-center justify-center\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -99,12 +99,12 @@ func menusPageContent(menus []MenuView) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"text-gray-500 italic\">No Image</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"gms-light-text opacity-70 italic\">No Image</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"p-4\"><h3 class=\"text-lg font-bold gms-main-text\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"flex flex-col flex-1 p-4\"><h3 class=\"text-lg font-bold gms-main-text\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -117,7 +117,7 @@ func menusPageContent(menus []MenuView) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</h3><div class=\"flex gap-2 mt-3\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</h3><div class=\"flex gap-2 mt-auto pt-3\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -143,7 +143,7 @@ func menusPageContent(menus []MenuView) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-clear border gms-border-medium\">Edit</a><form method=\"POST\" action=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium\">Edit</a><form method=\"POST\" action=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

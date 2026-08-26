@@ -53,7 +53,7 @@ func RestaurantQuickNav(restaurants []shared.RestaurantView, locale string) temp
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"shrink-0 w-32 block gms-hover-bg-light border gms-border-medium rounded-lg shadow overflow-hidden\"><div class=\"h-20 w-full bg-gray-200 flex items-center justify-center\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"shrink-0 w-32 block gms-hover-bg-light border gms-border-medium rounded-lg shadow overflow-hidden\"><div class=\"h-20 w-full gms-dark-bg flex items-center justify-center\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -89,7 +89,7 @@ func RestaurantQuickNav(restaurants []shared.RestaurantView, locale string) temp
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"text-gray-500 text-xs italic\">No Logo</div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"gms-light-text opacity-70 text-xs italic\">No Logo</div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

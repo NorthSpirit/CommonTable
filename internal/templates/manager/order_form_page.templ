@@ -5,16 +5,19 @@ templ OrderFormPage(employeeName string, tables []TableOptionView, waiters []Emp
 }
 
 templ orderFormContent(tables []TableOptionView, waiters []EmployeeOptionView, items []MenuItemOptionView, errorMessage string) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold mb-6 gms-main-text text-center border-b-2 gms-border-medium pb-2">
-			Create Order Manually
-		</h2>
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@BackLink("/manager/orders", "Back")
+			<h2 class="text-2xl font-bold gms-main-text">
+				Create Order Manually
+			</h2>
+		</div>
 
 		if errorMessage != "" {
-			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm w-full lg:w-[65%] mx-auto">{ errorMessage }</p>
 		}
 
-		<form method="POST" action="/manager/orders/new" class="max-w-2xl mx-auto">
+		<form method="POST" action="/manager/orders/new" class="w-full lg:w-[65%] mx-auto">
 			<fieldset class="border p-4 rounded-lg gms-border-medium mb-4">
 				<legend class="text-lg font-semibold px-2">Order Details</legend>
 

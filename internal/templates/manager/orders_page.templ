@@ -5,10 +5,10 @@ templ OrdersPage(restaurantName string, employeeName string, orders []OrderListI
 }
 
 templ ordersPageContent(orders []OrderListItemView) {
-	<main class="flex-1 p-6 gms-content-bg gms-main-text">
-		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-2">
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex justify-between items-center mb-6 border-b-2 gms-border-medium pb-4">
 			<h2 class="text-2xl font-bold gms-main-text">Orders</h2>
-			<a href="/manager/orders/new" class="px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+			<a href="/manager/orders/new" class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 				+ New Order
 			</a>
 		</div>
@@ -36,7 +36,7 @@ templ ordersPageContent(orders []OrderListItemView) {
 							<td class="p-2 uppercase text-xs font-bold">{ o.Status }</td>
 							<td class="p-2">{ o.CreatedAt }</td>
 							<td class="p-2">
-								<a href={ templ.URL("/manager/orders/" + itoa(o.ID)) } class="px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-clear border gms-border-medium">
+								<a href={ templ.URL("/manager/orders/" + itoa(o.ID)) } class="px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 									View
 								</a>
 							</td>
