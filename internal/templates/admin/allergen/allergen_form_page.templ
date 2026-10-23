@@ -39,12 +39,12 @@ templ allergenFormContent(isEdit bool, allergen adminshared.AllergenAdminView, e
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Name</span>
-					<input type="text" name="name" value={ allergen.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="name" value={ allergen.Name } maxlength="255" required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Name (Alt Language)</span>
-					<input type="text" name="name_alt" value={ allergen.NameAlt } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="name_alt" value={ allergen.NameAlt } maxlength="255" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block">
@@ -55,7 +55,7 @@ templ allergenFormContent(isEdit bool, allergen adminshared.AllergenAdminView, e
 							title="A short internal shorthand for this allergen (e.g. 'gluten', 'GF', 'nuts'). There is no universal allergen coding standard — restaurants define their own menu keys — so this is just your own label to keep things consistent across menus."
 						>?</span>
 					</span>
-					<input type="text" name="code" value={ allergen.Code } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="code" value={ allergen.Code } maxlength="255" required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 			</fieldset>
 
@@ -78,4 +78,4 @@ templ allergenFormContent(isEdit bool, allergen adminshared.AllergenAdminView, e
 			</div>
 		</form>
 	</main>
-}
+}

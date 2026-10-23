@@ -39,17 +39,17 @@ templ tableFormContent(isEdit bool, table adminshared.TableView, errorMessage st
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Number</span>
-					<input type="number" name="number" min="1" value={ adminshared.Itoa(table.Number) } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="number" name="number" min="1" max="100000" value={ adminshared.Itoa(table.Number) } required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Capacity</span>
-					<input type="number" name="capacity" min="1" value={ adminshared.Itoa(table.Capacity) } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="number" name="capacity" min="1" max="1000" value={ adminshared.Itoa(table.Capacity) } required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Section</span>
-					<input type="text" name="section" value={ table.Section } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="section" value={ table.Section } maxlength="255" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				if isEdit {
@@ -70,4 +70,4 @@ templ tableFormContent(isEdit bool, table adminshared.TableView, errorMessage st
 			</div>
 		</form>
 	</main>
-}
+}

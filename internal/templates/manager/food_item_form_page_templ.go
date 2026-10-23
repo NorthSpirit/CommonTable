@@ -143,7 +143,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Name (Alt Language)</span> <input type=\"text\" name=\"name_alt\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" maxlength=\"255\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Name (Alt Language)</span> <input type=\"text\" name=\"name_alt\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -156,7 +156,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Description</span> <textarea name=\"description\" rows=\"3\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" maxlength=\"255\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Description</span> <textarea name=\"description\" rows=\"3\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -208,27 +208,27 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</textarea></label><div class=\"grid grid-cols-2 gap-4 mb-4\"><label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Price (€)</span> <input type=\"number\" step=\"0.01\" min=\"0\" name=\"price\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</textarea></label><div class=\"grid grid-cols-2 gap-4 mb-4\"><label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Price (€)</span> <input type=\"number\" step=\"0.01\" min=\"0\" max=\"100000\" name=\"price\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(formatPrice(item.Price))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 72, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 72, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Prep Time (mins)</span> <input type=\"number\" min=\"0\" name=\"prep_time_mins\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Prep Time (mins)</span> <input type=\"number\" min=\"0\" max=\"1000\" name=\"prep_time_mins\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(itoa(item.PrepTimeMins))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 76, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 76, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -486,7 +486,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" class=\"border gms-border-medium rounded p-3\"><p class=\"text-sm font-semibold mb-2\">Can't find it? Create it</p><input type=\"text\" name=\"new_ingredient_name\" placeholder=\"Ingredient name\" required class=\"p-2 border gms-border-medium rounded-md w-full mb-2\"><div class=\"flex gap-2 mb-2\"><input type=\"number\" step=\"0.01\" min=\"0\" name=\"amount\" placeholder=\"Amount\" class=\"p-2 border gms-border-medium rounded-md w-full\"> <input type=\"text\" name=\"measurement\" placeholder=\"Unit (g, ml...)\" class=\"p-2 border gms-border-medium rounded-md w-full\"></div><button type=\"submit\" class=\"w-full px-3 py-2 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium\">Create &amp; Add</button></form></div></fieldset>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" class=\"border gms-border-medium rounded p-3\"><p class=\"text-sm font-semibold mb-2\">Can't find it? Create it</p><input type=\"text\" name=\"new_ingredient_name\" placeholder=\"Ingredient name\" maxlength=\"255\" required class=\"p-2 border gms-border-medium rounded-md w-full mb-2\"><div class=\"flex gap-2 mb-2\"><input type=\"number\" step=\"0.01\" min=\"0\" name=\"amount\" placeholder=\"Amount\" class=\"p-2 border gms-border-medium rounded-md w-full\"> <input type=\"text\" name=\"measurement\" placeholder=\"Unit (g, ml...)\" class=\"p-2 border gms-border-medium rounded-md w-full\"></div><button type=\"submit\" class=\"w-full px-3 py-2 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium\">Create &amp; Add</button></form></div></fieldset>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

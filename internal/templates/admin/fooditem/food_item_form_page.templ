@@ -40,12 +40,12 @@ templ foodItemFormContent(restaurantID int32, menuID int32, isEdit bool, item ad
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Name</span>
-					<input type="text" name="name" value={ item.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="name" value={ item.Name } maxlength="255" required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Name (Alt Language)</span>
-					<input type="text" name="name_alt" value={ item.NameAlt } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="name_alt" value={ item.NameAlt } maxlength="255" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
@@ -71,11 +71,11 @@ templ foodItemFormContent(restaurantID int32, menuID int32, isEdit bool, item ad
 				<div class="grid grid-cols-2 gap-4 mb-4">
 					<label class="block">
 						<span class="text-sm font-medium mb-1 block">Price (€)</span>
-						<input type="number" step="0.01" min="0" name="price" value={ adminshared.FormatPrice(item.Price) } required class="p-2 border gms-border-medium rounded-md w-full"/>
+						<input type="number" step="0.01" min="0" max="100000" name="price" value={ adminshared.FormatPrice(item.Price) } required class="p-2 border gms-border-medium rounded-md w-full"/>
 					</label>
 					<label class="block">
 						<span class="text-sm font-medium mb-1 block">Prep Time (mins)</span>
-						<input type="number" min="0" name="prep_time_mins" value={ adminshared.Itoa(item.PrepTimeMins) } class="p-2 border gms-border-medium rounded-md w-full"/>
+						<input type="number" min="0" max="1000" name="prep_time_mins" value={ adminshared.Itoa(item.PrepTimeMins) } class="p-2 border gms-border-medium rounded-md w-full"/>
 					</label>
 				</div>
 

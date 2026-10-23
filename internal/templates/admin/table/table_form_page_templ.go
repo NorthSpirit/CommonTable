@@ -131,27 +131,27 @@ func tableFormContent(isEdit bool, table adminshared.TableView, errorMessage str
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"w-full lg:w-[65%] mx-auto\"><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Details</legend> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Number</span> <input type=\"number\" name=\"number\" min=\"1\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"w-full lg:w-[65%] mx-auto\"><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Details</legend> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Number</span> <input type=\"number\" name=\"number\" min=\"1\" max=\"100000\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(adminshared.Itoa(table.Number))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/table/table_form_page.templ`, Line: 42, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/table/table_form_page.templ`, Line: 42, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Capacity</span> <input type=\"number\" name=\"capacity\" min=\"1\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Capacity</span> <input type=\"number\" name=\"capacity\" min=\"1\" max=\"1000\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(adminshared.Itoa(table.Capacity))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/table/table_form_page.templ`, Line: 47, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/table/table_form_page.templ`, Line: 47, Col: 101}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -170,7 +170,7 @@ func tableFormContent(isEdit bool, table adminshared.TableView, errorMessage str
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" maxlength=\"255\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

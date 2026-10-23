@@ -113,7 +113,7 @@ func restaurantProfileContent(restaurant RestaurantProfileView, errorMessage str
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Address</span> <input type=\"text\" name=\"address\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" maxlength=\"255\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Address</span> <input type=\"text\" name=\"address\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -139,7 +139,7 @@ func restaurantProfileContent(restaurant RestaurantProfileView, errorMessage str
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Email</span> <input type=\"email\" name=\"email\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" maxlength=\"30\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Email</span> <input type=\"email\" name=\"email\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -152,7 +152,7 @@ func restaurantProfileContent(restaurant RestaurantProfileView, errorMessage str
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">New Login Password (leave blank to keep current)</span> <input type=\"password\" name=\"password\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label></fieldset><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Logo &amp; Description</legend> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" maxlength=\"254\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">New Login Password (leave blank to keep current)</span> <input type=\"password\" name=\"password\" maxlength=\"72\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label></fieldset><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Logo &amp; Description</legend> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

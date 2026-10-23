@@ -78,10 +78,33 @@ func (h *ProfileHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
+	password := r.FormValue("password")
+	formView := managertmpl.RestaurantProfileView{
+		ID:             claims.RestaurantID,
+		Name:           name,
+		Address:        r.FormValue("address"),
+		Phone:          r.FormValue("phone"),
+		Email:          r.FormValue("email"),
+		LogoURL:        current.LogoUrl.String,
+		Description:    r.FormValue("description"),
+		DescriptionAlt: r.FormValue("description_alt"),
+	}
 	if name == "" {
-		view := buildProfileView(current)
 		w.WriteHeader(http.StatusBadRequest)
-		_ = managertmpl.RestaurantProfilePage(claims.Name, view, "Name is required.", "").Render(r.Context(), w)
+		_ = managertmpl.RestaurantProfilePage(claims.Name, formView, "Name is required.", "").Render(r.Context(), w)
+		return
+	}
+
+	msg := helpers.CheckLengths(helpers.FieldLimit{Label: "Name", Value: name, Max: 255})
+	if msg == "" {
+		msg = helpers.ValidateContact(formView.Email, formView.Phone)
+	}
+	if msg == "" {
+		msg = helpers.ValidateSecret("Password", password)
+	}
+	if msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = managertmpl.RestaurantProfilePage(claims.Name, formView, msg, "").Render(r.Context(), w)
 		return
 	}
 
@@ -113,12 +136,22 @@ func (h *ProfileHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.restaurantService.UpdateRestaurant(r.Context(), claims.RestaurantID, name, address, phone, email, logoURLPtr, description, descriptionAlt); err != nil {
+		if isUniqueViolation(err) {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = managertmpl.RestaurantProfilePage(claims.Name, formView, "A restaurant named \""+name+"\" already exists.", "").Render(r.Context(), w)
+			return
+		}
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = managertmpl.RestaurantProfilePage(claims.Name, formView, msg, "").Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to update restaurant", http.StatusInternalServerError)
 		return
 	}
 
-	if newPassword := r.FormValue("password"); newPassword != "" {
-		passwordHash, err := helpers.HashPassword(newPassword)
+	if password != "" {
+		passwordHash, err := helpers.HashPassword(password)
 		if err != nil {
 			http.Error(w, "failed to hash password", http.StatusInternalServerError)
 			return

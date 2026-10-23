@@ -84,9 +84,19 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "idempotency_key is required")
 		return
 	}
+	if len(req.IdempotencyKey) > 64 {
+		writeError(w, http.StatusBadRequest, "idempotency_key must be at most 64 characters")
+		return
+	}
 	if len(req.Items) == 0 {
 		writeError(w, http.StatusBadRequest, "at least one item is required")
 		return
+	}
+	for _, item := range req.Items {
+		if item.Quantity <= 0 || item.Quantity > 1000 {
+			writeError(w, http.StatusBadRequest, "quantity must be between 1 and 1000")
+			return
+		}
 	}
 
 	lines := make([]foodorderservices.OrderLine, 0, len(req.Items))
@@ -226,8 +236,8 @@ func (h *OrderHandler) UpdateItemQuantity(w http.ResponseWriter, r *http.Request
 		writeError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if req.Quantity <= 0 {
-		writeError(w, http.StatusBadRequest, "quantity must be greater than 0")
+	if req.Quantity <= 0 || req.Quantity > 1000 {
+		writeError(w, http.StatusBadRequest, "quantity must be between 1 and 1000")
 		return
 	}
 

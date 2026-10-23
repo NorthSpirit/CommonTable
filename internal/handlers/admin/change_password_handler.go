@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/services/adminservices"
 	"CommonTable/internal/templates/admin/adminshared"
 )
@@ -37,6 +38,12 @@ func (h *ChangePasswordHandler) Update(w http.ResponseWriter, r *http.Request) {
 	if newPassword != newPasswordConfirm {
 		w.WriteHeader(http.StatusBadRequest)
 		_ = adminshared.ChangePasswordPage("", "New password and confirmation do not match.").Render(r.Context(), w)
+		return
+	}
+
+	if msg := helpers.ValidateSecret("New password", newPassword); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = adminshared.ChangePasswordPage("", msg).Render(r.Context(), w)
 		return
 	}
 

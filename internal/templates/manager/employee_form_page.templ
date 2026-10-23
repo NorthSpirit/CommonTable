@@ -37,7 +37,7 @@ templ employeeFormContent(isEdit bool, employee EmployeeView, errorMessage strin
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Name</span>
-					<input type="text" name="name" value={ employee.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="name" value={ employee.Name } maxlength="255" required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
@@ -51,23 +51,23 @@ templ employeeFormContent(isEdit bool, employee EmployeeView, errorMessage strin
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Email</span>
-					<input type="email" name="email" value={ employee.Email } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="email" name="email" value={ employee.Email } maxlength="254" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Phone</span>
-					<input type="text" name="phone_number" value={ employee.PhoneNumber } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="phone_number" value={ employee.PhoneNumber } maxlength="30" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				if isEdit {
 					<label class="block">
 						<span class="text-sm font-medium mb-1 block">New PIN/Password (leave blank to keep current)</span>
-						<input type="password" name="pin" class="p-2 border gms-border-medium rounded-md w-full"/>
+						<input type="password" name="pin" maxlength="72" class="p-2 border gms-border-medium rounded-md w-full"/>
 					</label>
 				} else {
 					<label class="block">
 						<span class="text-sm font-medium mb-1 block">PIN/Password</span>
-						<input type="password" name="pin" required class="p-2 border gms-border-medium rounded-md w-full"/>
+						<input type="password" name="pin" maxlength="72" required class="p-2 border gms-border-medium rounded-md w-full"/>
 					</label>
 				}
 			</fieldset>

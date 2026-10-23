@@ -144,7 +144,7 @@ func ingredientFormContent(isEdit bool, ingredient adminshared.IngredientView, e
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Description</span> <textarea name=\"description\" rows=\"6\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" maxlength=\"255\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Description</span> <textarea name=\"description\" rows=\"6\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
 	managertmpl "CommonTable/internal/templates/manager"
@@ -158,6 +159,11 @@ func (h *FoodItemHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if msg := helpers.ValidateFoodItemForm(r); msg != "" {
+		h.renderFormError(w, r, int32(menuID), 0, false, "", msg)
+		return
+	}
+
 	price, _ := strconv.ParseFloat(r.FormValue("price"), 64)
 	prepTime := parseIntPtr(r.FormValue("prep_time_mins"))
 	isAvailable := r.FormValue("is_available") == "on"
@@ -183,6 +189,10 @@ func (h *FoodItemHandler) Create(w http.ResponseWriter, r *http.Request) {
 		price,
 	)
 	if err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			h.renderFormError(w, r, int32(menuID), 0, false, "", msg)
+			return
+		}
 		http.Error(w, "failed to create food item", http.StatusInternalServerError)
 		return
 	}
@@ -305,6 +315,11 @@ func (h *FoodItemHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if msg := helpers.ValidateFoodItemForm(r); msg != "" {
+		h.renderFormError(w, r, int32(menuID), int32(itemID), true, current.ImageUrl.String, msg)
+		return
+	}
+
 	price, _ := strconv.ParseFloat(r.FormValue("price"), 64)
 	prepTime := parseIntPtr(r.FormValue("prep_time_mins"))
 	isAvailable := r.FormValue("is_available") == "on"
@@ -349,6 +364,10 @@ func (h *FoodItemHandler) Update(w http.ResponseWriter, r *http.Request) {
 		price,
 	)
 	if err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			h.renderFormError(w, r, int32(menuID), int32(itemID), true, current.ImageUrl.String, msg)
+			return
+		}
 		http.Error(w, "failed to update food item", http.StatusInternalServerError)
 		return
 	}
@@ -477,11 +496,7 @@ func (h *FoodItemHandler) AddIngredient(w http.ResponseWriter, r *http.Request) 
 }
 
 // CreateIngredient handles POST /manager/menus/{menuID}/items/{itemID}/ingredients/create
-//
-// This is the "search first, create if missing" flow: creates a brand
-// new ingredient in the shared catalog, then immediately attaches it to
-// this item — a manager can do both in one step rather than needing
-// admin to add the ingredient first.
+
 func (h *FoodItemHandler) CreateIngredient(w http.ResponseWriter, r *http.Request) {
 	menuID := chi.URLParam(r, "menuID")
 	itemID, err := strconv.Atoi(chi.URLParam(r, "itemID"))
@@ -498,6 +513,11 @@ func (h *FoodItemHandler) CreateIngredient(w http.ResponseWriter, r *http.Reques
 	newName := r.FormValue("new_ingredient_name")
 	if newName == "" {
 		http.Redirect(w, r, "/manager/menus/"+menuID+"/items/"+strconv.Itoa(itemID)+"/edit", http.StatusFound)
+		return
+	}
+
+	if msg := helpers.CheckLengths(helpers.FieldLimit{Label: "Ingredient name", Value: newName, Max: 255}); msg != "" {
+		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
 
@@ -544,4 +564,46 @@ func parseIntPtr(s string) *int32 {
 	}
 	v32 := int32(v)
 	return &v32
+}
+
+// renderFormError re-renders the item form with the submitted values and an
+// error message. Allergen checkboxes are reloaded from the database.
+func (h *FoodItemHandler) renderFormError(w http.ResponseWriter, r *http.Request, menuID, itemID int32, isEdit bool, imageURL, msg string) {
+	claims := claimsFromContext(r.Context())
+
+	view := managertmpl.FoodItemView{
+		ID:              itemID,
+		Name:            r.FormValue("name"),
+		NameAlt:         r.FormValue("name_alt"),
+		Description:     r.FormValue("description"),
+		DescriptionAlt:  r.FormValue("description_alt"),
+		Instructions:    r.FormValue("instructions"),
+		InstructionsAlt: r.FormValue("instructions_alt"),
+		Price:           helpers.SafeFormPrice(r),
+		PrepTimeMins:    helpers.SafeFormPrepTime(r),
+		IsAvailable:     r.FormValue("is_available") == "on",
+		ImageURL:        imageURL,
+	}
+
+	allergens, err := h.buildAllergenCheckboxes(r, itemID)
+	if err != nil {
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	var ingredientOptions []managertmpl.IngredientOptionView
+	var itemIngredients []managertmpl.ItemIngredientView
+	if isEdit {
+		ingredientOptions, err = h.buildIngredientOptions(r)
+		if err == nil {
+			itemIngredients, err = h.buildItemIngredients(r, itemID)
+		}
+		if err != nil {
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusBadRequest)
+	_ = managertmpl.FoodItemFormPage(claims.Name, menuID, isEdit, view, allergens, ingredientOptions, itemIngredients, msg).Render(r.Context(), w)
 }

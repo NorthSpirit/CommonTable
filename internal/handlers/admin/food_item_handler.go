@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
 	"CommonTable/internal/templates/admin/adminshared"
@@ -196,6 +197,11 @@ func (h *FoodItemHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if msg := helpers.ValidateFoodItemForm(r); msg != "" {
+		h.renderFormError(w, r, int32(restaurantID), int32(menuID), 0, false, "", msg)
+		return
+	}
+
 	price, _ := strconv.ParseFloat(r.FormValue("price"), 64)
 	prepTime := parseIntPtr(r.FormValue("prep_time_mins"))
 	isAvailable := r.FormValue("is_available") == "on"
@@ -221,6 +227,10 @@ func (h *FoodItemHandler) Create(w http.ResponseWriter, r *http.Request) {
 		price,
 	)
 	if err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			h.renderFormError(w, r, int32(restaurantID), int32(menuID), 0, false, "", msg)
+			return
+		}
 		http.Error(w, "failed to create food item", http.StatusInternalServerError)
 		return
 	}
@@ -367,6 +377,12 @@ func (h *FoodItemHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if msg := helpers.ValidateFoodItemForm(r); msg != "" {
+		menuIDNum, _ := strconv.Atoi(menuID)
+		h.renderFormError(w, r, int32(restaurantID), int32(menuIDNum), int32(itemID), true, current.ImageUrl.String, msg)
+		return
+	}
+
 	price, _ := strconv.ParseFloat(r.FormValue("price"), 64)
 	prepTime := parseIntPtr(r.FormValue("prep_time_mins"))
 	isAvailable := r.FormValue("is_available") == "on"
@@ -411,6 +427,11 @@ func (h *FoodItemHandler) Update(w http.ResponseWriter, r *http.Request) {
 		price,
 	)
 	if err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			menuIDNum, _ := strconv.Atoi(menuID)
+			h.renderFormError(w, r, int32(restaurantID), int32(menuIDNum), int32(itemID), true, current.ImageUrl.String, msg)
+			return
+		}
 		http.Error(w, "failed to update food item", http.StatusInternalServerError)
 		return
 	}
@@ -538,4 +559,49 @@ func parseIntPtr(s string) *int32 {
 	}
 	v32 := int32(v)
 	return &v32
+}
+
+// renderFormError re-renders the item form with the submitted values and an
+// error message. Allergen / menu checkboxes are reloaded from the database.
+func (h *FoodItemHandler) renderFormError(w http.ResponseWriter, r *http.Request, restaurantID, menuID, itemID int32, isEdit bool, imageURL, msg string) {
+	view := adminshared.FoodItemView{
+		ID:              itemID,
+		Name:            r.FormValue("name"),
+		NameAlt:         r.FormValue("name_alt"),
+		Description:     r.FormValue("description"),
+		DescriptionAlt:  r.FormValue("description_alt"),
+		Instructions:    r.FormValue("instructions"),
+		InstructionsAlt: r.FormValue("instructions_alt"),
+		Price:           helpers.SafeFormPrice(r),
+		ImageURL:        imageURL,
+		PrepTimeMins:    helpers.SafeFormPrepTime(r),
+		IsAvailable:     r.FormValue("is_available") == "on",
+	}
+
+	allergens, err := h.buildAllergenCheckboxes(r, itemID)
+	if err != nil {
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	var menus []adminshared.MenuCheckboxView
+	var ingredientOptions []adminshared.IngredientOptionView
+	if isEdit {
+		menus, err = h.buildMenuCheckboxes(r, restaurantID, itemID)
+		if err == nil {
+			ingredientOptions, err = h.buildIngredientOptions(r)
+		}
+		if err == nil {
+			view.Ingredients, err = h.buildItemIngredients(r, itemID)
+		}
+	} else {
+		menus, err = h.buildMenuCheckboxesWithDefault(r, restaurantID, 0, menuID)
+	}
+	if err != nil {
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusBadRequest)
+	_ = fooditem.FoodItemFormPage(restaurantID, menuID, isEdit, view, allergens, menus, ingredientOptions, msg).Render(r.Context(), w)
 }

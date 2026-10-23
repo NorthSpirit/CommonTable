@@ -23,7 +23,7 @@ templ restaurantProfileContent(restaurant RestaurantProfileView, errorMessage st
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Name</span>
-					<input type="text" name="name" value={ restaurant.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="name" value={ restaurant.Name } maxlength="255" required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
@@ -33,17 +33,17 @@ templ restaurantProfileContent(restaurant RestaurantProfileView, errorMessage st
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Phone</span>
-					<input type="text" name="phone" value={ restaurant.Phone } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="phone" value={ restaurant.Phone } maxlength="30" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Email</span>
-					<input type="email" name="email" value={ restaurant.Email } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="email" name="email" value={ restaurant.Email } maxlength="254" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block">
 					<span class="text-sm font-medium mb-1 block">New Login Password (leave blank to keep current)</span>
-					<input type="password" name="password" class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="password" name="password" maxlength="72" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 			</fieldset>
 

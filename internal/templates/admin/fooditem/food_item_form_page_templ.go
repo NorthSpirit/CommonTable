@@ -145,7 +145,7 @@ func foodItemFormContent(restaurantID int32, menuID int32, isEdit bool, item adm
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Name (Alt Language)</span> <input type=\"text\" name=\"name_alt\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" maxlength=\"255\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Name (Alt Language)</span> <input type=\"text\" name=\"name_alt\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -158,7 +158,7 @@ func foodItemFormContent(restaurantID int32, menuID int32, isEdit bool, item adm
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Description</span> <textarea name=\"description\" rows=\"3\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" maxlength=\"255\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Description</span> <textarea name=\"description\" rows=\"3\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -210,27 +210,27 @@ func foodItemFormContent(restaurantID int32, menuID int32, isEdit bool, item adm
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</textarea></label><div class=\"grid grid-cols-2 gap-4 mb-4\"><label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Price (€)</span> <input type=\"number\" step=\"0.01\" min=\"0\" name=\"price\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</textarea></label><div class=\"grid grid-cols-2 gap-4 mb-4\"><label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Price (€)</span> <input type=\"number\" step=\"0.01\" min=\"0\" max=\"100000\" name=\"price\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(adminshared.FormatPrice(item.Price))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/fooditem/food_item_form_page.templ`, Line: 74, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/fooditem/food_item_form_page.templ`, Line: 74, Col: 116}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Prep Time (mins)</span> <input type=\"number\" min=\"0\" name=\"prep_time_mins\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Prep Time (mins)</span> <input type=\"number\" min=\"0\" max=\"1000\" name=\"prep_time_mins\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(adminshared.Itoa(item.PrepTimeMins))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/fooditem/food_item_form_page.templ`, Line: 78, Col: 100}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/fooditem/food_item_form_page.templ`, Line: 78, Col: 111}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {

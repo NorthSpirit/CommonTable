@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/repository"
 	"CommonTable/internal/services/foodorderservices"
 	"CommonTable/internal/services/restaurantservices"
@@ -144,11 +145,25 @@ func (h *TableHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := h.tableService.InsertTable(r.Context(), int32(number), int32(capacity), strPtrOrNil(r.FormValue("section")), repository.TableStatusFree)
+	section := r.FormValue("section")
+	msg := helpers.CheckRange("Table number", float64(number), 1, 100000)
+	if msg == "" {
+		msg = helpers.CheckRange("Capacity", float64(capacity), 1, 1000)
+	}
+	if msg == "" {
+		msg = helpers.CheckLengths(helpers.FieldLimit{Label: "Section", Value: section, Max: 255})
+	}
+	if msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = table.TableFormPage(false, adminshared.TableView{Section: section}, msg).Render(r.Context(), w)
+		return
+	}
+
+	_, err := h.tableService.InsertTable(r.Context(), int32(number), int32(capacity), strPtrOrNil(section), repository.TableStatusFree)
 	if err != nil {
 		if isUniqueViolation(err) {
 			w.WriteHeader(http.StatusBadRequest)
-			_ = table.TableFormPage(false, adminshared.TableView{Number: int32(number), Capacity: int32(capacity)}, "Table number "+strconv.Itoa(number)+" already exists.").Render(r.Context(), w)
+			_ = table.TableFormPage(false, adminshared.TableView{Number: int32(number), Capacity: int32(capacity), Section: section}, "Table number "+strconv.Itoa(number)+" already exists.").Render(r.Context(), w)
 			return
 		}
 		http.Error(w, "failed to create table", http.StatusInternalServerError)
@@ -202,10 +217,24 @@ func (h *TableHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.tableService.UpdateTable(r.Context(), int32(id), int32(number), int32(capacity), strPtrOrNil(r.FormValue("section"))); err != nil {
+	section := r.FormValue("section")
+	msg := helpers.CheckRange("Table number", float64(number), 1, 100000)
+	if msg == "" {
+		msg = helpers.CheckRange("Capacity", float64(capacity), 1, 1000)
+	}
+	if msg == "" {
+		msg = helpers.CheckLengths(helpers.FieldLimit{Label: "Section", Value: section, Max: 255})
+	}
+	if msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = table.TableFormPage(true, adminshared.TableView{ID: int32(id), Section: section}, msg).Render(r.Context(), w)
+		return
+	}
+
+	if err := h.tableService.UpdateTable(r.Context(), int32(id), int32(number), int32(capacity), strPtrOrNil(section)); err != nil {
 		if isUniqueViolation(err) {
 			w.WriteHeader(http.StatusBadRequest)
-			_ = table.TableFormPage(true, adminshared.TableView{ID: int32(id), Number: int32(number), Capacity: int32(capacity)}, "Table number "+strconv.Itoa(number)+" already exists.").Render(r.Context(), w)
+			_ = table.TableFormPage(true, adminshared.TableView{ID: int32(id), Number: int32(number), Capacity: int32(capacity), Section: section}, "Table number "+strconv.Itoa(number)+" already exists.").Render(r.Context(), w)
 			return
 		}
 		http.Error(w, "failed to update table", http.StatusInternalServerError)

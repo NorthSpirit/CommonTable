@@ -144,7 +144,7 @@ func allergenFormContent(isEdit bool, allergen adminshared.AllergenAdminView, er
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Name (Alt Language)</span> <input type=\"text\" name=\"name_alt\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" maxlength=\"255\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Name (Alt Language)</span> <input type=\"text\" name=\"name_alt\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -157,7 +157,7 @@ func allergenFormContent(isEdit bool, allergen adminshared.AllergenAdminView, er
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 flex items-center gap-1\">Code <span class=\"inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border gms-border-medium cursor-help\" title=\"A short internal shorthand for this allergen (e.g. 'gluten', 'GF', 'nuts'). There is no universal allergen coding standard — restaurants define their own menu keys — so this is just your own label to keep things consistent across menus.\">?</span></span> <input type=\"text\" name=\"code\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" maxlength=\"255\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 flex items-center gap-1\">Code <span class=\"inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border gms-border-medium cursor-help\" title=\"A short internal shorthand for this allergen (e.g. 'gluten', 'GF', 'nuts'). There is no universal allergen coding standard — restaurants define their own menu keys — so this is just your own label to keep things consistent across menus.\">?</span></span> <input type=\"text\" name=\"code\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -170,7 +170,7 @@ func allergenFormContent(isEdit bool, allergen adminshared.AllergenAdminView, er
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label></fieldset><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Description</legend> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Description</span> <textarea name=\"description\" rows=\"6\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" maxlength=\"255\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label></fieldset><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Description</legend> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Description</span> <textarea name=\"description\" rows=\"6\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

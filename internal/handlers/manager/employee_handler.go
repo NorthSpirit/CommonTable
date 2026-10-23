@@ -76,18 +76,34 @@ func (h *EmployeeHandler) Create(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	pin := r.FormValue("pin")
 	roleRaw := r.FormValue("role")
+	email := r.FormValue("email")
+	phone := r.FormValue("phone_number")
+	view := managertmpl.EmployeeView{Name: name, Role: roleRaw, Email: email, PhoneNumber: phone}
 
 	// Enforced here too, not just hidden from the UI — a manager can
 	// only ever create waiter or chef accounts, never another manager.
 	if roleRaw != "waiter" && roleRaw != "chef" {
 		w.WriteHeader(http.StatusBadRequest)
-		_ = managertmpl.EmployeeFormPage(claims.Name, false, managertmpl.EmployeeView{Name: name, Role: roleRaw}, "Managers can only create waiter or chef accounts.").Render(r.Context(), w)
+		_ = managertmpl.EmployeeFormPage(claims.Name, false, view, "Managers can only create waiter or chef accounts.").Render(r.Context(), w)
 		return
 	}
 
 	if name == "" || pin == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		_ = managertmpl.EmployeeFormPage(claims.Name, false, managertmpl.EmployeeView{Name: name, Role: roleRaw}, "Name and PIN are required.").Render(r.Context(), w)
+		_ = managertmpl.EmployeeFormPage(claims.Name, false, view, "Name and PIN are required.").Render(r.Context(), w)
+		return
+	}
+
+	msg := helpers.CheckLengths(helpers.FieldLimit{Label: "Name", Value: name, Max: 255})
+	if msg == "" {
+		msg = helpers.ValidateContact(email, phone)
+	}
+	if msg == "" {
+		msg = helpers.ValidateSecret("PIN", pin)
+	}
+	if msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = managertmpl.EmployeeFormPage(claims.Name, false, view, msg).Render(r.Context(), w)
 		return
 	}
 
@@ -104,13 +120,18 @@ func (h *EmployeeHandler) Create(w http.ResponseWriter, r *http.Request) {
 		repository.EmployeeRole(roleRaw),
 		&pinHash,
 		nil,
-		strPtrOrNil(r.FormValue("email")),
-		strPtrOrNil(r.FormValue("phone_number")),
+		strPtrOrNil(email),
+		strPtrOrNil(phone),
 	)
 	if err != nil {
 		if isUniqueViolation(err) {
 			w.WriteHeader(http.StatusBadRequest)
-			_ = managertmpl.EmployeeFormPage(claims.Name, false, managertmpl.EmployeeView{Name: name, Role: roleRaw}, "An active employee named \""+name+"\" already exists at this restaurant.").Render(r.Context(), w)
+			_ = managertmpl.EmployeeFormPage(claims.Name, false, view, "An active employee named \""+name+"\" already exists at this restaurant.").Render(r.Context(), w)
+			return
+		}
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = managertmpl.EmployeeFormPage(claims.Name, false, view, msg).Render(r.Context(), w)
 			return
 		}
 		http.Error(w, "failed to create employee", http.StatusInternalServerError)
@@ -190,14 +211,31 @@ func (h *EmployeeHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	name := r.FormValue("name")
 	roleRaw := r.FormValue("role")
+	email := r.FormValue("email")
+	phone := r.FormValue("phone_number")
+	pin := r.FormValue("pin")
+	view := managertmpl.EmployeeView{ID: int32(employeeID), Name: name, Role: roleRaw, Email: email, PhoneNumber: phone}
 	if roleRaw != "waiter" && roleRaw != "chef" {
 		w.WriteHeader(http.StatusBadRequest)
-		_ = managertmpl.EmployeeFormPage(claims.Name, true, managertmpl.EmployeeView{ID: int32(employeeID), Name: name, Role: roleRaw}, "Managers can only assign waiter or chef roles.").Render(r.Context(), w)
+		_ = managertmpl.EmployeeFormPage(claims.Name, true, view, "Managers can only assign waiter or chef roles.").Render(r.Context(), w)
 		return
 	}
 	if name == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		_ = managertmpl.EmployeeFormPage(claims.Name, true, managertmpl.EmployeeView{ID: int32(employeeID), Name: name, Role: roleRaw}, "Name is required.").Render(r.Context(), w)
+		_ = managertmpl.EmployeeFormPage(claims.Name, true, view, "Name is required.").Render(r.Context(), w)
+		return
+	}
+
+	msg := helpers.CheckLengths(helpers.FieldLimit{Label: "Name", Value: name, Max: 255})
+	if msg == "" {
+		msg = helpers.ValidateContact(email, phone)
+	}
+	if msg == "" {
+		msg = helpers.ValidateSecret("PIN", pin)
+	}
+	if msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = managertmpl.EmployeeFormPage(claims.Name, true, view, msg).Render(r.Context(), w)
 		return
 	}
 
@@ -206,20 +244,25 @@ func (h *EmployeeHandler) Update(w http.ResponseWriter, r *http.Request) {
 		int32(employeeID),
 		name,
 		repository.EmployeeRole(roleRaw),
-		strPtrOrNil(r.FormValue("email")),
-		strPtrOrNil(r.FormValue("phone_number")),
+		strPtrOrNil(email),
+		strPtrOrNil(phone),
 	)
 	if err != nil {
 		if isUniqueViolation(err) {
 			w.WriteHeader(http.StatusBadRequest)
-			_ = managertmpl.EmployeeFormPage(claims.Name, true, managertmpl.EmployeeView{ID: int32(employeeID), Name: name, Role: roleRaw}, "An active employee named \""+name+"\" already exists at this restaurant.").Render(r.Context(), w)
+			_ = managertmpl.EmployeeFormPage(claims.Name, true, view, "An active employee named \""+name+"\" already exists at this restaurant.").Render(r.Context(), w)
+			return
+		}
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = managertmpl.EmployeeFormPage(claims.Name, true, view, msg).Render(r.Context(), w)
 			return
 		}
 		http.Error(w, "failed to update employee", http.StatusInternalServerError)
 		return
 	}
 
-	if pin := r.FormValue("pin"); pin != "" {
+	if pin != "" {
 		pinHash, err := helpers.HashPassword(pin)
 		if err != nil {
 			http.Error(w, "failed to hash pin", http.StatusInternalServerError)

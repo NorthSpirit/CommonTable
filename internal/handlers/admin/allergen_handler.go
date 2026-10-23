@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/services/foodrelationshipservices"
 	"errors"
 	"net/http"
@@ -63,15 +64,32 @@ func (h *AllergenHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	nameAlt := r.FormValue("name_alt")
+	view := adminshared.AllergenAdminView{Name: name, NameAlt: nameAlt, Description: r.FormValue("description"), DescriptionAlt: r.FormValue("description_alt"), Code: code}
+	if msg := helpers.CheckLengths(
+		helpers.FieldLimit{Label: "Name", Value: name, Max: 255},
+		helpers.FieldLimit{Label: "Name (alt)", Value: nameAlt, Max: 255},
+		helpers.FieldLimit{Label: "Code", Value: code, Max: 255},
+	); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = allergen.AllergenFormPage(false, view, msg).Render(r.Context(), w)
+		return
+	}
+
 	_, err := h.foodAllergenService.InsertFoodAllergen(
 		r.Context(),
 		name,
-		strPtrOrNil(r.FormValue("name_alt")),
+		strPtrOrNil(nameAlt),
 		strPtrOrNil(r.FormValue("description")),
 		strPtrOrNil(r.FormValue("description_alt")),
 		code,
 	)
 	if err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = allergen.AllergenFormPage(false, view, msg).Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to create allergen", http.StatusInternalServerError)
 		return
 	}
@@ -123,16 +141,33 @@ func (h *AllergenHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	nameAlt := r.FormValue("name_alt")
+	view := adminshared.AllergenAdminView{ID: int32(id), Name: name, NameAlt: nameAlt, Description: r.FormValue("description"), DescriptionAlt: r.FormValue("description_alt"), Code: code}
+	if msg := helpers.CheckLengths(
+		helpers.FieldLimit{Label: "Name", Value: name, Max: 255},
+		helpers.FieldLimit{Label: "Name (alt)", Value: nameAlt, Max: 255},
+		helpers.FieldLimit{Label: "Code", Value: code, Max: 255},
+	); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = allergen.AllergenFormPage(true, view, msg).Render(r.Context(), w)
+		return
+	}
+
 	err = h.foodAllergenService.UpdateFoodAllergen(
 		r.Context(),
 		int32(id),
 		name,
-		strPtrOrNil(r.FormValue("name_alt")),
+		strPtrOrNil(nameAlt),
 		strPtrOrNil(r.FormValue("description")),
 		strPtrOrNil(r.FormValue("description_alt")),
 		code,
 	)
 	if err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = allergen.AllergenFormPage(true, view, msg).Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to update allergen", http.StatusInternalServerError)
 		return
 	}

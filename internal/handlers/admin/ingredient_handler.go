@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
 	"CommonTable/internal/templates/admin/adminshared"
@@ -62,8 +63,20 @@ func (h *IngredientHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	view := adminshared.IngredientView{Name: name, Description: r.FormValue("description")}
+	if msg := helpers.CheckLengths(helpers.FieldLimit{Label: "Name", Value: name, Max: 255}); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = ingredient.IngredientFormPage(false, view, msg).Render(r.Context(), w)
+		return
+	}
+
 	_, err := h.foodIngredientService.InsertFoodIngredient(r.Context(), name, strPtrOrNil(r.FormValue("description")))
 	if err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = ingredient.IngredientFormPage(false, view, msg).Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to create ingredient", http.StatusInternalServerError)
 		return
 	}
@@ -114,7 +127,19 @@ func (h *IngredientHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	view := adminshared.IngredientView{ID: int32(id), Name: name, Description: r.FormValue("description")}
+	if msg := helpers.CheckLengths(helpers.FieldLimit{Label: "Name", Value: name, Max: 255}); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = ingredient.IngredientFormPage(true, view, msg).Render(r.Context(), w)
+		return
+	}
+
 	if err := h.foodIngredientService.UpdateFoodIngredient(r.Context(), int32(id), name, strPtrOrNil(r.FormValue("description"))); err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = ingredient.IngredientFormPage(true, view, msg).Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to update ingredient", http.StatusInternalServerError)
 		return
 	}

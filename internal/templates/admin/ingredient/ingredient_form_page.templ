@@ -39,7 +39,7 @@ templ ingredientFormContent(isEdit bool, ingredient adminshared.IngredientView, 
 
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Name</span>
-					<input type="text" name="name" value={ ingredient.Name } required class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="name" value={ ingredient.Name } maxlength="255" required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 
 				<label class="block">
@@ -53,4 +53,4 @@ templ ingredientFormContent(isEdit bool, ingredient adminshared.IngredientView, 
 			</div>
 		</form>
 	</main>
-}
+}

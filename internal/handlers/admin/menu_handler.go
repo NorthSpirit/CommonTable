@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"CommonTable/internal/helpers"
 	"CommonTable/internal/services/foodrelationshipservices"
 	"CommonTable/internal/services/foodservices"
 	"CommonTable/internal/services/restaurantservices"
@@ -81,16 +82,32 @@ func (h *MenuHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
+	nameAltRaw := r.FormValue("name_alt")
+	view := adminshared.MenuView{Name: name, NameAlt: nameAltRaw, Description: r.FormValue("description"), DescriptionAlt: r.FormValue("description_alt")}
 	if name == "" {
-		http.Error(w, "name is required", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		_ = menu.MenuFormPage(int32(restaurantID), false, view, "Name is required.").Render(r.Context(), w)
 		return
 	}
-	nameAlt := strPtrOrNil(r.FormValue("name_alt"))
+	if msg := helpers.CheckLengths(
+		helpers.FieldLimit{Label: "Name", Value: name, Max: 255},
+		helpers.FieldLimit{Label: "Name (alt)", Value: nameAltRaw, Max: 255},
+	); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = menu.MenuFormPage(int32(restaurantID), false, view, msg).Render(r.Context(), w)
+		return
+	}
+	nameAlt := strPtrOrNil(nameAltRaw)
 	description := strPtrOrNil(r.FormValue("description"))
 	descriptionAlt := strPtrOrNil(r.FormValue("description_alt"))
 
 	dbMenu, err := h.foodMenuService.InsertFoodMenu(r.Context(), int32(restaurantID), name, nameAlt, description, descriptionAlt, nil)
 	if err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = menu.MenuFormPage(int32(restaurantID), false, view, msg).Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to create menu", http.StatusInternalServerError)
 		return
 	}
@@ -163,11 +180,22 @@ func (h *MenuHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
+	nameAltRaw := r.FormValue("name_alt")
+	view := adminshared.MenuView{ID: int32(menuID), ImageURL: current.ImageUrl.String, Name: name, NameAlt: nameAltRaw, Description: r.FormValue("description"), DescriptionAlt: r.FormValue("description_alt")}
 	if name == "" {
-		http.Error(w, "name is required", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		_ = menu.MenuFormPage(int32(restaurantID), true, view, "Name is required.").Render(r.Context(), w)
 		return
 	}
-	nameAlt := strPtrOrNil(r.FormValue("name_alt"))
+	if msg := helpers.CheckLengths(
+		helpers.FieldLimit{Label: "Name", Value: name, Max: 255},
+		helpers.FieldLimit{Label: "Name (alt)", Value: nameAltRaw, Max: 255},
+	); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = menu.MenuFormPage(int32(restaurantID), true, view, msg).Render(r.Context(), w)
+		return
+	}
+	nameAlt := strPtrOrNil(nameAltRaw)
 	description := strPtrOrNil(r.FormValue("description"))
 	descriptionAlt := strPtrOrNil(r.FormValue("description_alt"))
 
@@ -189,6 +217,11 @@ func (h *MenuHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.foodMenuService.UpdateFoodMenu(r.Context(), int32(menuID), name, nameAlt, description, descriptionAlt, imageURLPtr); err != nil {
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = menu.MenuFormPage(int32(restaurantID), true, view, msg).Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "failed to update menu", http.StatusInternalServerError)
 		return
 	}

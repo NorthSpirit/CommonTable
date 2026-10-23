@@ -145,7 +145,7 @@ func employeeFormContent(restaurantID int32, isEdit bool, employee adminshared.E
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Role</span> <select name=\"role\" required class=\"p-2 border gms-border-medium rounded-md w-full\"><option value=\"waiter\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" maxlength=\"255\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Role</span> <select name=\"role\" required class=\"p-2 border gms-border-medium rounded-md w-full\"><option value=\"waiter\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -188,7 +188,7 @@ func employeeFormContent(restaurantID int32, isEdit bool, employee adminshared.E
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Phone</span> <input type=\"text\" name=\"phone_number\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" maxlength=\"254\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Phone</span> <input type=\"text\" name=\"phone_number\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -201,17 +201,17 @@ func employeeFormContent(restaurantID int32, isEdit bool, employee adminshared.E
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" maxlength=\"30\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if isEdit {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">New PIN/Password (leave blank to keep current)</span> <input type=\"password\" name=\"pin\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">New PIN/Password (leave blank to keep current)</span> <input type=\"password\" name=\"pin\" maxlength=\"72\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">PIN/Password</span> <input type=\"password\" name=\"pin\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">PIN/Password</span> <input type=\"password\" name=\"pin\" maxlength=\"72\" required class=\"p-2 border gms-border-medium rounded-md w-full\"></label>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

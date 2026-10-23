@@ -60,8 +60,29 @@ func (h *RestaurantHandler) Create(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	password := r.FormValue("password")
 
+	view := adminshared.RestaurantView{
+		Name:           name,
+		Address:        r.FormValue("address"),
+		Phone:          r.FormValue("phone"),
+		Email:          r.FormValue("email"),
+		Description:    r.FormValue("description"),
+		DescriptionAlt: r.FormValue("description_alt"),
+	}
+
 	if name == "" || password == "" {
-		h.renderFormError(w, r, false, adminshared.RestaurantView{Name: name}, "Name and password are required.")
+		h.renderFormError(w, r, false, view, "Name and password are required.")
+		return
+	}
+
+	msg := helpers.CheckLengths(helpers.FieldLimit{Label: "Name", Value: name, Max: 255})
+	if msg == "" {
+		msg = helpers.ValidateContact(r.FormValue("email"), r.FormValue("phone"))
+	}
+	if msg == "" {
+		msg = helpers.ValidateSecret("Password", password)
+	}
+	if msg != "" {
+		h.renderFormError(w, r, false, view, msg)
 		return
 	}
 
@@ -79,6 +100,14 @@ func (h *RestaurantHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	dbRestaurant, err := h.restaurantService.InsertRestaurant(r.Context(), name, address, phone, email, passwordHash, nil, description, descriptionAlt)
 	if err != nil {
+		if isUniqueViolation(err) {
+			h.renderFormError(w, r, false, view, "A restaurant named \""+name+"\" already exists.")
+			return
+		}
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			h.renderFormError(w, r, false, view, msg)
+			return
+		}
 		http.Error(w, "failed to create restaurant", http.StatusInternalServerError)
 		return
 	}
@@ -147,8 +176,31 @@ func (h *RestaurantHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
+	password := r.FormValue("password")
+	view := adminshared.RestaurantView{
+		ID:             int32(id),
+		Name:           name,
+		Address:        r.FormValue("address"),
+		Phone:          r.FormValue("phone"),
+		Email:          r.FormValue("email"),
+		Description:    r.FormValue("description"),
+		DescriptionAlt: r.FormValue("description_alt"),
+		LogoURL:        current.LogoUrl.String,
+	}
 	if name == "" {
-		h.renderFormError(w, r, true, toRestaurantView(current), "Name is required.")
+		h.renderFormError(w, r, true, view, "Name is required.")
+		return
+	}
+
+	msg := helpers.CheckLengths(helpers.FieldLimit{Label: "Name", Value: name, Max: 255})
+	if msg == "" {
+		msg = helpers.ValidateContact(r.FormValue("email"), r.FormValue("phone"))
+	}
+	if msg == "" {
+		msg = helpers.ValidateSecret("Password", password)
+	}
+	if msg != "" {
+		h.renderFormError(w, r, true, view, msg)
 		return
 	}
 
@@ -178,12 +230,20 @@ func (h *RestaurantHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.restaurantService.UpdateRestaurant(r.Context(), int32(id), name, address, phone, email, logoURLPtr, description, descriptionAlt); err != nil {
+		if isUniqueViolation(err) {
+			h.renderFormError(w, r, true, view, "A restaurant named \""+name+"\" already exists.")
+			return
+		}
+		if msg := helpers.PgUserMessage(err); msg != "" {
+			h.renderFormError(w, r, true, view, msg)
+			return
+		}
 		http.Error(w, "failed to update restaurant", http.StatusInternalServerError)
 		return
 	}
 
-	if newPassword := r.FormValue("password"); newPassword != "" {
-		passwordHash, err := helpers.HashPassword(newPassword)
+	if password != "" {
+		passwordHash, err := helpers.HashPassword(password)
 		if err != nil {
 			http.Error(w, "failed to hash password", http.StatusInternalServerError)
 			return

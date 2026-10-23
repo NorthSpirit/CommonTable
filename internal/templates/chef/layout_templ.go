@@ -86,7 +86,7 @@ func Layout(title string, employeeName string, content templ.Component) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><footer class=\"gms-dark-bg gms-light-text p-4 text-center gms-accent-text\"><p>&copy; 2026 Mantas \"IndomitableWastage\" Jurevičius</p></footer></div><script src=\"/assets/jsscripts/hamburger.js\"></script><script src=\"/assets/jsscripts/chat_unread.js\"></script><script src=\"/assets/jsscripts/colour_swap.js\"></script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><footer class=\"gms-dark-bg gms-light-text p-4 text-center gms-accent-text\"><p>&copy; 2026 Mantas \"IndomitableWastage\" Jurevičius</p></footer></div><script src=\"/assets/jsscripts/hamburger.js\"></script><script src=\"/assets/jsscripts/chat_unread.js\"></script><script src=\"/assets/jsscripts/colour_swap.js\"></script><script src=\"/assets/jsscripts/limit_notice.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -468,7 +468,7 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 		qty, err := strconv.Atoi(values[0])
-		if err != nil || qty <= 0 {
+		if err != nil || qty <= 0 || qty > 1000 {
 			continue
 		}
 		lines = append(lines, foodorderservices.OrderLine{ItemID: int32(itemID), Quantity: int32(qty)})
@@ -581,8 +581,8 @@ func (h *OrderHandler) UpdateItemQuantity(w http.ResponseWriter, r *http.Request
 	}
 
 	quantity, err := strconv.Atoi(r.FormValue("quantity"))
-	if err != nil || quantity <= 0 {
-		http.Error(w, "quantity must be greater than 0", http.StatusBadRequest)
+	if err != nil || quantity <= 0 || quantity > 1000 {
+		http.Error(w, "quantity must be between 1 and 1000", http.StatusBadRequest)
 		return
 	}
 
@@ -633,8 +633,8 @@ func (h *OrderHandler) CreatePayment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	amount, err := strconv.ParseFloat(r.FormValue("amount"), 64)
-	if err != nil || amount <= 0 {
-		http.Error(w, "a valid amount is required", http.StatusBadRequest)
+	if err != nil || helpers.CheckRange("Amount", amount, 0.01, 1000000) != "" {
+		http.Error(w, "amount must be between 0.01 and 1000000", http.StatusBadRequest)
 		return
 	}
 
@@ -731,7 +731,7 @@ func (h *OrderHandler) AddItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	quantity, err := strconv.Atoi(r.FormValue("quantity"))
-	if err != nil || quantity <= 0 {
+	if err != nil || quantity <= 0 || quantity > 1000 {
 		quantity = 1
 	}
 
