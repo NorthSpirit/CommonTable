@@ -29,15 +29,19 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL
 
 				<div class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">English</span>
-					@editorToolbar("toolbar-en")
-					<div data-wysiwyg data-input="welcome_text" data-toolbar="toolbar-en" data-required="true" data-label="English welcome text" class="gms-content-bg gms-main-text border gms-border-medium"></div>
+					<div class="border gms-border-medium rounded-md overflow-hidden">
+						@editorToolbar("toolbar-en")
+						<div data-wysiwyg data-input="welcome_text" data-toolbar="toolbar-en" data-required="true" data-label="English welcome text" class="gms-content-bg gms-main-text"></div>
+					</div>
 					<input type="hidden" id="welcome_text" name="welcome_text" value={ welcomeText }/>
 				</div>
 
 				<div class="block">
 					<span class="text-sm font-medium mb-1 block">Alt Language (optional — falls back to English if blank)</span>
-					@editorToolbar("toolbar-alt")
-					<div data-wysiwyg data-input="welcome_text_alt" data-toolbar="toolbar-alt" data-required="false" class="gms-content-bg gms-main-text border gms-border-medium"></div>
+					<div class="border gms-border-medium rounded-md overflow-hidden">
+						@editorToolbar("toolbar-alt")
+						<div data-wysiwyg data-input="welcome_text_alt" data-toolbar="toolbar-alt" data-required="false" class="gms-content-bg gms-main-text"></div>
+					</div>
 					<input type="hidden" id="welcome_text_alt" name="welcome_text_alt" value={ welcomeTextAlt }/>
 				</div>
 			</fieldset>
@@ -88,13 +92,15 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL
 }
 
 templ editorToolbar(id string) {
-	<div id={ id } class="gms-content-bg gms-main-text border gms-border-medium">
-		<button type="button" class="ql-header" value="1"></button>
-		<button type="button" class="ql-header" value="2"></button>
-		<button type="button" class="ql-bold"></button>
-		<button type="button" class="ql-underline"></button>
-		<button type="button" class="wysiwyg-token" data-token={ "{{image1}}" }>Image 1</button>
-		<button type="button" class="wysiwyg-token" data-token={ "{{image2}}" }>Image 2</button>
-		<button type="button" class="wysiwyg-token" data-token="---">Spacer</button>
+	<div class="border-b gms-border-medium">
+		<div id={ id } class="gms-content-bg gms-main-text">
+			<button type="button" class="ql-header" value="1"></button>
+			<button type="button" class="ql-header" value="2"></button>
+			<button type="button" class="ql-bold"></button>
+			<button type="button" class="ql-underline"></button>
+			<button type="button" class="wysiwyg-token" data-token={ "{{image1}}" }>Image 1</button>
+			<button type="button" class="wysiwyg-token" data-token={ "{{image2}}" }>Image 2</button>
+			<button type="button" class="wysiwyg-token" data-token="---">Spacer</button>
+		</div>
 	</div>
 }

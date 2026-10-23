@@ -3,17 +3,23 @@
 (function () {
     if (typeof Quill === 'undefined') return;
 
-    // Make Quill's default (light) toolbar follow the page palette.
+    // Make Quill's default (light) look follow the page palette. The outer
+    // wrapper in the template draws the single border, so Quill's own
+    // borders are removed. !important is needed because Quill's stylesheet
+    // is loaded after this one.
     var style = document.createElement('style');
     style.textContent =
+        '.ql-toolbar.ql-snow,.ql-container.ql-snow{border:0 !important}' +
         '.ql-snow .ql-stroke{stroke:currentColor !important}' +
         '.ql-snow .ql-fill{fill:currentColor !important}' +
         '.ql-snow .ql-picker{color:inherit}' +
-        '.ql-toolbar.ql-snow,.ql-container.ql-snow{border-color:currentColor}' +
         '.ql-container.ql-snow{font-size:1rem}' +
         '.ql-editor{min-height:12rem}' +
-        '.ql-toolbar button.wysiwyg-token{width:auto;padding:0 .5rem;font-size:.75rem;font-weight:600;color:inherit}';
-    document.head.appendChild(style);
+        '.ql-toolbar.ql-snow button.wysiwyg-token{' +
+            'width:auto !important;height:24px;padding:0 .6rem !important;margin-left:.25rem;' +
+            'white-space:nowrap;font-size:.75rem;font-weight:600;color:inherit;' +
+            'float:left}';
+    document.body.appendChild(style);
 
     var editors = [];
 
