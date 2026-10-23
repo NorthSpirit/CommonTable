@@ -11,7 +11,6 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"CommonTable/internal/templates/helpers"
 	"CommonTable/internal/templates/layout"
-	"CommonTable/internal/templates/richtext"
 	"CommonTable/internal/templates/shared"
 )
 
@@ -77,7 +76,7 @@ func homePageContent(locale string, content shared.HomepageView, restaurants []s
 			var templ_7745c5c3_Var3 templ.SafeURL
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(helpers.WithLang("/restaurants/"+helpers.Itoa(restaurant.ID), locale)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/home_page.templ`, Line: 24, Col: 97}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/home_page.templ`, Line: 23, Col: 97}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -90,7 +89,7 @@ func homePageContent(locale string, content shared.HomepageView, restaurants []s
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(restaurant.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/home_page.templ`, Line: 25, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/home_page.templ`, Line: 24, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -101,11 +100,11 @@ func homePageContent(locale string, content shared.HomepageView, restaurants []s
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</ul></div></nav><main class=\"flex-1 lg:w-4/6 p-6 gms-content-bg gms-main-text\"><div id=\"welcome\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</ul></div></nav><main class=\"flex-1 lg:w-4/6 p-6 gms-content-bg gms-main-text\"><div id=\"welcome\" class=\"[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:text-center [&_h1]:border-b-2 [&_h1]:border-current [&_h1]:pb-2 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-2 [&_p]:mt-4 [&_u]:underline\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = richtext.RenderBlocks(content.WelcomeBlocks, content.ImageOneURL, content.ImageTwoURL).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.Raw(content.WelcomeHTML).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

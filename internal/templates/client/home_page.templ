@@ -3,7 +3,6 @@ package client
 import (
 	"CommonTable/internal/templates/helpers"
 	"CommonTable/internal/templates/layout"
-	"CommonTable/internal/templates/richtext"
 	"CommonTable/internal/templates/shared"
 )
 
@@ -31,8 +30,8 @@ templ homePageContent(locale string, content shared.HomepageView, restaurants []
 		</nav>
 
 		<main class="flex-1 lg:w-4/6 p-6 gms-content-bg gms-main-text">
-			<div id="welcome">
-				@richtext.RenderBlocks(content.WelcomeBlocks, content.ImageOneURL, content.ImageTwoURL)
+			<div id="welcome" class="[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:text-center [&_h1]:border-b-2 [&_h1]:border-current [&_h1]:pb-2 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-2 [&_p]:mt-4 [&_u]:underline">
+				@templ.Raw(content.WelcomeHTML)
 			</div>
 		</main>
 	</div>

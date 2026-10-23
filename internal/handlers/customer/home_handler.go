@@ -3,11 +3,11 @@ package customer
 import (
 	"net/http"
 
+	"CommonTable/internal/htmlcontent"
 	"CommonTable/internal/services/homepageservices"
 	"CommonTable/internal/services/restaurantservices"
 	"CommonTable/internal/templates/client"
 	"CommonTable/internal/templates/shared"
-	"CommonTable/internal/textmarkup"
 )
 
 type HomeHandler struct {
@@ -37,13 +37,8 @@ func (h *HomeHandler) Home(w http.ResponseWriter, r *http.Request) {
 		imageTwoURL = content.ImageTwoUrl.String
 	}
 
-	blocks := textmarkup.Parse(content.WelcomeText)
-	blocks = textmarkup.EnsureImagesPlaced(blocks, imageOneURL != "", imageTwoURL != "")
-
 	view := shared.HomepageView{
-		WelcomeBlocks: blocks,
-		ImageOneURL:   imageOneURL,
-		ImageTwoURL:   imageTwoURL,
+		WelcomeHTML: htmlcontent.Render(content.WelcomeText, imageOneURL, imageTwoURL),
 	}
 
 	restaurants, err := h.restaurantService.ListRestaurantsForDisplay(r.Context(), locale)

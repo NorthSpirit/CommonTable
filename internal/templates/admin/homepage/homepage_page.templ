@@ -14,30 +14,32 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL
 			<p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm">{ successMessage }</p>
 		}
 
-		<form method="POST" action="/admin/homepage" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+		<form method="POST" action="/admin/homepage" enctype="multipart/form-data" data-wysiwyg-form class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
 			<fieldset class="border p-4 rounded-lg gms-border-medium">
 				<legend class="text-lg font-semibold px-2">Welcome Text</legend>
 
 				<div class="mb-4 p-3 rounded-lg gms-dark-bg gms-light-text text-sm">
-					<p class="font-semibold mb-1 gms-demo-accent-text">Formatting guide</p>
-					<ul class="list-disc pl-5 space-y-0.5 opacity-90">
-						<li><code># Heading</code> — large heading</li>
-						<li><code>## Subheading</code> — smaller heading</li>
-						<li><code>**bold text**</code> and <code>__underlined text__</code></li>
-						<li><code>---</code> on its own line — visual spacer</li>
-						<li><code>{ "{{image1}}" }</code> / <code>{ "{{image2}}" }</code> — places that image at this point (otherwise both are added at the end automatically)</li>
+					<p class="font-semibold mb-1 gms-demo-accent-text">Tips</p>
+					<ul class="list-disc pl-5 space-y-0.5">
+						<li>Use the toolbar for headings, <strong>bold</strong> and <u>underline</u>.</li>
+						<li><code>{ "{{image1}}" }</code> / <code>{ "{{image2}}" }</code> — buttons insert a placeholder where that image will appear (otherwise both are added at the end automatically).</li>
+						<li><code>---</code> on its own line — the Spacer button inserts a visual spacer line.</li>
 					</ul>
 				</div>
 
-				<label class="block mb-4">
+				<div class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">English</span>
-					<textarea name="welcome_text" rows="10" required class="p-2 border gms-border-medium rounded-md w-full">{ welcomeText }</textarea>
-				</label>
+					@editorToolbar("toolbar-en")
+					<div data-wysiwyg data-input="welcome_text" data-toolbar="toolbar-en" data-required="true" data-label="English welcome text" class="gms-content-bg gms-main-text border gms-border-medium"></div>
+					<input type="hidden" id="welcome_text" name="welcome_text" value={ welcomeText }/>
+				</div>
 
-				<label class="block">
+				<div class="block">
 					<span class="text-sm font-medium mb-1 block">Alt Language (optional — falls back to English if blank)</span>
-					<textarea name="welcome_text_alt" rows="10" class="p-2 border gms-border-medium rounded-md w-full">{ welcomeTextAlt }</textarea>
-				</label>
+					@editorToolbar("toolbar-alt")
+					<div data-wysiwyg data-input="welcome_text_alt" data-toolbar="toolbar-alt" data-required="false" class="gms-content-bg gms-main-text border gms-border-medium"></div>
+					<input type="hidden" id="welcome_text_alt" name="welcome_text_alt" value={ welcomeTextAlt }/>
+				</div>
 			</fieldset>
 
 			<fieldset class="border p-4 rounded-lg gms-border-medium">
@@ -79,5 +81,20 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL
 		</form>
 	</main>
 
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"/>
+	<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 	<script src="/assets/jsscripts/image_preview.js"></script>
+	<script src="/assets/jsscripts/wysiwyg.js"></script>
+}
+
+templ editorToolbar(id string) {
+	<div id={ id } class="gms-content-bg gms-main-text border gms-border-medium">
+		<button type="button" class="ql-header" value="1"></button>
+		<button type="button" class="ql-header" value="2"></button>
+		<button type="button" class="ql-bold"></button>
+		<button type="button" class="ql-underline"></button>
+		<button type="button" class="wysiwyg-token" data-token={ "{{image1}}" }>Image 1</button>
+		<button type="button" class="wysiwyg-token" data-token={ "{{image2}}" }>Image 2</button>
+		<button type="button" class="wysiwyg-token" data-token="---">Spacer</button>
+	</div>
 }

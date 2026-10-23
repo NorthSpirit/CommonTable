@@ -15,6 +15,9 @@ admin_credentials.json
 *.test
 *.out
 
+
+/commontable
+
 # GoLand / JetBrains IDE
 .idea/
 

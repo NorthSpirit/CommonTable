@@ -1,7 +1,5 @@
 package shared
 
-import "CommonTable/internal/textmarkup"
-
 type BrandingView struct {
 	Name    string
 	LogoURL string
@@ -44,9 +42,7 @@ type ItemDetailView struct {
 }
 
 type HomepageView struct {
-	WelcomeBlocks []textmarkup.Block
-	ImageOneURL   string
-	ImageTwoURL   string
+	WelcomeHTML string
 }
 
 type QuickNavItemView struct {

@@ -83,14 +83,14 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"POST\" action=\"/admin/homepage\" enctype=\"multipart/form-data\" class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 w-full\"><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Welcome Text</legend><div class=\"mb-4 p-3 rounded-lg gms-dark-bg gms-light-text text-sm\"><p class=\"font-semibold mb-1 gms-demo-accent-text\">Formatting guide</p><ul class=\"list-disc pl-5 space-y-0.5 opacity-90\"><li><code># Heading</code> — large heading</li><li><code>## Subheading</code> — smaller heading</li><li><code>**bold text**</code> and <code>__underlined text__</code></li><li><code>---</code> on its own line — visual spacer</li><li><code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"POST\" action=\"/admin/homepage\" enctype=\"multipart/form-data\" data-wysiwyg-form class=\"grid grid-cols-1 lg:grid-cols-2 gap-6 w-full\"><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Welcome Text</legend><div class=\"mb-4 p-3 rounded-lg gms-dark-bg gms-light-text text-sm\"><p class=\"font-semibold mb-1 gms-demo-accent-text\">Tips</p><ul class=\"list-disc pl-5 space-y-0.5\"><li>Use the toolbar for headings, <strong>bold</strong> and <u>underline</u>.</li><li><code>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("{{image1}}")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 28, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 25, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -103,39 +103,55 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("{{image2}}")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 28, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 25, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</code> — places that image at this point (otherwise both are added at the end automatically)</li></ul></div><label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">English</span> <textarea name=\"welcome_text\" rows=\"10\" required class=\"p-2 border gms-border-medium rounded-md w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</code> — buttons insert a placeholder where that image will appear (otherwise both are added at the end automatically).</li><li><code>---</code> on its own line — the Spacer button inserts a visual spacer line.</li></ul></div><div class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">English</span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = editorToolbar("toolbar-en").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div data-wysiwyg data-input=\"welcome_text\" data-toolbar=\"toolbar-en\" data-required=\"true\" data-label=\"English welcome text\" class=\"gms-content-bg gms-main-text border gms-border-medium\"></div><input type=\"hidden\" id=\"welcome_text\" name=\"welcome_text\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(welcomeText)
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(welcomeText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 34, Col: 122}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 34, Col: 83}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</textarea></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Alt Language (optional — falls back to English if blank)</span> <textarea name=\"welcome_text_alt\" rows=\"10\" class=\"p-2 border gms-border-medium rounded-md w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"></div><div class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Alt Language (optional — falls back to English if blank)</span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = editorToolbar("toolbar-alt").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div data-wysiwyg data-input=\"welcome_text_alt\" data-toolbar=\"toolbar-alt\" data-required=\"false\" class=\"gms-content-bg gms-main-text border gms-border-medium\"></div><input type=\"hidden\" id=\"welcome_text_alt\" name=\"welcome_text_alt\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(welcomeTextAlt)
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(welcomeTextAlt)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 39, Col: 120}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 41, Col: 94}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</textarea></label></fieldset><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Images</legend><div class=\"grid grid-cols-2 gap-4 mb-4\"><div><span class=\"text-sm font-medium mb-1 block\">Image One</span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\"></div></fieldset><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Images</legend><div class=\"grid grid-cols-2 gap-4 mb-4\"><div><span class=\"text-sm font-medium mb-1 block\">Image One</span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -144,20 +160,20 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<img id=\"image-one-preview\" src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<img id=\"image-one-preview\" src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(imageOneURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 49, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 51, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" alt=\"Image one preview\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" alt=\"Image one preview\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -170,7 +186,7 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -179,7 +195,7 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div id=\"image-one-preview-placeholder\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div id=\"image-one-preview-placeholder\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -192,7 +208,7 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"><p class=\"text-sm italic opacity-70\">No image set.</p></div></div><div><span class=\"text-sm font-medium mb-1 block\">Image Two</span> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"><p class=\"text-sm italic opacity-70\">No image set.</p></div></div><div><span class=\"text-sm font-medium mb-1 block\">Image Two</span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -201,20 +217,20 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<img id=\"image-two-preview\" src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<img id=\"image-two-preview\" src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(imageTwoURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 56, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 58, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" alt=\"Image two preview\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" alt=\"Image two preview\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -227,7 +243,7 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -236,7 +252,7 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"image-two-preview-placeholder\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div id=\"image-two-preview-placeholder\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -249,7 +265,75 @@ func homepagePageContent(welcomeText string, welcomeTextAlt string, imageOneURL 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"><p class=\"text-sm italic opacity-70\">No image set.</p></div></div></div><label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Replace Image One</span> <input type=\"file\" name=\"image_one\" data-preview-target=\"image-one-preview\" accept=\".jpg,.jpeg,.png,.webp\" class=\"p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Replace Image Two</span> <input type=\"file\" name=\"image_two\" data-preview-target=\"image-two-preview\" accept=\".jpg,.jpeg,.png,.webp\" class=\"p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text\"></label> <span class=\"text-xs opacity-70 block mt-2\">Uploading a new file replaces the corresponding image above.</span></fieldset><div class=\"lg:col-span-2 flex justify-end\"><input type=\"submit\" value=\"Save Changes\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium\"></div></form></main><script src=\"/assets/jsscripts/image_preview.js\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\"><p class=\"text-sm italic opacity-70\">No image set.</p></div></div></div><label class=\"block mb-4\"><span class=\"text-sm font-medium mb-1 block\">Replace Image One</span> <input type=\"file\" name=\"image_one\" data-preview-target=\"image-one-preview\" accept=\".jpg,.jpeg,.png,.webp\" class=\"p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Replace Image Two</span> <input type=\"file\" name=\"image_two\" data-preview-target=\"image-two-preview\" accept=\".jpg,.jpeg,.png,.webp\" class=\"p-2 border gms-border-medium rounded-md w-full gms-content-bg gms-main-text\"></label> <span class=\"text-xs opacity-70 block mt-2\">Uploading a new file replaces the corresponding image above.</span></fieldset><div class=\"lg:col-span-2 flex justify-end\"><input type=\"submit\" value=\"Save Changes\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium\"></div></form></main><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css\"><script src=\"https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js\"></script><script src=\"/assets/jsscripts/image_preview.js\"></script><script src=\"/assets/jsscripts/wysiwyg.js\"></script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func editorToolbar(id string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var19 string
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 91, Col: 13}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" class=\"gms-content-bg gms-main-text border gms-border-medium\"><button type=\"button\" class=\"ql-header\" value=\"1\"></button> <button type=\"button\" class=\"ql-header\" value=\"2\"></button> <button type=\"button\" class=\"ql-bold\"></button> <button type=\"button\" class=\"ql-underline\"></button> <button type=\"button\" class=\"wysiwyg-token\" data-token=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue("{{image1}}")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 96, Col: 71}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\">Image 1</button> <button type=\"button\" class=\"wysiwyg-token\" data-token=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var21 string
+		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue("{{image2}}")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/homepage/homepage_page.templ`, Line: 97, Col: 71}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\">Image 2</button> <button type=\"button\" class=\"wysiwyg-token\" data-token=\"---\">Spacer</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

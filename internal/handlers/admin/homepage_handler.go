@@ -4,6 +4,7 @@ import (
 	admin "CommonTable/internal/templates/admin/homepage"
 	"net/http"
 
+	"CommonTable/internal/htmlcontent"
 	"CommonTable/internal/services/homepageservices"
 )
 
@@ -87,8 +88,18 @@ func (h *HomepageHandler) Update(w http.ResponseWriter, r *http.Request) {
 		imageTwoURL = url
 	}
 
-	welcomeText := r.FormValue("welcome_text")
-	welcomeTextAlt := r.FormValue("welcome_text_alt")
+	// The editor submits HTML; strip everything except the formatting
+	// tags the toolbar can produce before it is stored.
+	welcomeText := htmlcontent.Sanitize(r.FormValue("welcome_text"))
+	welcomeTextAlt := htmlcontent.Sanitize(r.FormValue("welcome_text_alt"))
+
+	if htmlcontent.IsEmpty(welcomeText) {
+		http.Error(w, "welcome text is required", http.StatusBadRequest)
+		return
+	}
+	if htmlcontent.IsEmpty(welcomeTextAlt) {
+		welcomeTextAlt = ""
+	}
 
 	var welcomeTextAltPtr, imageOneURLPtr, imageTwoURLPtr *string
 	if welcomeTextAlt != "" {
