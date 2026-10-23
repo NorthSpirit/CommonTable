@@ -113,7 +113,7 @@ func profilePageContent(email string, phone string, successMessage string, error
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Phone</span> <input type=\"text\" name=\"phone_number\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" maxlength=\"254\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">Phone</span> <input type=\"text\" name=\"phone_number\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -126,7 +126,7 @@ func profilePageContent(email string, phone string, successMessage string, error
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label></fieldset><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Change PIN</legend> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">New PIN (leave blank to keep current)</span> <input type=\"password\" name=\"new_pin\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label></fieldset><div class=\"flex justify-end\"><input type=\"submit\" value=\"Save\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium\"></div></form></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" maxlength=\"30\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label></fieldset><fieldset class=\"border p-4 rounded-lg gms-border-medium\"><legend class=\"text-lg font-semibold px-2\">Change PIN</legend> <label class=\"block\"><span class=\"text-sm font-medium mb-1 block\">New PIN (leave blank to keep current)</span> <input type=\"password\" name=\"new_pin\" maxlength=\"72\" class=\"p-2 border gms-border-medium rounded-md w-full\"></label></fieldset><div class=\"flex justify-end\"><input type=\"submit\" value=\"Save\" class=\"px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium\"></div></form></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

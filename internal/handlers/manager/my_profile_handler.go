@@ -58,14 +58,25 @@ func (h *MyProfileHandler) Update(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	phone := r.FormValue("phone_number")
 
-	// Name and role are deliberately not editable here — only admin
-	// changes those, via the manager's own admin-created employee record.
+	if msg := helpers.ValidateContact(email, phone); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = managertmpl.MyProfilePage(claims.Name, email, phone, "", msg).Render(r.Context(), w)
+		return
+	}
+
+	newPin := r.FormValue("new_pin")
+	if len(newPin) > 72 {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = managertmpl.MyProfilePage(claims.Name, email, phone, "", "PIN must be at most 72 characters.").Render(r.Context(), w)
+		return
+	}
+	
 	if err := h.employeeService.UpdateEmployee(r.Context(), claims.EmployeeID, dbEmployee.Name, dbEmployee.Role, strPtrOrNil(email), strPtrOrNil(phone)); err != nil {
 		http.Error(w, "failed to update profile", http.StatusInternalServerError)
 		return
 	}
 
-	if newPin := r.FormValue("new_pin"); newPin != "" {
+	if newPin != "" {
 		pinHash, err := helpers.HashPassword(newPin)
 		if err != nil {
 			http.Error(w, "failed to hash pin", http.StatusInternalServerError)

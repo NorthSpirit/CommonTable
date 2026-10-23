@@ -58,6 +58,12 @@ func (h *ProfileHandler) Update(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	phone := r.FormValue("phone_number")
 
+	if msg := helpers.ValidateContact(email, phone); msg != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = chef.ProfilePage(claims.Name, email, phone, "", msg).Render(r.Context(), w)
+		return
+	}
+
 	// Name and role are deliberately not editable here — only an admin
 	// changes those, via the employee's admin record.
 	err = h.employeeService.UpdateEmployee(
@@ -80,6 +86,12 @@ func (h *ProfileHandler) Update(w http.ResponseWriter, r *http.Request) {
 		if newPin != newPinConfirm {
 			w.WriteHeader(http.StatusBadRequest)
 			_ = chef.ProfilePage(claims.Name, email, phone, "", "New PIN and confirmation do not match.").Render(r.Context(), w)
+			return
+		}
+
+		if len(newPin) > 72 {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = chef.ProfilePage(claims.Name, email, phone, "", "PIN must be at most 72 characters.").Render(r.Context(), w)
 			return
 		}
 

@@ -20,11 +20,11 @@ templ profilePageContent(email string, phone string, successMessage string, erro
 				<legend class="text-lg font-semibold px-2">Contact Details</legend>
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Email</span>
-					<input type="email" name="email" value={ email } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="email" name="email" value={ email } maxlength="254" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 				<label class="block">
 					<span class="text-sm font-medium mb-1 block">Phone</span>
-					<input type="text" name="phone_number" value={ phone } class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="text" name="phone_number" value={ phone } maxlength="30" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 			</fieldset>
 
@@ -32,7 +32,7 @@ templ profilePageContent(email string, phone string, successMessage string, erro
 				<legend class="text-lg font-semibold px-2">Change PIN</legend>
 				<label class="block">
 					<span class="text-sm font-medium mb-1 block">New PIN (leave blank to keep current)</span>
-					<input type="password" name="new_pin" class="p-2 border gms-border-medium rounded-md w-full"/>
+					<input type="password" name="new_pin" maxlength="72" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
 			</fieldset>
 

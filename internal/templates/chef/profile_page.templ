@@ -1,52 +1,52 @@
 package chef
 
 templ ProfilePage(employeeName string, email string, phone string, successMessage string, errorMessage string) {
-	@Layout("My Profile", employeeName, profilePageContent(email, phone, successMessage, errorMessage))
+    @Layout("My Profile", employeeName, profilePageContent(email, phone, successMessage, errorMessage))
 }
 
 templ profilePageContent(email string, phone string, successMessage string, errorMessage string) {
-	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
-		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">My Profile</h2>
+    <main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+       <h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">My Profile</h2>
 
-		if successMessage != "" {
-			<p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm w-full lg:w-[65%] mx-auto">{ successMessage }</p>
-		}
-		if errorMessage != "" {
-			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm w-full lg:w-[65%] mx-auto">{ errorMessage }</p>
-		}
+       if successMessage != "" {
+          <p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm w-full lg:w-[65%] mx-auto">{ successMessage }</p>
+       }
+       if errorMessage != "" {
+          <p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm w-full lg:w-[65%] mx-auto">{ errorMessage }</p>
+       }
 
-		<form method="POST" action="/chef/profile" class="w-full lg:w-[65%] mx-auto space-y-4">
-			<fieldset class="border p-4 rounded-lg gms-border-medium">
-				<legend class="text-lg font-semibold px-2">Contact Details</legend>
+       <form method="POST" action="/chef/profile" class="w-full lg:w-[65%] mx-auto space-y-4">
+          <fieldset class="border p-4 rounded-lg gms-border-medium">
+             <legend class="text-lg font-semibold px-2">Contact Details</legend>
 
-				<label class="block mb-4">
-					<span class="text-sm font-medium mb-1 block">Email</span>
-					<input type="email" name="email" value={ email } class="p-2 border gms-border-medium rounded-md w-full"/>
-				</label>
+             <label class="block mb-4">
+                <span class="text-sm font-medium mb-1 block">Email</span>
+                <input type="email" name="email" value={ email } maxlength="254" class="p-2 border gms-border-medium rounded-md w-full"/>
+             </label>
 
-				<label class="block">
-					<span class="text-sm font-medium mb-1 block">Phone</span>
-					<input type="text" name="phone_number" value={ phone } class="p-2 border gms-border-medium rounded-md w-full"/>
-				</label>
-			</fieldset>
+             <label class="block">
+                <span class="text-sm font-medium mb-1 block">Phone</span>
+                <input type="text" name="phone_number" value={ phone } maxlength="30" class="p-2 border gms-border-medium rounded-md w-full"/>
+             </label>
+          </fieldset>
 
-			<fieldset class="border p-4 rounded-lg gms-border-medium">
-				<legend class="text-lg font-semibold px-2">Change PIN</legend>
+          <fieldset class="border p-4 rounded-lg gms-border-medium">
+             <legend class="text-lg font-semibold px-2">Change PIN</legend>
 
-				<label class="block mb-4">
-					<span class="text-sm font-medium mb-1 block">New PIN (leave blank to keep current)</span>
-					<input type="password" name="new_pin" class="p-2 border gms-border-medium rounded-md w-full"/>
-				</label>
+             <label class="block mb-4">
+                <span class="text-sm font-medium mb-1 block">New PIN (leave blank to keep current)</span>
+                <input type="password" name="new_pin" maxlength="72" class="p-2 border gms-border-medium rounded-md w-full"/>
+             </label>
 
-				<label class="block">
-					<span class="text-sm font-medium mb-1 block">Confirm New PIN</span>
-					<input type="password" name="new_pin_confirm" class="p-2 border gms-border-medium rounded-md w-full"/>
-				</label>
-			</fieldset>
+             <label class="block">
+                <span class="text-sm font-medium mb-1 block">Confirm New PIN</span>
+                <input type="password" name="new_pin_confirm" maxlength="72" class="p-2 border gms-border-medium rounded-md w-full"/>
+             </label>
+          </fieldset>
 
-			<div class="flex justify-end">
-				<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
-			</div>
-		</form>
-	</main>
+          <div class="flex justify-end">
+             <input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+          </div>
+       </form>
+    </main>
 }
