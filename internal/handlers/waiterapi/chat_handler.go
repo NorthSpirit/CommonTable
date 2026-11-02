@@ -51,7 +51,6 @@ func (h *ChatHandler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 // Poll handles GET /api/waiter/chat/messages/after/{id}
-// Poll handles GET /api/waiter/chat/messages/after/{id}
 func (h *ChatHandler) Poll(w http.ResponseWriter, r *http.Request) {
 	claims := claimsFromContext(r.Context())
 
