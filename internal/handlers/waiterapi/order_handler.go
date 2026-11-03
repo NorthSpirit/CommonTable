@@ -72,26 +72,43 @@ type createOrderResponse struct {
 //   - Both paths are idempotency-key protected: a retried request with
 //     the same key is safe and won't duplicate items or orders.
 func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
+
+	// First, claims tells who is calling (restaurant + person)
+	// Middleware already checked the JWT and put the claims into the request, this just reads them out
 	claims := claimsFromContext(r.Context())
 
+	// 2nd, attempts to read the json body into the struct just above this method
+	// Broken json = 400
 	var req createOrderRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 
+	// Rejects nonsense early on, before database is even reached, returning 400
+	// Obviously, no key at all is rejected
 	if req.IdempotencyKey == "" {
 		writeError(w, http.StatusBadRequest, "idempotency_key is required")
 		return
 	}
+
+	// The waiter app uses a key of format of UUID v4, which is 36 chars long,
+	// but at the start, it wasn't a given what it will use, so it's simply the fact
+	// DB uses 64 char limit for the key's field
 	if len(req.IdempotencyKey) > 64 {
 		writeError(w, http.StatusBadRequest, "idempotency_key must be at most 64 characters")
 		return
 	}
+
+	// Orders should have at least 1 item to exist
 	if len(req.Items) == 0 {
 		writeError(w, http.StatusBadRequest, "at least one item is required")
 		return
 	}
+
+	// Quantity of items in the orders, obviously, logically, to exist, should have at least quantity of 1
+	// 1000 is a bit of a magic number, but logical limit was needed
+	// not really expecting anybody ever order 1000 of anything
 	for _, item := range req.Items {
 		if item.Quantity <= 0 || item.Quantity > 1000 {
 			writeError(w, http.StatusBadRequest, "quantity must be between 1 and 1000")
@@ -99,25 +116,35 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Translates the order's lines (as in list of items) into the shape service layer uses
+	// Once again, based on the struct, depicted just above this method
 	lines := make([]foodorderservices.OrderLine, 0, len(req.Items))
 	for _, item := range req.Items {
 		lines = append(lines, foodorderservices.OrderLine{
 			ItemID:   item.ItemID,
 			Quantity: item.Quantity,
-			Notes:    strPtrOrNilJSON(item.Notes),
+			Notes:    strPtrOrNilJSON(item.Notes), // empty becomes null, technically it saves space
 		})
 	}
 
-	// Only check for an already-open order when there's a real table —
-	// takeout orders (no table) are always independent, never merged.
+	// Checks if it's a takeout or not. If table has no id, it means it's takeout
+	// for active (still open) orders, already using the table (for the same restaurant)
+	// order is appended, like, beer, beer, beer, some more beer, goes into the same order
+	// as long as it's not delivered or cancelled
+	// since take-out is not meant to check, who orders what, it wouldn't make sense
+	// to append all the orders of the takeout
 	if req.TableID != nil {
+		// GetActive... returns the table's open order, or ErrNoRows error if there isn't one
 		activeOrder, activeErr := h.foodOrderService.GetActiveOrderForTable(r.Context(), *req.TableID, claims.RestaurantID)
+		// If there is no error, it means it found an open order on this table and it is possible to append to it.
+		// Note: ATOMIC!
 		if activeErr == nil {
 			if err := h.foodOrderService.AppendItemsToOrderAtomic(r.Context(), h.pool, activeOrder.ID, req.IdempotencyKey, lines); err != nil {
 				writeError(w, http.StatusInternalServerError, "failed to add items to existing order")
 				return
 			}
 
+			// Append was successful, returns an ok and a json of the shape below
 			writeJSON(w, http.StatusOK, createOrderResponse{
 				OrderID:     activeOrder.ID,
 				OrderNumber: activeOrder.OrderNumber,
@@ -127,16 +154,21 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 			})
 			return
 		}
+
+		// ErrNoRows is fine (no open order, so goes on to create a new one), anything else is a proper DB error
 		if !errors.Is(activeErr, pgx.ErrNoRows) {
 			writeError(w, http.StatusInternalServerError, "failed to check for active order")
 			return
 		}
 	}
 
-	// No active order to append to (or no table at all) — check for a
-	// prior successful submission with this exact key (a retry), then
-	// create fresh.
+	// No active order to append to (or no table at all)
+	// check for a prior successful submission with this exact key (a retry)
+	// attempts to find an order, based on the key
 	existing, err := h.foodOrderService.GetOrderByIdempotencyKey(r.Context(), req.IdempotencyKey)
+
+	// If search passes, it means it's a repeat, don't create a new order
+	// and return 200 with an old result stuff with a tick "it's a duplicate"
 	if err == nil {
 		writeJSON(w, http.StatusOK, createOrderResponse{
 			OrderID:     existing.ID,
@@ -146,24 +178,37 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	// proper DB error - 500, inform, return
 	if !errors.Is(err, pgx.ErrNoRows) {
 		writeError(w, http.StatusInternalServerError, "failed to check for existing order")
 		return
 	}
 
+	// It is a legit new order, key wasn't used before
+	// Orders get new number every day, days counting from midnight till midnight (00:00)
 	orderNumber, err := h.foodOrderService.GetNextOrderNumberForToday(r.Context(), claims.RestaurantID)
 	if err != nil {
+		// Just in case, checks if order number was actually generated
 		writeError(w, http.StatusInternalServerError, "failed to generate order number")
 		return
 	}
 
+	// Converts order's notes
 	notes := strPtrOrNilJSON(req.Notes)
 
+	// Actually attempts to create the new order
 	order, err := h.foodOrderService.CreateOrderWithItemsAtomic(
 		r.Context(), h.pool, claims.RestaurantID, req.TableID, claims.EmployeeID, orderNumber, notes, req.IdempotencyKey, lines,
 	)
 	if err != nil {
+
+		// One last time, the database itself checks if it's unique violation
+		// Two requests with the same key can arrive at once
+		// like a retry while the first is still running or a connection derp
 		if isUniqueViolation(err) {
+			// Both pass the key check above, but the unique constraint lets only one insert through
+			// So database's unique constraint itself is the final check
+			// Causing the other one to be a duplicate
 			existing, existErr := h.foodOrderService.GetOrderByIdempotencyKey(r.Context(), req.IdempotencyKey)
 			if existErr == nil {
 				writeJSON(w, http.StatusOK, createOrderResponse{
@@ -179,6 +224,7 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 201, Created a non-duplicate, cheers
 	writeJSON(w, http.StatusCreated, createOrderResponse{
 		OrderID:     order.ID,
 		OrderNumber: order.OrderNumber,
