@@ -60,11 +60,12 @@ func main() {
 	// Builds all the business-logic services in one place (using dependency injection containers)
 	// Services use the DB queries and get the setting they need: Admin login, JWT signing, upload folder.
 	services := container.NewServices(queries, container.ServicesConfig{
-		AdminUsername:     cfg.AdminUsername,
-		AdminPasswordHash: cfg.AdminPasswordHash,
-		JWTSecret:         cfg.JWTSecret,   // key used to sign login tokens
-		JWTTokenTTL:       cfg.JWTTokenTTL, // how long a token stays valid
-		UploadsDir:        cfg.UploadsDir,  // where uploaded files are stored
+		AdminUsername:        cfg.AdminUsername,
+		AdminPasswordHash:    cfg.AdminPasswordHash,
+		AdminCredentialsPath: cfg.AdminCredentialsPath,
+		JWTSecret:            cfg.JWTSecret,   // key used to sign login tokens
+		JWTTokenTTL:          cfg.JWTTokenTTL, // how long a token stays valid
+		UploadsDir:           cfg.UploadsDir,  // where uploaded files are stored
 	})
 
 	// Handler stuff (HTTP layers + waiter's app)

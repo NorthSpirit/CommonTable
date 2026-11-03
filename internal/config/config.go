@@ -86,15 +86,16 @@ func Load() (*Config, error) {
 	}
 
 	return &Config{
-		DBString:          dbString,
-		AdminUsername:     adminUsername,
-		AdminPasswordHash: adminPasswordHash,
-		JWTSecret:         []byte(jwtSecretRaw),
-		JWTTokenTTL:       time.Duration(ttlHours) * time.Hour,
-		AltLanguageLabel:  altLanguageLabel,
-		TranslationsDir:   translationsDir,
-		UploadsDir:        uploadsDir,
-		DeploymentMode:    deploymentMode,
-		PublicBaseURL:     os.Getenv("PUBLIC_BASE_URL"),
+		DBString:             dbString,
+		AdminUsername:        adminUsername,
+		AdminPasswordHash:    adminPasswordHash,
+		AdminCredentialsPath: adminCredentialsPath,
+		JWTSecret:            []byte(jwtSecretRaw),
+		JWTTokenTTL:          time.Duration(ttlHours) * time.Hour,
+		AltLanguageLabel:     altLanguageLabel,
+		TranslationsDir:      translationsDir,
+		UploadsDir:           uploadsDir,
+		DeploymentMode:       deploymentMode,
+		PublicBaseURL:        os.Getenv("PUBLIC_BASE_URL"),
 	}, nil
 }
