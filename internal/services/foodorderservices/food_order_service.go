@@ -208,6 +208,7 @@ type OrderLine struct {
 //
 // tableID is nil for takeout orders (no table assigned).
 func (s *FoodOrderService) CreateOrderWithItemsAtomic(
+	// Passes tons of stuff required for order's creation (plus context and pool)
 	ctx context.Context,
 	pool *pgxpool.Pool,
 	restaurantID int32,
@@ -219,19 +220,32 @@ func (s *FoodOrderService) CreateOrderWithItemsAtomic(
 	lines []OrderLine,
 ) (repository.FoodOrder, error) {
 
+	// Borrows a connection from the PostgreSQL pool and starts a transaction on it, tx is that transaction
+	// while err is obviously the error
 	tx, err := pool.Begin(ctx)
+
+	// If the transaction couldn't be started, returns the error, marked as "begin transaction"
 	if err != nil {
 		return repository.FoodOrder{}, fmt.Errorf("begin transaction: %w", err)
 	}
+
+	// If something breaks up anywhere before commit, it undoes everything prior to this point
+	// And returns the connection back the pool
+	// If commit succeeds, rollback still fires, but basically does nothing.
 	defer tx.Rollback(ctx)
 
+	// SQLC generated go code executes the actual query, initiates the struct
+	// Passing tx makes every query below run inside this transaction
+	// Basically a C# equivalent would be init the class to use the method.
 	q := repository.New(tx)
 
+	// First, checks the table ID, if it's null (takeout), the order is saved without a table (NULL in the DB)
 	var tableIDParam pgtype.Int4
 	if tableID != nil {
 		tableIDParam = pgtype.Int4{Int32: *tableID, Valid: true}
 	}
 
+	// Creates the food order, with the passed down values
 	order, err := q.CreateFoodOrderWithIdempotencyKey(ctx, repository.CreateFoodOrderWithIdempotencyKeyParams{
 		RestaurantID:      restaurantID,
 		TableID:           tableIDParam,
@@ -246,12 +260,16 @@ func (s *FoodOrderService) CreateOrderWithItemsAtomic(
 		return repository.FoodOrder{}, fmt.Errorf("create order: %w", err)
 	}
 
+	// For every food line in the order passed to this method
 	for _, line := range lines {
+
+		// Looks up the item by ID to check its price, name and description
 		item, err := q.GetFoodItem(ctx, line.ItemID)
 		if err != nil {
-			return repository.FoodOrder{}, fmt.Errorf("get item %d: %w", line.ItemID, err)
+			return repository.FoodOrder{}, fmt.Errorf("get item %d: %w", line.ItemID, err) // Item wasn't gotten - the lookup failed (item missing or DB error)
 		}
 
+		// Price is first, because it shouldn't be null, if it's null, it gets turned to 0
 		price := item.Price
 		if !price.Valid {
 			price = helpers.NumericFromFloat64(0)
@@ -264,18 +282,21 @@ func (s *FoodOrderService) CreateOrderWithItemsAtomic(
 			UnitPriceSnapshot:       price,
 			VatSnapshot:             pgtype.Numeric{Valid: false},
 			Notes:                   helpers.TextFromString(line.Notes),
-			ItemNameSnapshot:        helpers.TextFromString(&item.Name),
-			ItemDescriptionSnapshot: item.Description,
+			ItemNameSnapshot:        helpers.TextFromString(&item.Name), // Copies the item's current name into the snapshot
+			ItemDescriptionSnapshot: item.Description,                   // And the description (also a copy)
 		})
+		// If adding failed
 		if err != nil {
 			return repository.FoodOrder{}, fmt.Errorf("add item %d to order: %w", line.ItemID, err)
 		}
 	}
 
+	// Commit saves the order (with its key) and all lines together, all or nothing, making it atomic
 	if err := tx.Commit(ctx); err != nil {
 		return repository.FoodOrder{}, fmt.Errorf("commit transaction: %w", err)
 	}
 
+	// Returns the order and a null for an error
 	return order, nil
 }
 
@@ -295,26 +316,41 @@ func (s *FoodOrderService) AppendItemsToOrderAtomic(
 	lines []OrderLine,
 ) error {
 
+	// Borrows the connection to the DB and starts the transaction
 	tx, err := pool.Begin(ctx)
+
+	// If there was some kind of error, send the error what happened
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
 	}
+
+	// If something breaks up anywhere before commit, it undoes everything prior to this point
+	// And returns the connection back the pool
+	// If commit succeeds, rollback still fires, but basically does nothing.
 	defer tx.Rollback(ctx)
 
+	// SQLC generated go code executes the actual query, initiates the struct
+	// Basically a C# equivalent would be init the class to use the method.
 	q := repository.New(tx)
 
-	if _, err := q.CheckIdempotencyKey(ctx, idempotencyKey); err == nil {
+	// Checks if Idempotency key was already in use
+	// _ means, I don't care about the row itself, only the "error" - if it was actually used
+	if _, err := q.CheckIdempotencyKey(ctx, idempotencyKey); err == nil { // err == nil means a row was found, so the key was already used
 		return nil // already applied, safe retry
 	} else if !errors.Is(err, pgx.ErrNoRows) {
-		return fmt.Errorf("check idempotency: %w", err)
+		return fmt.Errorf("check idempotency: %w", err) // Query itself failed
 	}
 
+	// For every food line in the order passed to this method
 	for _, line := range lines {
+
+		// Looks up the item by ID to check its price, name and description
 		item, err := q.GetFoodItem(ctx, line.ItemID)
 		if err != nil {
 			return fmt.Errorf("get item %d: %w", line.ItemID, err)
-		}
+		} // Item wasn't gotten - the lookup failed (item missing or DB error)
 
+		// Price is first, because it shouldn't be null, if it's null, it gets turned to 0
 		price := item.Price
 		if !price.Valid {
 			price = helpers.NumericFromFloat64(0)
@@ -327,18 +363,21 @@ func (s *FoodOrderService) AppendItemsToOrderAtomic(
 			UnitPriceSnapshot:       price,
 			VatSnapshot:             pgtype.Numeric{Valid: false},
 			Notes:                   helpers.TextFromString(line.Notes),
-			ItemNameSnapshot:        helpers.TextFromString(&item.Name),
-			ItemDescriptionSnapshot: item.Description,
+			ItemNameSnapshot:        helpers.TextFromString(&item.Name), // Gets the item's name
+			ItemDescriptionSnapshot: item.Description,                   // And the description
 		})
+		// If adding failed
 		if err != nil {
 			return fmt.Errorf("add item %d to order: %w", line.ItemID, err)
 		}
 	}
 
+	// All lines added, now the key is saved as used, so a retry with the same key will be skipped above
 	if err := q.RecordIdempotencyKey(ctx, idempotencyKey); err != nil {
 		return fmt.Errorf("record idempotency key: %w", err)
 	}
 
+	// Commit saves all lines and the key together, all or nothing, making it atomic
 	return tx.Commit(ctx)
 }
 
