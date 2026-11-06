@@ -2,31 +2,48 @@ package kitchen
 
 import "strconv"
 
+// Top level component, which in reality doesn't do much by itself, just gets values
+// and passes them for boardContent, wrapped in the shared Layout.
+// Such "empty" component is mainly for organizational reasons, one could as well write contents of boardContent inside it
+// But it helps to see the data
+// Data is handed to it by it's handler
 templ BoardPage(employeeName string, orders []KitchenOrderView) {
 	@Layout(employeeName, boardContent(orders))
 }
 
+// The main "insides" of the page: layout.templ draws the frame (header, menu, footer),
+// and this goes into its @content part
 templ boardContent(orders []KitchenOrderView) {
-	<div id="order-board" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+	<div id="order-board" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+
+	    // Since this an order display page, it has a for loop to render each of the smaller cards inside
+        // Since I don't know the number of orders known in advance
+        // It calls orderCard (which makes a "div") for each order in orders
 		for _, order := range orders {
 			@orderCard(order)
 		}
+		// Some beautification/quality of life check if there are no active orders.
 		if len(orders) == 0 {
 			<p class="text-center italic gms-main-text col-span-full">No active orders.</p>
 		}
 	</div>
+	// Just like in the real HTML, loads the script, which refreshes the board every 4 seconds
 	<script src="/assets/jsscripts/kitchen_poll.js"></script>
 }
 
+// The little component inside of the big board, meant to represent a single order.
 templ orderCard(order KitchenOrderView) {
-	<div class="border gms-border-medium rounded-lg shadow-lg overflow-hidden gms-content-bg">
+	<div class="border gms-border-very-dark rounded-lg shadow-lg overflow-hidden gms-content-bg flex flex-col">
 		<div class="gms-dark-bg gms-light-text px-3 py-2 flex justify-between items-center">
 			<span class="font-bold">Table { itoa(order.TableNumber) }</span>
 			<span class="text-xs uppercase opacity-80">{ order.Status }</span>
 		</div>
-		<div class="p-3">
+		<div class="p-3 flex flex-col flex-1">
 			<p class="text-xs opacity-60 mb-2">Order #{ itoa(order.OrderNumber) } — { order.CreatedAt }</p>
 			<ul class="text-sm gms-main-text mb-3 space-y-1">
+			    // Basically, a for loop inside a for loop of sorts - since orders themselves are in a loop
+			    // for (every order has a for every item in said order)
+			    // To list out orders items
 				for _, item := range order.Items {
 					<li>
 						<span class="font-semibold">{ itoa(item.Quantity) }x</span> { item.Name }
@@ -39,8 +56,12 @@ templ orderCard(order KitchenOrderView) {
 			if order.Notes != "" {
 				<p class="text-xs italic opacity-70 mb-3">Note: { order.Notes }</p>
 			}
+			// The order's button, which automatically calls a post method with the route specified
+			// The hidden fields tell which order (order_id) should move to which status (status)
+            // The POST Method and the route is handled by internal/handlers/kitchen/orders_handler.go
+            // The form is shown only if the order has a next status
 			if order.NextStatus != "" {
-				<form method="POST" action="/kitchen/orders/status">
+				<form method="POST" action="/kitchen/orders/status" class="mt-auto">
 					<input type="hidden" name="order_id" value={ itoa(order.ID) }/>
 					<input type="hidden" name="status" value={ order.NextStatus }/>
 					<button type="submit" class="w-full px-3 py-2 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
@@ -52,6 +73,7 @@ templ orderCard(order KitchenOrderView) {
 	</div>
 }
 
+// A small limitation of templ's {contents here} can only print strings, so int32 needs to be converted
 func itoa(n int32) string {
 	return strconv.Itoa(int(n))
 }

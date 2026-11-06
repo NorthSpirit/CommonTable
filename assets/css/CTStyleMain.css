@@ -82,6 +82,10 @@
     border-color: #533205;
 }
 
+.gms-border-very-dark {
+    border-color: #2a1a03;
+}
+
 /* ------------------ Buttons ------------------ */
 .gms-btn-clear {
     background-color: #f5a261;

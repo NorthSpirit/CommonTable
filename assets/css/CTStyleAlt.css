@@ -18,6 +18,10 @@
     background-color: #ebd9ce;
 }
 
+.gms-border-very-dark {
+    border-color: #553607;
+}
+
 /* ------------------ Text Colors ------------------ */
 .gms-light-text {
     color: #412009;
