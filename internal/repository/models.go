@@ -318,9 +318,16 @@ type HomepageContent struct {
 	ID             int32            `json:"id"`
 	WelcomeText    string           `json:"welcome_text"`
 	WelcomeTextAlt pgtype.Text      `json:"welcome_text_alt"`
-	ImageOneUrl    pgtype.Text      `json:"image_one_url"`
-	ImageTwoUrl    pgtype.Text      `json:"image_two_url"`
 	UpdatedAt      pgtype.Timestamp `json:"updated_at"`
+}
+
+type HomepageImage struct {
+	Slot            int32            `json:"slot"`
+	Url             string           `json:"url"`
+	WidthPercent    int32            `json:"width_percent"`
+	Shape           string           `json:"shape"`
+	PositionPercent int32            `json:"position_percent"`
+	UpdatedAt       pgtype.Timestamp `json:"updated_at"`
 }
 
 type IdempotencyKey struct {

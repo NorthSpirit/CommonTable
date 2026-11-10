@@ -22,23 +22,20 @@ func NewHomeHandler(homepageService *homepageservices.HomepageService, restauran
 func (h *HomeHandler) Home(w http.ResponseWriter, r *http.Request) {
 	locale := GetLocale(r)
 
-	content, err := h.homepageService.GetContentForDisplay(r.Context(), locale)
+	welcomeText, err := h.homepageService.GetContentForDisplay(r.Context(), locale)
 	if err != nil {
 		renderServerError(w, r)
 		return
 	}
 
-	imageOneURL := ""
-	if content.ImageOneUrl.Valid {
-		imageOneURL = content.ImageOneUrl.String
-	}
-	imageTwoURL := ""
-	if content.ImageTwoUrl.Valid {
-		imageTwoURL = content.ImageTwoUrl.String
+	images, err := h.homepageService.ListImages(r.Context())
+	if err != nil {
+		renderServerError(w, r)
+		return
 	}
 
 	view := shared.HomepageView{
-		WelcomeHTML: htmlcontent.Render(content.WelcomeText, imageOneURL, imageTwoURL),
+		WelcomeHTML: htmlcontent.Render(welcomeText, images),
 	}
 
 	restaurants, err := h.restaurantService.ListRestaurantsForDisplay(r.Context(), locale)

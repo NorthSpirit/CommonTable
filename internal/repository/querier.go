@@ -40,6 +40,7 @@ type Querier interface {
 	DeleteFoodIngredient(ctx context.Context, id int32) error
 	DeleteFoodMenu(ctx context.Context, id int32) error
 	DeleteFoodOrder(ctx context.Context, id int32) error
+	DeleteHomepageImage(ctx context.Context, slot int32) error
 	DeletePayment(ctx context.Context, id int32) error
 	GetActiveOrderForTable(ctx context.Context, arg GetActiveOrderForTableParams) (FoodOrder, error)
 	GetAllergen(ctx context.Context, id int32) (Allergen, error)
@@ -54,7 +55,7 @@ type Querier interface {
 	GetFoodMenuForDisplay(ctx context.Context, arg GetFoodMenuForDisplayParams) (GetFoodMenuForDisplayRow, error)
 	GetFoodOrder(ctx context.Context, id int32) (FoodOrder, error)
 	GetHomepageContent(ctx context.Context) (HomepageContent, error)
-	GetHomepageContentForDisplay(ctx context.Context, locale string) (GetHomepageContentForDisplayRow, error)
+	GetHomepageContentForDisplay(ctx context.Context, locale string) (string, error)
 	GetItemOrder(ctx context.Context, id int32) (ItemOrder, error)
 	GetNextOrderNumberForToday(ctx context.Context, restaurantID int32) (int32, error)
 	GetOrderByIdempotencyKey(ctx context.Context, idempotencyKey pgtype.Text) (FoodOrder, error)
@@ -81,6 +82,7 @@ type Querier interface {
 	ListFoodItemsByRestaurantForAdmin(ctx context.Context, restaurantID int32) ([]ListFoodItemsByRestaurantForAdminRow, error)
 	ListFoodMenusByRestaurant(ctx context.Context, restaurantID int32) ([]FoodMenu, error)
 	ListFoodMenusByRestaurantForDisplay(ctx context.Context, arg ListFoodMenusByRestaurantForDisplayParams) ([]ListFoodMenusByRestaurantForDisplayRow, error)
+	ListHomepageImages(ctx context.Context) ([]HomepageImage, error)
 	ListIngredientsForItem(ctx context.Context, itemID int32) ([]ListIngredientsForItemRow, error)
 	ListIngredientsForRestaurant(ctx context.Context, restaurantID int32) ([]ListIngredientsForRestaurantRow, error)
 	ListItemsForOrder(ctx context.Context, orderID int32) ([]ItemOrder, error)
@@ -151,6 +153,7 @@ type Querier interface {
 	UpdateRestaurantPasswordHash(ctx context.Context, arg UpdateRestaurantPasswordHashParams) error
 	UpdateTable(ctx context.Context, arg UpdateTableParams) error
 	UpdateWaiterQuickItemSortOrder(ctx context.Context, arg UpdateWaiterQuickItemSortOrderParams) error
+	UpsertHomepageImage(ctx context.Context, arg UpsertHomepageImageParams) error
 }
 
 var _ Querier = (*Queries)(nil)

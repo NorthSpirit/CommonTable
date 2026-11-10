@@ -1,4 +1,5 @@
 package hub
+import "strconv"
 
 templ ApiDocsPage() {
 	<!DOCTYPE html>
@@ -41,48 +42,21 @@ templ ApiDocsPage() {
 						<div class="gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6">
 							<h2 class="text-lg font-bold mb-2">Authentication</h2>
 							<p class="text-sm mb-2">
-								Login is two-step: verify the restaurant, then verify the employee within it. The employee step returns a bearer token, sent as <code>Authorization: Bearer &lt;token&gt;</code> on every subsequent request.
+								Login is two-step: verify the restaurant, then verify the employee within it. The second step returns a bearer token, sent as <code>Authorization: Bearer &lt;token&gt;</code> on every subsequent request.
 							</p>
 							<p class="text-sm">
 								Tokens use a sliding expiry: every authenticated response may include an <code>X-Refreshed-Token</code> header — store and use whichever token was most recently received. An unused session lapses after roughly one hour.
 							</p>
 						</div>
 
-						@endpointGroup("Auth", []endpoint{
-							{"POST", "/api/waiter/login", "Verify restaurant name + password. Returns restaurant_id, restaurant_name, logo_url.", false},
-							{"POST", "/api/waiter/login/employee", "Verify employee name + PIN within a restaurant. Requires waiter or manager role. Returns a bearer token.", false},
-							{"GET", "/api/waiter/me", "Returns the current employee's identity from their token.", true},
-						})
+						<div class="flex justify-end gap-2 mb-4 text-xs font-bold uppercase">
+							<button type="button" id="apiExpandAll" class="px-3 py-1 rounded gms-content-bg gms-main-text gms-hover-bg-light border gms-border-medium">Expand all</button>
+							<button type="button" id="apiCollapseAll" class="px-3 py-1 rounded gms-content-bg gms-main-text gms-hover-bg-light border gms-border-medium">Collapse all</button>
+						</div>
 
-						@endpointGroup("Menus & Items", []endpoint{
-							{"GET", "/api/waiter/menus", "List all menus for the logged-in restaurant.", true},
-							{"GET", "/api/waiter/menus/{menuID}/items", "List items on a specific menu, including price and availability.", true},
-							{"GET", "/api/waiter/items/{itemID}", "Full item detail: description, ingredients, allergens, price.", true},
-							{"GET", "/api/waiter/search?q=", "Search all of the restaurant's items by name.", true},
-						})
-
-						@endpointGroup("Quick Items (Pinned)", []endpoint{
-							{"GET", "/api/waiter/quick-items", "List the current employee's pinned items.", true},
-							{"POST", "/api/waiter/quick-items", "Pin an item. Body: item_id, sort_order. Max 15 per employee.", true},
-							{"DELETE", "/api/waiter/quick-items/{itemID}", "Unpin an item.", true},
-							{"PATCH", "/api/waiter/quick-items/{itemID}", "Change a pinned item's sort order.", true},
-						})
-
-						@endpointGroup("Tables", []endpoint{
-							{"GET", "/api/waiter/tables", "List all tables, with whether the current restaurant has an active order at each.", true},
-						})
-
-						@endpointGroup("Orders", []endpoint{
-							{"POST", "/api/waiter/orders", "Submit an order. Body: idempotency_key, table_id (null for take-out), items[]. Appends to an already-open table order if one exists.", true},
-							{"GET", "/api/waiter/orders", "List the current employee's own active (non-delivered/cancelled) orders.", true},
-							{"POST", "/api/waiter/orders/{orderID}/cancel", "Cancel an order. Only allowed while its status is still pending.", true},
-						})
-
-						@endpointGroup("Chat", []endpoint{
-							{"GET", "/api/waiter/chat/messages", "List all chat messages for the restaurant.", true},
-							{"GET", "/api/waiter/chat/messages/after/{id}", "List messages newer than a given message ID — used for polling.", true},
-							{"POST", "/api/waiter/chat/send", "Send a chat message. Body: message.", true},
-						})
+						for _, g := range apiGroups {
+							@endpointGroup(g)
+						}
 
 						<div class="text-xs gms-demo-accent-text mt-8 text-center">
 							<p>All requests/responses are JSON. Errors return { "{" }"error": "..."{ "}" } with a 4xx/5xx status.</p>
@@ -96,33 +70,109 @@ templ ApiDocsPage() {
 			</div>
 
 			<script src="/assets/jsscripts/colour_swap.js"></script>
+			<script src="/assets/jsscripts/api_docs.js"></script>
 		</body>
 	</html>
 }
 
-type endpoint struct {
-	Method       string
-	Path         string
-	Description  string
-	AuthRequired bool
-}
-
-templ endpointGroup(title string, endpoints []endpoint) {
+templ endpointGroup(g apiGroup) {
 	<div class="mb-6">
-		<h2 class="text-lg font-bold gms-light-text mb-2">{ title }</h2>
-		<div class="gms-content-bg gms-main-text rounded-lg shadow-lg divide-y gms-border-medium">
-			for _, e := range endpoints {
-				<div class="p-3 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
-					<span class={ "text-xs font-bold px-2 py-0.5 rounded w-fit", methodColor(e.Method) }>{ e.Method }</span>
-					<code class="text-sm font-bold">{ e.Path }</code>
-					if e.AuthRequired {
-						<span class="text-xs gms-dark-text">(auth required)</span>
-					}
-					<span class="text-xs gms-dark-text sm:ml-auto">{ e.Description }</span>
-				</div>
+		<h2 class="text-lg font-bold gms-light-text mb-2">{ g.Title }</h2>
+		<div class="space-y-2">
+			for _, e := range g.Endpoints {
+				@endpointCard(e)
 			}
 		</div>
 	</div>
+}
+
+templ endpointCard(e apiEndpoint) {
+	<details class="api-endpoint gms-content-bg gms-main-text rounded-lg shadow-lg border-2 gms-border-medium">
+		<summary class="p-3 cursor-pointer flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
+			<span class={ "text-xs font-bold px-2 py-0.5 rounded w-fit", methodColor(e.Method) }>{ e.Method }</span>
+			<code class="text-sm font-bold break-all">{ e.Path }</code>
+			if e.Auth {
+				<span class="text-xs gms-dark-text">(auth required)</span>
+			}
+			<span class="text-xs gms-dark-text sm:ml-auto">{ e.Summary }</span>
+		</summary>
+		<div class="p-3 border-t-2 gms-border-medium space-y-4">
+			if len(e.Params) > 0 {
+				<div>
+					<h3 class="text-sm font-bold mb-1">Parameters</h3>
+					<div class="overflow-x-auto">
+						<table class="text-xs w-full">
+							<tbody>
+								for _, p := range e.Params {
+									<tr class="align-top border-b gms-border-medium">
+										<td class="py-1 pr-3 whitespace-nowrap"><code class="font-bold">{ p.Name }</code></td>
+										<td class="py-1 pr-3 whitespace-nowrap">{ p.In }</td>
+										<td class="py-1 pr-3 whitespace-nowrap">{ p.Type }</td>
+										<td class="py-1 pr-3 whitespace-nowrap">
+											if p.Required {
+												required
+											} else {
+												optional
+											}
+										</td>
+										<td class="py-1">{ p.Desc }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			}
+			if e.Request != "" {
+				<div>
+					<h3 class="text-sm font-bold mb-1">Request body</h3>
+					@jsonBlock(e.Request)
+				</div>
+			}
+			<div>
+				<h3 class="text-sm font-bold mb-1">Responses</h3>
+				<div class="space-y-2">
+					for _, r := range e.Responses {
+						<div>
+							<p class="text-xs mb-1"><span class={ "font-bold px-2 py-0.5 rounded", statusColor(r.Status) }>{ statusText(r.Status) }</span> { r.Desc }</p>
+							if r.Body != "" {
+								@jsonBlock(r.Body)
+							}
+						</div>
+					}
+				</div>
+			</div>
+			if len(e.Notes) > 0 {
+				<div>
+					<h3 class="text-sm font-bold mb-1">Notes</h3>
+					<ul class="list-disc pl-5 text-xs space-y-0.5">
+						for _, n := range e.Notes {
+							<li>{ n }</li>
+						}
+					</ul>
+				</div>
+			}
+		</div>
+	</details>
+}
+
+templ jsonBlock(body string) {
+	<pre class="gms-dark-bg gms-light-text rounded p-2 text-xs overflow-x-auto"><code>{ body }</code></pre>
+}
+
+func statusText(status int) string {
+	return strconv.Itoa(status)
+}
+
+func statusColor(status int) string {
+	switch {
+	case status < 300:
+		return "bg-green-600 text-white"
+	case status < 500:
+		return "bg-orange-600 text-white"
+	default:
+		return "bg-red-600 text-white"
+	}
 }
 
 func methodColor(method string) string {

@@ -1,25 +1,71 @@
-// Package htmlcontent sanitizes admin-authored homepage HTML (from the
-// WYSIWYG editor) and expands the placeholder tokens it may contain.
 package htmlcontent
 
 import (
+	"fmt"
 	"html"
+	"strconv"
 	"strings"
 
 	"github.com/microcosm-cc/bluemonday"
 )
 
 const (
-	tokenImageOne = "{{image1}}"
-	tokenImageTwo = "{{image2}}"
-	tokenSpacer   = "<p>---</p>"
+	tokenSpacer = "<p>---</p>"
 
-	imageClass  = "w-full max-w-md mx-auto h-auto rounded-lg border-2 gms-border-medium block my-4"
+	imageClass  = "rounded-lg border-2 gms-border-medium"
 	spacerClass = "my-6 gms-border-medium"
 )
 
-// Only the formatting the editor toolbar can produce is allowed; everything
-// else (scripts, styles, links, event handlers...) is stripped.
+const MaxImages = 4
+
+const (
+	DefaultWidthPercent    = 50
+	DefaultPositionPercent = 50
+	DefaultShape           = "original"
+
+	MinWidthPercent = 10
+	MaxWidthPercent = 100
+)
+
+type Shape struct {
+	Value string
+	Label string
+	ratio string
+}
+
+var Shapes = []Shape{
+	{Value: "original", Label: "Original (not cropped)"},
+	{Value: "16:9", Label: "16:9 (wide, cropped)", ratio: "16 / 9"},
+	{Value: "4:3", Label: "4:3 (cropped)", ratio: "4 / 3"},
+	{Value: "1:1", Label: "1:1 (square, cropped)", ratio: "1 / 1"},
+	{Value: "3:4", Label: "3:4 (tall, cropped)", ratio: "3 / 4"},
+}
+
+func ValidShape(v string) bool {
+	for _, s := range Shapes {
+		if s.Value == v {
+			return true
+		}
+	}
+	return false
+}
+
+func shapeRatio(v string) string {
+	for _, s := range Shapes {
+		if s.Value == v {
+			return s.ratio
+		}
+	}
+	return ""
+}
+
+type Image struct {
+	URL             string
+	WidthPercent    int // of the text column's width
+	Shape           string
+	PositionPercent int // 0 = left edge, 50 = centered, 100 = right edge
+}
+
 var policy = func() *bluemonday.Policy {
 	p := bluemonday.NewPolicy()
 	p.AllowElements("p", "br", "strong", "em", "u", "h1", "h2")
@@ -28,50 +74,61 @@ var policy = func() *bluemonday.Policy {
 
 var textOnly = bluemonday.StrictPolicy()
 
-// Sanitize strips everything but the allowed formatting tags.
 func Sanitize(s string) string {
 	return policy.Sanitize(s)
 }
 
-// IsEmpty reports whether the HTML has no visible text (e.g. Quill's
-// empty "<p><br></p>").
 func IsEmpty(s string) bool {
 	return strings.TrimSpace(html.UnescapeString(textOnly.Sanitize(s))) == ""
 }
 
-// Render sanitizes the stored HTML, then expands {{image1}} / {{image2}}
-// into images and a lone "---" paragraph into a spacer line. An uploaded
-// image the admin never placed is appended at the end, so it is never
-// silently dropped.
-func Render(content string, imageOneURL string, imageTwoURL string) string {
+func Render(content string, images []Image) string {
 	out := Sanitize(content)
 
 	out = strings.ReplaceAll(out, tokenSpacer, `<hr class="`+spacerClass+`"/>`)
 
-	out, foundOne := expandImage(out, tokenImageOne, imageOneURL)
-	out, foundTwo := expandImage(out, tokenImageTwo, imageTwoURL)
+	var unplaced strings.Builder
+	for i, img := range images {
+		if i >= MaxImages {
+			break
+		}
+		token := "{{image" + strconv.Itoa(i+1) + "}}"
 
-	if imageOneURL != "" && !foundOne {
-		out += imageTag(imageOneURL)
-	}
-	if imageTwoURL != "" && !foundTwo {
-		out += imageTag(imageTwoURL)
+		if strings.Contains(out, token) {
+			replacement := ""
+			if img.URL != "" {
+				replacement = imageTag(img)
+			}
+			out = strings.ReplaceAll(out, token, replacement)
+		} else if img.URL != "" {
+			unplaced.WriteString(imageTag(img))
+		}
 	}
 
-	return out
+	return out + unplaced.String()
 }
 
-func expandImage(s string, token string, url string) (string, bool) {
-	if !strings.Contains(s, token) {
-		return s, false
+func imageTag(img Image) string {
+	width := clamp(img.WidthPercent, MinWidthPercent, MaxWidthPercent)
+	position := clamp(img.PositionPercent, 0, 100)
+	left := float64(100-width) * float64(position) / 100
+
+	var style strings.Builder
+	fmt.Fprintf(&style, "display:block;width:%d%%;height:auto;margin:1rem 0 1rem %.2f%%;", width, left)
+	if ratio := shapeRatio(img.Shape); ratio != "" {
+		style.WriteString("aspect-ratio:" + ratio + ";object-fit:cover;")
 	}
-	replacement := ""
-	if url != "" {
-		replacement = imageTag(url)
-	}
-	return strings.ReplaceAll(s, token, replacement), true
+
+	return `<img src="` + html.EscapeString(img.URL) + `" alt="Homepage image" class="` + imageClass +
+		`" style="` + style.String() + `"/>`
 }
 
-func imageTag(url string) string {
-	return `<img src="` + html.EscapeString(url) + `" alt="Homepage image" class="` + imageClass + `"/>`
+func clamp(v, min, max int) int {
+	if v < min {
+		return min
+	}
+	if v > max {
+		return max
+	}
+	return v
 }

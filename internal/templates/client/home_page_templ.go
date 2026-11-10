@@ -64,7 +64,7 @@ func homePageContent(locale string, content shared.HomepageView, restaurants []s
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col md:flex-row flex-1\"><nav class=\"order-first w-full md:w-40 lg:w-1/6 gms-dark-bg m-0 md:border-r gms-border-dark sticky top-[35px] self-start z-10 md:h-fit md:m-1\"><div><h3 class=\"font-semibold text-lg px-2 md:my-1 gms-accent-text hidden md:block\">Quick Navigation</h3><ul class=\"flex flex-row flex-nowrap space-x-4 overflow-x-scroll border gms-border-medium pb-2 rounded-md md:border-none md:flex-col md:space-x-0 md:space-y-1 sm:items-start\"><li class=\"shrink-0\"><a href=\"#top\" class=\"block px-2 py-0 rounded gms-hover-bg-light gms-accent-hover-text\">Back to top</a></li><li class=\"shrink-0\"><a href=\"#welcome\" class=\"block px-2 py-0 rounded gms-hover-bg-light gms-accent-hover-text\">Welcome</a></li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col md:flex-row flex-1\"><nav class=\"order-first w-full md:w-40 lg:w-1/6 gms-dark-bg m-0 md:border-r gms-border-dark sticky top-[35px] self-start z-10 md:h-fit md:m-1\"><div><h3 class=\"font-semibold text-lg px-2 md:my-1 gms-accent-text hidden md:block\">Quick Navigation</h3><ul class=\"flex flex-row flex-nowrap space-x-4 overflow-x-scroll border gms-border-medium pb-2 rounded-md md:border-none md:flex-col md:space-x-0 md:space-y-1 sm:items-start\"><li class=\"shrink-0\"><a href=\"#top\" class=\"block px-2 py-0 rounded gms-hover-bg-light gms-accent-hover-text\">Back to top</a></li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -76,7 +76,7 @@ func homePageContent(locale string, content shared.HomepageView, restaurants []s
 			var templ_7745c5c3_Var3 templ.SafeURL
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(helpers.WithLang("/restaurants/"+helpers.Itoa(restaurant.ID), locale)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/home_page.templ`, Line: 23, Col: 97}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/home_page.templ`, Line: 22, Col: 97}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -89,7 +89,7 @@ func homePageContent(locale string, content shared.HomepageView, restaurants []s
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(restaurant.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/home_page.templ`, Line: 24, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/client/home_page.templ`, Line: 23, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
