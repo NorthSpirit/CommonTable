@@ -64,7 +64,7 @@ func homePageContent(locale string, content shared.HomepageView, restaurants []s
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col md:flex-row flex-1\"><nav class=\"order-first w-full md:w-40 lg:w-1/6 gms-dark-bg m-0 md:border-r gms-border-dark sticky top-[35px] self-start z-10 md:h-fit md:m-1\"><div><h3 class=\"font-semibold text-lg px-2 md:my-1 gms-accent-text hidden md:block\">Quick Navigation</h3><ul class=\"flex flex-row flex-nowrap space-x-4 overflow-x-scroll border gms-border-medium pb-2 rounded-md md:border-none md:flex-col md:space-x-0 md:space-y-1 sm:items-start\"><li class=\"shrink-0\"><a href=\"#top\" class=\"block px-2 py-0 rounded gms-hover-bg-light gms-accent-hover-text\">Back to top</a></li>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col md:flex-row flex-1\"><nav class=\"order-first w-full md:w-40 lg:w-1/6 gms-dark-bg m-0 sticky top-[35px] self-start z-10 md:h-fit md:m-1\"><div><h3 class=\"font-semibold text-lg px-2 md:my-1 gms-accent-text hidden md:block\">Quick Navigation</h3><ul class=\"flex flex-row flex-nowrap space-x-4 overflow-x-scroll border gms-border-medium pb-2 rounded-md md:border-none md:flex-col md:space-x-0 md:space-y-1 sm:items-start\"><li class=\"shrink-0\"><a href=\"#top\" class=\"block px-2 py-0 rounded gms-hover-bg-light gms-accent-hover-text\">Back to top</a></li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,0 +1,111 @@
+/*
+ * =========================================================
+ * Grand Menu Service – Neutral Colour Scheme CSS
+ * =========================================================
+ */
+
+/* ------------------ Background Colors ------------------ */
+
+.gms-primary-bg {
+    background-color: #2f6f4f;
+}
+
+.gms-dark-bg {
+    background-color: #d8cfbf;
+}
+
+.gms-content-bg {
+    background-color: #f5f0e6;
+}
+
+.gms-border-very-dark {
+    border-color: #3e2f2f;
+}
+
+/* ------------------ Text Colors ------------------ */
+.gms-light-text {
+    color: #412009;
+}
+
+.gms-dark-text {
+    color: #251103;
+}
+
+.gms-main-text {
+    color: #412009;
+}
+
+.gms-title-text {
+    color: #382005;
+}
+
+@media (max-width: 640px) {
+    .gms-title-text {
+        color: #0e520e;
+        text-shadow: none;
+    }
+}
+
+.gms-accent-text,
+.gms-accent-hover-text,
+.gms-accent-hover-text:hover,
+.gms-demo-accent-text {
+    color: #412009;
+}
+
+
+/* ------------------ Hover Backgrounds ------------------ */
+.gms-hover-bg-light:hover {
+    background-color: #e8dcc0;
+}
+
+.gms-primary-hover-bg:hover {
+    background-color: #245a40;
+}
+
+/* ------------------ Borders ------------------ */
+.gms-border-dark,
+.gms-border-medium {
+    border-color: #b09a7c;
+}
+
+
+/* ------------------ Buttons ------------------ */
+.gms-btn-clear {
+    background-color: #b5532f;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.gms-btn-clear:hover {
+    background: radial-gradient(circle at center, #ffd000 0%, #FD1010 100%);
+    border-color: #000000;
+    color: #000000;
+    transform: translateY(2px);
+    box-shadow: 15px 15px 5px -5px #FD1010,
+    -15px -15px 5px -5px #ffd000;
+}
+
+.gms-btn-submit {
+    background-color: #2f6f4f;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.gms-btn-submit:hover {
+    background: radial-gradient(circle at center, #0044ff 0%, #7fcf5a 100%);
+    border-color: #000000;
+    color: #000000;
+    transform: translateY(2px);
+    box-shadow: 15px 15px 5px -5px #7fcf5a,
+    -15px -15px 5px -5px #0044ff;
+}
+
+.gms-dashboard-highlight:hover {
+    background: radial-gradient(circle at center, #0044ff 0%, #7fcf5a 100%);
+    border-color: #000000;
+    color: #000000;
+    transform: translateY(2px);
+    box-shadow: 15px 15px 5px -5px #7fcf5a,
+    -15px -15px 5px -5px #0044ff;
+}

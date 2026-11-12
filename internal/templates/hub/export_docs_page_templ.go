@@ -29,14 +29,14 @@ func ExportDocsPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><title>CommonTable - Menu Export</title><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/png\" href=\"/assets/images/favicon.png\"><script src=\"https://cdn.tailwindcss.com\"></script><link id=\"themeCSS\" rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><link id=\"themeCSSAlt\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAlt.css\" disabled><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\r\nhtml, body { height: 100%; }\r\n:root { font-family: 'Lora', serif; }\r\na { color: inherit; }\r\ncode { font-family: monospace; }\r\n</style></head><body><div class=\"min-h-screen flex flex-col gms-dark-bg\"><header class=\"gms-dark-bg gms-light-text p-2 shadow-md border-b-4 gms-border-dark\"><div class=\"container mx-auto text-center py-4\"><h1 class=\"gms-title-text lg:text-3xl sm:text-2xl font-bold mb-1\">CommonTable</h1><p class=\"text-sm gms-demo-accent-text\">Menu Export Reference</p></div></header><nav class=\"border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex gms-content-bg\"><a href=\"/hub\" class=\"flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light\">&larr; Back to Hub</a> <a href=\"#\" id=\"MColour\" class=\"flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light border-l-2 gms-border-medium\">Palette Swap</a></nav><main class=\"flex-1 px-6 py-6 gms-dark-bg\"><div class=\"w-full lg:w-[65%] mx-auto\"><p class=\"text-sm gms-light-text mb-6\">Any restaurant's menu content can be exported as a single JSON file — useful for building a custom, bespoke storefront outside of CommonTable's own customer page. The export is a read-only snapshot; nothing here can be used to write data back.</p><div class=\"gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6\"><h2 class=\"text-lg font-bold mb-2\">Getting an export</h2><p class=\"text-sm mb-2\">Requires an admin session (this endpoint lives under <code>/admin</code>, same auth as the rest of the admin panel). Given a restaurant's ID:</p><code class=\"block text-sm font-bold p-2 bg-black bg-opacity-10 rounded\">GET /admin/restaurants/")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><title>CommonTable - Menu Export</title><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/png\" href=\"/assets/images/favicon.png\"><script src=\"https://cdn.tailwindcss.com\"></script><link id=\"themeCSS\" rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><link id=\"themeCSSAlt\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAlt.css\" disabled><link id=\"themeCSSAltClean\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAltClean.css\" disabled><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\r\nhtml, body { height: 100%; }\r\n:root { font-family: 'Lora', serif; }\r\na { color: inherit; }\r\ncode { font-family: monospace; }\r\n</style></head><body><div class=\"min-h-screen flex flex-col gms-dark-bg\"><header class=\"gms-dark-bg gms-light-text p-2 shadow-md\"><div class=\"container mx-auto text-center\"><h1 class=\"gms-title-text lg:text-4xl sm:text-3xl font-bold mb-1\">CommonTable</h1><p class=\"text-sm gms-demo-accent-text\">Menu Export Reference</p></div></header><nav class=\"border-y-2 gms-border-dark uppercase font-bold sticky top-0 z-50 flex gms-content-bg\"><a href=\"/hub\" class=\"flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light\">&larr; Back to Hub</a> <a href=\"#\" id=\"MColour\" class=\"flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light border-l-2 gms-border-medium\">Palette Swap</a></nav><main class=\"flex-1 px-6 py-6 gms-dark-bg\"><div class=\"w-full lg:w-[65%] mx-auto\"><p class=\"text-sm gms-light-text mb-6\">Any restaurant's menu content can be exported as a single JSON file — useful for building a custom, bespoke storefront outside of CommonTable's own customer page. The export is a read-only snapshot; nothing here can be used to write data back.</p><div class=\"gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6\"><h2 class=\"text-lg font-bold mb-2\">Getting an export</h2><p class=\"text-sm mb-2\">Requires an admin session (this endpoint lives under <code>/admin</code>, same auth as the rest of the admin panel). Given a restaurant's ID:</p><code class=\"block text-sm font-bold p-2 bg-black bg-opacity-10 rounded\">GET /admin/restaurants/")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("{id}")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 46, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 47, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -95,7 +95,7 @@ func ExportDocsPage() templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(exampleJSON)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 99, Col: 110}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 100, Col: 110}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -143,7 +143,7 @@ func fieldGroup(title string, fields []field) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 122, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 123, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -161,7 +161,7 @@ func fieldGroup(title string, fields []field) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(f.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 126, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 127, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -174,7 +174,7 @@ func fieldGroup(title string, fields []field) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(f.Type)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 127, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 128, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -187,7 +187,7 @@ func fieldGroup(title string, fields []field) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(f.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 128, Col: 51}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/hub/export_docs_page.templ`, Line: 129, Col: 51}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

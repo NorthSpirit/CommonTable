@@ -11,6 +11,7 @@ templ ApiDocsPage() {
 			<script src="https://cdn.tailwindcss.com"></script>
 			<link id="themeCSS" rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
 			<link id="themeCSSAlt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
+			<link id="themeCSSAltClean" rel="stylesheet" href="/assets/css/CTStyleAltClean.css" disabled/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<style>
 				html, body { height: 100%; }
@@ -21,14 +22,14 @@ templ ApiDocsPage() {
 		</head>
 		<body>
 			<div class="min-h-screen flex flex-col gms-dark-bg">
-				<header class="gms-dark-bg gms-light-text p-2 shadow-md border-b-4 gms-border-dark">
+				<header class="gms-dark-bg gms-light-text p-2 shadow-md">
 					<div class="container mx-auto text-center">
 						<h1 class="gms-title-text lg:text-4xl sm:text-3xl font-bold mb-1">CommonTable</h1>
 						<p class="text-sm gms-demo-accent-text">Waiter API Reference</p>
 					</div>
 				</header>
 
-				<nav class="border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex gms-content-bg">
+				<nav class="border-y-2 gms-border-dark uppercase font-bold sticky top-0 z-50 flex gms-content-bg">
 					<a href="/hub" class="flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light">&larr; Back to Hub</a>
 					<a href="#" id="MColour" class="flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light border-l-2 gms-border-medium">Palette Swap</a>
 				</nav>

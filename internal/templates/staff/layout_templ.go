@@ -42,14 +42,14 @@ func Layout(title string, employeeName string, content templ.Component) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/png\" href=\"/assets/images/favicon.png\"><script src=\"https://cdn.tailwindcss.com\"></script><link id=\"theme-default\" rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><link id=\"theme-alt\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAlt.css\" disabled><link id=\"theme-dark\" rel=\"stylesheet\" href=\"/assets/css/CTStyleDark.css\" disabled><link id=\"theme-highContrast\" rel=\"stylesheet\" href=\"/assets/css/CTStyleHighContrast.css\" disabled><link id=\"theme-protanopia\" rel=\"stylesheet\" href=\"/assets/css/CTStyleProtanopia.css\" disabled><link id=\"theme-deuteranopia\" rel=\"stylesheet\" href=\"/assets/css/CTStyleDeuteranopia.css\" disabled><link id=\"theme-tritanopia\" rel=\"stylesheet\" href=\"/assets/css/CTStyleTritanopia.css\" disabled><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\r\n\t\t\t\thtml, body { height: 100%; }\r\n\t\t\t\t:root { font-family: 'Lora', serif; }\r\n\t\t\t\ta { color: inherit; }\r\n\t\t\t</style></head><body><div class=\"min-h-screen flex flex-col gms-dark-bg\"><header class=\"gms-dark-bg gms-light-text p-2 shadow-md\"><div class=\"container mx-auto text-center\"><h1 class=\"gms-title-text lg:text-3xl sm:text-2xl font-bold mb-1\">CommonTable Staff</h1><p class=\"text-sm gms-demo-accent-text\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/png\" href=\"/assets/images/favicon.png\"><script src=\"https://cdn.tailwindcss.com\"></script><link id=\"themeCSS\" rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><link id=\"themeCSSAlt\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAlt.css\" disabled><link id=\"themeCSSAltClean\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAltClean.css\" disabled><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\r\n\t\t\t\thtml, body { height: 100%; }\r\n\t\t\t\t:root { font-family: 'Lora', serif; }\r\n\t\t\t\ta { color: inherit; }\r\n\t\t\t</style></head><body><div class=\"min-h-screen flex flex-col gms-dark-bg\"><header class=\"gms-dark-bg gms-light-text p-2 shadow-md\"><div class=\"container mx-auto text-center\"><h1 class=\"gms-title-text lg:text-3xl sm:text-2xl font-bold mb-1\">CommonTable Staff</h1><p class=\"text-sm gms-demo-accent-text\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/layout.templ`, Line: 30, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/layout.templ`, Line: 26, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -67,7 +67,7 @@ func Layout(title string, employeeName string, content templ.Component) templ.Co
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(employeeName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/layout.templ`, Line: 32, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/staff/layout.templ`, Line: 28, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -78,7 +78,7 @@ func Layout(title string, employeeName string, content templ.Component) templ.Co
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></header><nav class=\"border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg\"><ul class=\"list-none m-0 w-full flex flex-col md:flex-row md:justify-center md:items-stretch text-center\"><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/staff/profile\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">My Profile</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a id=\"nav-chat-link\" href=\"/staff/chat\" data-poll-url=\"/staff/chat/messages\" data-storage-key=\"chat_last_read_staff\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Chat</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"#\" id=\"MColour\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Palette Swap</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/staff/logout\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Logout</a></li></ul></nav><div class=\"flex flex-col flex-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></header><nav class=\"border-y-2 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg\"><ul class=\"list-none m-0 w-full flex flex-col md:flex-row md:justify-center md:items-stretch text-center\"><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/staff/profile\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">My Profile</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a id=\"nav-chat-link\" href=\"/staff/chat\" data-poll-url=\"/staff/chat/messages\" data-storage-key=\"chat_last_read_staff\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Chat</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"#\" id=\"MColour\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Palette Swap</a></li><li class=\"border gms-border-medium w-full md:flex-1\"><a href=\"/staff/logout\" class=\"block py-1 text-center gms-content-bg gms-main-text gms-hover-bg-light\">Logout</a></li></ul></nav><div class=\"flex flex-col flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

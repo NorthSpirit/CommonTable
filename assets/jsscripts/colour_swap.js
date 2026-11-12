@@ -1,24 +1,26 @@
-const defaultCSS = document.getElementById('themeCSS');
-const altCSS = document.getElementById('themeCSSAlt');
+const themes = [
+    {key: 'default', id: 'themeCSS'},
+    {key: 'alt', id: 'themeCSSAlt'},
+    {key: 'altclean', id: 'themeCSSAltClean'}
+];
 const paletteMenuLink = document.getElementById('MColour');
 const themeKey = 'GMSTheme';
 
-function applyTheme(isAlt) {
-    if (isAlt) {
-        defaultCSS.disabled = true;
-        altCSS.disabled = false;
-        localStorage.setItem(themeKey, 'alt');
-    } else {
-        defaultCSS.disabled = false;
-        altCSS.disabled = true;
-        localStorage.setItem(themeKey, 'default');
-    }
+function availableThemes() {
+    return themes.filter(t => document.getElementById(t.id));
+}
+
+function applyTheme(key) {
+    availableThemes().forEach(t => {
+        document.getElementById(t.id).disabled = (t.key !== key);
+    });
+    localStorage.setItem(themeKey, key);
 }
 
 function applyThemeFromCache() {
     const cachedTheme = localStorage.getItem(themeKey);
-    if (cachedTheme === 'alt') {
-        applyTheme(true);
+    if (cachedTheme && availableThemes().some(t => t.key === cachedTheme)) {
+        applyTheme(cachedTheme);
     }
 }
 
@@ -26,6 +28,9 @@ document.addEventListener('DOMContentLoaded', applyThemeFromCache);
 
 paletteMenuLink.addEventListener('click', (e) => {
     e.preventDefault();
-    const isCurrentlyDefault = altCSS.disabled;
-    applyTheme(isCurrentlyDefault);
+    const available = availableThemes();
+    // The theme that is on now is the one whose <link> is not disabled
+    const currentIndex = available.findIndex(t => !document.getElementById(t.id).disabled);
+    const next = available[(currentIndex + 1) % available.length];
+    applyTheme(next.key);
 });

@@ -47,7 +47,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/png\" href=\"/assets/images/favicon.png\"><script src=\"https://cdn.tailwindcss.com\"></script><link id=\"themeCSS\" rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><link id=\"themeCSSAlt\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAlt.css\" disabled><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\r\n\t\t\t\thtml, body { height: 100%; }\r\n\t\t\t\t:root { font-family: 'Lora', serif; }\r\n\t\t\t\ta { color: inherit; }\r\n\t\t\t</style></head><body><div id=\"top\" class=\"min-h-screen flex flex-col gms-dark-bg\"><header class=\"gms-dark-bg gms-light-text p-2 shadow-md\"><div class=\"container mx-auto text-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><meta charset=\"utf-8\"><link rel=\"icon\" type=\"image/png\" href=\"/assets/images/favicon.png\"><script src=\"https://cdn.tailwindcss.com\"></script><link id=\"themeCSS\" rel=\"stylesheet\" href=\"/assets/css/CTStyleMain.css\"><link id=\"themeCSSAlt\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAlt.css\" disabled><link id=\"themeCSSAltClean\" rel=\"stylesheet\" href=\"/assets/css/CTStyleAltClean.css\" disabled><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>\r\n\t\t\t\thtml, body { height: 100%; }\r\n\t\t\t\t:root { font-family: 'Lora', serif; }\r\n\t\t\t\ta { color: inherit; }\r\n\t\t\t</style></head><body><div id=\"top\" class=\"min-h-screen flex flex-col gms-dark-bg\"><header class=\"gms-dark-bg gms-light-text p-2 shadow-md\"><div class=\"container mx-auto text-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -64,7 +64,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(branding.LogoURL)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 32, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 33, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 				if templ_7745c5c3_Err != nil {
@@ -77,7 +77,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(branding.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 32, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 33, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 				if templ_7745c5c3_Err != nil {
@@ -91,7 +91,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(branding.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 34, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 35, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(shared.T(locale, "powered_by"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 36, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 37, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -127,20 +127,20 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 42, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 43, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p></div></header><nav id=\"menu\" class=\"border-b-4 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg\"><div class=\"md:hidden w-full\"><button id=\"menu-toggle\" class=\"px-4 py-1 w-full flex items-center justify-between gms-main-text gms-hover-bg-light rounded\"><div class=\"flex items-center space-x-2\"><svg class=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg> <span class=\"text-base font-bold tracking-wider\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p></div></header><nav id=\"menu\" class=\"border-y-2 gms-border-dark uppercase font-bold sticky top-0 z-50 flex flex-col md:flex-row md:justify-center gms-content-bg\"><div class=\"md:hidden w-full\"><button id=\"menu-toggle\" class=\"px-4 py-1 w-full flex items-center justify-between gms-main-text gms-hover-bg-light rounded\"><div class=\"flex items-center space-x-2\"><svg class=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg> <span class=\"text-base font-bold tracking-wider\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(shared.T(locale, "nav_menu_toggle"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 53, Col: 94}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 54, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -153,7 +153,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 		var templ_7745c5c3_Var9 templ.SafeURL
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(helpers.WithLang("/", locale)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 60, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 61, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -166,7 +166,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(shared.T(locale, "nav_home"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 60, Col: 187}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 61, Col: 187}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -179,7 +179,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 		var templ_7745c5c3_Var11 templ.SafeURL
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(helpers.WithLang("/restaurants", locale)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 63, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 64, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -192,7 +192,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(shared.T(locale, "nav_restaurants"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 63, Col: 205}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 64, Col: 205}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -205,7 +205,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(shared.T(locale, "nav_palette_swap"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 66, Col: 149}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 67, Col: 149}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -218,7 +218,7 @@ func Layout(title string, branding *shared.BrandingView, locale string, content 
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(shared.AltLanguageLabel())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 72, Col: 133}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layout/layout.templ`, Line: 73, Col: 133}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
