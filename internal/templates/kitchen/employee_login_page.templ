@@ -9,14 +9,11 @@ templ EmployeeLoginPage(restaurantID int32, restaurantName string, errorMessage 
 templ employeeLoginContent(restaurantID int32, restaurantName string, errorMessage string) {
 	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
 		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">{ restaurantName } - Log In</h2>
-
 		<div class="w-full lg:w-[65%] mx-auto p-6 rounded-lg shadow-lg border gms-border-medium gms-dark-bg">
 			<p class="gms-demo-accent-text mb-4 text-center text-sm">Kitchen board — chef/manager only</p>
-
 			if errorMessage != "" {
 				<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
 			}
-
 			<form method="POST" action="/kitchen/login/employee" class="space-y-4">
 				<input type="hidden" name="restaurant_id" value={ strconv.Itoa(int(restaurantID)) }/>
 				<label class="block">

@@ -12,7 +12,6 @@ templ employeesPageContent(employees []EmployeeView) {
 				+ New Employee
 			</a>
 		</div>
-
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			for _, e := range employees {
 				<div class={ "flex flex-col min-h-[160px] border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", !e.IsActive) }>
@@ -29,7 +28,6 @@ templ employeesPageContent(employees []EmployeeView) {
 					if e.PhoneNumber != "" {
 						<p class="text-xs opacity-70">{ e.PhoneNumber }</p>
 					}
-
 					<div class="flex gap-2 mt-auto pt-3">
 						<a href={ templ.URL("/manager/employees/" + itoa(e.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 							Edit

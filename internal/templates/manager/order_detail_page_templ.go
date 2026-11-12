@@ -145,7 +145,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 20, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 19, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -168,7 +168,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(itoa(item.Quantity))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 30, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 29, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -181,7 +181,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(item.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 30, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 29, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -199,7 +199,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(item.Notes)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 32, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 31, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -217,7 +217,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(item.Price))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 35, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 34, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -235,7 +235,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var13 templ.SafeURL
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/orders/" + itoa(order.ID) + "/items/" + itoa(item.ID) + "/edit"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 39, Col: 122}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 38, Col: 122}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -248,7 +248,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(itoa(item.Quantity))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 40, Col: 82}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 39, Col: 82}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 				if templ_7745c5c3_Err != nil {
@@ -261,7 +261,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var15 templ.SafeURL
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/orders/" + itoa(order.ID) + "/items/" + itoa(item.ID) + "/delete"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 43, Col: 124}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 42, Col: 124}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -295,7 +295,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var16 templ.SafeURL
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/orders/" + itoa(order.ID) + "/items/add"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 56, Col: 95}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 54, Col: 95}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -313,7 +313,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(itoa(opt.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 62, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 60, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 				if templ_7745c5c3_Err != nil {
@@ -326,7 +326,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(opt.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 62, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 60, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -339,7 +339,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(opt.Price))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 62, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 60, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -367,7 +367,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(p.Method)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 84, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 81, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -380,7 +380,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(p.Amount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 85, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 82, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -393,7 +393,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var22 templ.SafeURL
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/orders/" + itoa(order.ID) + "/payments/" + itoa(p.ID)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 87, Col: 111}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 84, Col: 111}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -472,7 +472,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(order.Total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 111, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 107, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -485,7 +485,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(order.TotalPaid))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 111, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 107, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -498,7 +498,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(order.Remaining))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 112, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 108, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -517,7 +517,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var26 templ.SafeURL
 				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/orders/" + itoa(order.ID) + "/payments/quick-pay"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 117, Col: 107}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 112, Col: 107}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
@@ -530,7 +530,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 				var templ_7745c5c3_Var27 string
 				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(order.Remaining))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 119, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 114, Col: 75}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 				if templ_7745c5c3_Err != nil {
@@ -548,7 +548,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var28 templ.SafeURL
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/orders/" + itoa(order.ID) + "/payments/new"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 126, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 120, Col: 101}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
@@ -561,7 +561,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(formatPrice(order.Remaining))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 129, Col: 104}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 123, Col: 104}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 			if templ_7745c5c3_Err != nil {
@@ -584,7 +584,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 		var templ_7745c5c3_Var30 templ.SafeURL
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/orders/" + itoa(order.ID)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 157, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 150, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
@@ -647,7 +647,7 @@ func orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOptionV
 		var templ_7745c5c3_Var31 string
 		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(order.Notes)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 171, Col: 106}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/order_detail_page.templ`, Line: 164, Col: 106}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {

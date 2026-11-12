@@ -13,13 +13,18 @@ templ ordersPageContent(restaurantID int32, restaurantName string, orders []admi
 				@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurantID), "Back to "+restaurantName)
 				<h2 class="text-2xl font-bold gms-main-text">Orders</h2>
 			</div>
-			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/new") } class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
-				+ New Order
-			</a>
+			<div class="flex gap-4">
+				<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/online") } class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+					Online Orders
+				</a>
+				<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/new") } class="inline-flex items-center px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
+					+ New Order
+				</a>
+			</div>
 		</div>
 
 		<div class="border gms-border-medium rounded-lg overflow-hidden">
-			<table class="w-full text-sm">
+			<table class="w-full text-sm whitespace-nowrap">
 				<thead>
 					<tr class="gms-dark-bg gms-light-text">
 						<th class="text-left p-2">ID</th>
@@ -27,8 +32,8 @@ templ ordersPageContent(restaurantID int32, restaurantName string, orders []admi
 						<th class="text-left p-2">Table</th>
 						<th class="text-left p-2">Waiter</th>
 						<th class="text-left p-2">Status</th>
-						<th class="text-left p-2">Created</th>
-						<th class="p-2"></th>
+						<th class="text-left p-2 w-px">Created</th>
+						<th class="p-2 w-px"></th>
 					</tr>
 				</thead>
 				<tbody class="divide-y gms-border-medium">
@@ -40,8 +45,8 @@ templ ordersPageContent(restaurantID int32, restaurantName string, orders []admi
 							<td class="p-2">{ o.WaiterName }</td>
 							<td class="p-2 uppercase text-xs font-bold">{ o.Status }</td>
 							<td class="p-2">{ o.CreatedAt }</td>
-							<td class="p-2">
-								<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(o.ID)) } class="px-3 py-1 text-xs font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
+							<td class="pl-4 px-4 py-[5px]">
+								<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/" + adminshared.Itoa(o.ID)) } class="block w-32 text-center py-1 text-xs font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 									View
 								</a>
 							</td>

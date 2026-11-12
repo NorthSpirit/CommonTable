@@ -21,7 +21,6 @@ templ restaurantDetailContent(restaurant adminshared.RestaurantView) {
 				}
 			</div>
 		</div>
-
 		<div class="flex flex-wrap gap-2">
 			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/employees") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
 				Manage Employees
@@ -39,8 +38,8 @@ templ restaurantDetailContent(restaurant adminshared.RestaurantView) {
 				View Chat
 			</a>
 			<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/export") } class="inline-block px-4 py-2 font-bold rounded-lg shadow-md gms-btn-submit border gms-border-medium">
-            	Export Menu (JSON)
-            </a>
+				Export Menu (JSON)
+			</a>
 		</div>
 	</main>
 }

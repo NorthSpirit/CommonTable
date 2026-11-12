@@ -78,6 +78,12 @@ func main() {
 	waiterAPIHandlers := container.NewWaiterAPIHandlers(services, pool)
 	managerHandlers := container.NewManagerHandlers(services, pool)
 	staffHandlers := container.NewStaffHandlers(services)
+	extServices := container.NewExternalOrderServices(queries, pool)
+	externalServices := container.NewExternalOrderServices(queries, pool)
+	externalAPIHandlers := container.NewExternalAPIHandlers(externalServices)
+	managerHandlers.OnlineOrder = container.NewManagerOnlineOrderHandler(services, externalServices)
+	adminHandlers.OnlineOrder = container.NewAdminOnlineOrderHandler(services, externalServices)
+	managerHandlers.ApiKey = container.NewManagerApiKeyHandler(services, extServices)
 
 	// Hub is a "landing" page (links, APK download, API docs). It doesn't need services.
 	hubHandler := hub.NewHubHandler()
@@ -111,6 +117,7 @@ func main() {
 	httpserver.RegisterManagerRoutes(r, managerHandlers, services.Auth)
 	httpserver.RegisterStaffRoutes(r, staffHandlers, services.Auth)
 	httpserver.RegisterTerminalRoutes(r, terminalHandlers)
+	httpserver.RegisterExternalAPIRoutes(r, externalAPIHandlers, externalServices.ApiKey)
 
 	// Static files. StripPrefix removes "/assets" from the URL before looking in the folder
 	r.Handle("/assets/*", http.StripPrefix("/assets", http.FileServer(http.Dir("./assets"))))
@@ -124,6 +131,7 @@ func main() {
 	r.Get("/api/discover", hub.Discover)
 	r.Get("/api-docs", hubHandler.ApiDocs)
 	r.Get("/api-docs/export", hubHandler.ExportDocs)
+	r.Get("/api-docs/external", hubHandler.ExternalApiDocs)
 
 	// UDP LAN discovery — lets clients find this server without a hardcoded IP.
 	// Only runs in a LAN mode

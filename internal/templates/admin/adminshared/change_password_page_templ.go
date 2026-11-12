@@ -70,7 +70,7 @@ func changePasswordContent(successMessage string, errorMessage string) templ.Com
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(successMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/adminshared/change_password_page.templ`, Line: 13, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/adminshared/change_password_page.templ`, Line: 12, Col: 96}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -89,7 +89,7 @@ func changePasswordContent(successMessage string, errorMessage string) templ.Com
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/adminshared/change_password_page.templ`, Line: 16, Col: 90}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/adminshared/change_password_page.templ`, Line: 15, Col: 90}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

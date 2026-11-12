@@ -12,18 +12,15 @@ templ restaurantDeleteConfirmContent(restaurant adminshared.RestaurantView, erro
 			@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurant.ID), "Back")
 			<h2 class="text-2xl font-bold gms-main-text">Confirm Deletion</h2>
 		</div>
-
 		<div class="w-full lg:w-[65%] mx-auto p-6 rounded-lg shadow-lg border gms-border-medium gms-dark-bg">
 			<p class="gms-demo-accent-text text-sm mb-4">
 				You are about to delete <strong>{ restaurant.Name }</strong>. Its menus and
 				items will be hidden from customers, but order history is preserved.
 				Enter your admin password to confirm.
 			</p>
-
 			if errorMessage != "" {
 				<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
 			}
-
 			<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID) + "/delete") } class="space-y-4">
 				<label class="block">
 					<span class="text-sm font-medium mb-1 block gms-demo-accent-text">Admin Password</span>

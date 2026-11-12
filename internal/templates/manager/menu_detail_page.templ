@@ -15,7 +15,6 @@ templ menuDetailContent(menu MenuView, items []FoodItemView) {
 				+ New Item
 			</a>
 		</div>
-
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, item := range items {
 				<div class={ "flex flex-col border gms-border-medium rounded-lg shadow-lg overflow-hidden", templ.KV("opacity-50", item.IsDeleted) }>

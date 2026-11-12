@@ -10,15 +10,17 @@ import (
 // Manager handlers is a toolbox for handlers the manager needs
 // They are bundled together because they should be passed down all together and they are needed to be passed anyhow
 type ManagerHandlers struct {
-	Auth      *manager.AuthHandler
-	Dashboard *manager.DashboardHandler
-	Employee  *manager.EmployeeHandler
-	Chat      *manager.ChatHandler
-	Profile   *manager.ProfileHandler
-	MyProfile *manager.MyProfileHandler
-	Order     *manager.OrderHandler
-	Menu      *manager.MenuHandler
-	FoodItem  *manager.FoodItemHandler
+	Auth        *manager.AuthHandler
+	Dashboard   *manager.DashboardHandler
+	Employee    *manager.EmployeeHandler
+	Chat        *manager.ChatHandler
+	Profile     *manager.ProfileHandler
+	MyProfile   *manager.MyProfileHandler
+	Order       *manager.OrderHandler
+	Menu        *manager.MenuHandler
+	FoodItem    *manager.FoodItemHandler
+	OnlineOrder *manager.OnlineOrderHandler
+	ApiKey      *manager.ApiKeyHandler
 }
 
 // RegisterManagerRoutes attaches all /manager/... URLs to the main router `r`.
@@ -84,7 +86,11 @@ func RegisterManagerRoutes(r chi.Router, h ManagerHandlers, authService *authser
 				// Items (dishes) inside an order
 				r.Post("/{orderID}/items/{itemOrderID}/delete", h.Order.RemoveItem)       // remove a dish
 				r.Post("/{orderID}/items/{itemOrderID}/edit", h.Order.UpdateItemQuantity) // change quantity
-				r.Post("/{orderID}/items/add", h.Order.AddItem)                           // add a dish
+				r.Post("/{orderID}/items/add", h.Order.AddItem)
+
+				r.Get("/online", h.OnlineOrder.List)
+				r.Post("/online/{onlineOrderID}/approve", h.OnlineOrder.Approve)
+				r.Post("/online/{onlineOrderID}/reject", h.OnlineOrder.Reject) // add a dish
 			})
 
 			// /manager/menus/...
@@ -109,6 +115,12 @@ func RegisterManagerRoutes(r chi.Router, h ManagerHandlers, authService *authser
 					r.Post("/{itemID}/ingredients/create", h.FoodItem.CreateIngredient)
 					r.Post("/{itemID}/ingredients/{ingredientID}/remove", h.FoodItem.RemoveIngredient)
 				})
+			})
+
+			r.Route("/api-keys", func(r chi.Router) {
+				r.Get("/", h.ApiKey.List)
+				r.Post("/", h.ApiKey.Create)
+				r.Post("/{keyID}/revoke", h.ApiKey.Revoke)
 			})
 		})
 	})

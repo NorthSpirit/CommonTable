@@ -106,7 +106,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 32, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 31, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -124,7 +124,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(itemFormAction(menuID, isEdit, item.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 35, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 33, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -137,7 +137,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 41, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 38, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -150,7 +150,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.NameAlt)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 46, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 42, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -163,7 +163,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(item.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 51, Col: 116}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 46, Col: 116}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -176,7 +176,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(item.DescriptionAlt)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 56, Col: 123}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 50, Col: 123}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -189,7 +189,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(item.Instructions)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 61, Col: 118}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 54, Col: 118}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -202,7 +202,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(item.InstructionsAlt)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 66, Col: 125}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 58, Col: 125}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -215,7 +215,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(formatPrice(item.Price))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 72, Col: 104}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 63, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -228,7 +228,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(itoa(item.PrepTimeMins))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 76, Col: 99}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 67, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -260,7 +260,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.ImageURL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 89, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 77, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
@@ -313,7 +313,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(itoa(allergen.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 104, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 90, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 			if templ_7745c5c3_Err != nil {
@@ -336,7 +336,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(allergen.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 105, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 91, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -374,7 +374,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(ing.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 137, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 119, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -387,7 +387,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 				var templ_7745c5c3_Var22 string
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(ing.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 138, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 120, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -400,7 +400,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 				var templ_7745c5c3_Var23 string
 				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(ing.Measurement)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 139, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 121, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {
@@ -413,7 +413,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 				var templ_7745c5c3_Var24 templ.SafeURL
 				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/menus/" + itoa(menuID) + "/items/" + itoa(item.ID) + "/ingredients/" + itoa(ing.IngredientID) + "/remove"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 141, Col: 165}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 123, Col: 165}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 				if templ_7745c5c3_Err != nil {
@@ -431,7 +431,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 			var templ_7745c5c3_Var25 templ.SafeURL
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/menus/" + itoa(menuID) + "/items/" + itoa(item.ID) + "/ingredients/add"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 152, Col: 126}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 133, Col: 126}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
@@ -449,7 +449,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 				var templ_7745c5c3_Var26 string
 				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(itoa(opt.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 157, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 138, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
 				if templ_7745c5c3_Err != nil {
@@ -462,7 +462,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 				var templ_7745c5c3_Var27 string
 				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(opt.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 157, Col: 49}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 138, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 				if templ_7745c5c3_Err != nil {
@@ -480,7 +480,7 @@ func foodItemFormContent(menuID int32, isEdit bool, item FoodItemView, allergens
 			var templ_7745c5c3_Var28 templ.SafeURL
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/menus/" + itoa(menuID) + "/items/" + itoa(item.ID) + "/ingredients/create"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 167, Col: 129}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/food_item_form_page.templ`, Line: 147, Col: 129}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {

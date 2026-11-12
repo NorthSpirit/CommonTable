@@ -382,6 +382,16 @@ type RestaurantAllergen struct {
 	AllergenID   int32 `json:"allergen_id"`
 }
 
+type RestaurantApiKey struct {
+	ID           int32            `json:"id"`
+	RestaurantID int32            `json:"restaurant_id"`
+	KeyHash      string           `json:"key_hash"`
+	KeyPrefix    string           `json:"key_prefix"`
+	Label        string           `json:"label"`
+	CreatedAt    pgtype.Timestamp `json:"created_at"`
+	RevokedAt    pgtype.Timestamp `json:"revoked_at"`
+}
+
 type RestaurantIngredient struct {
 	RestaurantID int32 `json:"restaurant_id"`
 	IngredientID int32 `json:"ingredient_id"`
@@ -395,6 +405,33 @@ type Table struct {
 	Section   pgtype.Text      `json:"section"`
 	Status    TableStatus      `json:"status"`
 	DeletedAt pgtype.Timestamp `json:"deleted_at"`
+}
+
+type UnapprovedOrder struct {
+	ID              int32            `json:"id"`
+	RestaurantID    int32            `json:"restaurant_id"`
+	ApiKeyID        int32            `json:"api_key_id"`
+	CustomerName    string           `json:"customer_name"`
+	CustomerPhone   string           `json:"customer_phone"`
+	Notes           pgtype.Text      `json:"notes"`
+	Status          string           `json:"status"`
+	IdempotencyKey  string           `json:"idempotency_key"`
+	ApprovedOrderID pgtype.Int4      `json:"approved_order_id"`
+	DecidedBy       pgtype.Int4      `json:"decided_by"`
+	DecidedAt       pgtype.Timestamp `json:"decided_at"`
+	RejectionReason pgtype.Text      `json:"rejection_reason"`
+	CreatedAt       pgtype.Timestamp `json:"created_at"`
+}
+
+type UnapprovedOrderItem struct {
+	ID                int32          `json:"id"`
+	UnapprovedOrderID int32          `json:"unapproved_order_id"`
+	ItemID            int32          `json:"item_id"`
+	Quantity          int32          `json:"quantity"`
+	UnitPriceSnapshot pgtype.Numeric `json:"unit_price_snapshot"`
+	VatSnapshot       pgtype.Numeric `json:"vat_snapshot"`
+	ItemNameSnapshot  string         `json:"item_name_snapshot"`
+	Notes             pgtype.Text    `json:"notes"`
 }
 
 type WaiterQuickItem struct {

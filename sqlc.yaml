@@ -12,6 +12,7 @@ sql:
       - "./queries/homepage"
       - "./queries/idempotency_keys"
       - "./queries/export"
+      - "./queries/external_orders"
     schema: "./migrations"
     gen:
       go:

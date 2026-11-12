@@ -1,4 +1,5 @@
 package hub
+
 import "strconv"
 
 templ ApiDocsPage() {
@@ -28,18 +29,15 @@ templ ApiDocsPage() {
 						<p class="text-sm gms-demo-accent-text">Waiter API Reference</p>
 					</div>
 				</header>
-
 				<nav class="border-y-2 gms-border-dark uppercase font-bold sticky top-0 z-50 flex gms-content-bg">
 					<a href="/hub" class="flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light">&larr; Back to Hub</a>
 					<a href="#" id="MColour" class="flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light border-l-2 gms-border-medium">Palette Swap</a>
 				</nav>
-
 				<main class="flex-1 px-6 py-6 gms-dark-bg">
 					<div class="w-full lg:w-[65%] mx-auto">
 						<p class="text-sm gms-light-text mb-6">
 							Reference for building a client against the waiter-facing JSON API. This is what the official waiter app itself talks to.
 						</p>
-
 						<div class="gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6">
 							<h2 class="text-lg font-bold mb-2">Authentication</h2>
 							<p class="text-sm mb-2">
@@ -49,27 +47,22 @@ templ ApiDocsPage() {
 								Tokens use a sliding expiry: every authenticated response may include an <code>X-Refreshed-Token</code> header — store and use whichever token was most recently received. An unused session lapses after roughly one hour.
 							</p>
 						</div>
-
 						<div class="flex justify-end gap-2 mb-4 text-xs font-bold uppercase">
 							<button type="button" id="apiExpandAll" class="px-3 py-1 rounded gms-content-bg gms-main-text gms-hover-bg-light border gms-border-medium">Expand all</button>
 							<button type="button" id="apiCollapseAll" class="px-3 py-1 rounded gms-content-bg gms-main-text gms-hover-bg-light border gms-border-medium">Collapse all</button>
 						</div>
-
 						for _, g := range apiGroups {
 							@endpointGroup(g)
 						}
-
 						<div class="text-xs gms-demo-accent-text mt-8 text-center">
 							<p>All requests/responses are JSON. Errors return { "{" }"error": "..."{ "}" } with a 4xx/5xx status.</p>
 						</div>
 					</div>
 				</main>
-
 				<footer class="gms-dark-bg gms-light-text p-4 text-center gms-accent-text">
 					<p>&copy; 2026 Mantas "IndomitableWastage" Jurevičius</p>
 				</footer>
 			</div>
-
 			<script src="/assets/jsscripts/colour_swap.js"></script>
 			<script src="/assets/jsscripts/api_docs.js"></script>
 		</body>

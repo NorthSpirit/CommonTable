@@ -18,9 +18,7 @@ templ menusPageContent(locale string, restaurantName string, quickNav []shared.Q
 				{ restaurantName }
 			</h2>
 		</div>
-
 		@QuickNav(quickNav, locale)
-
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, menu := range menus {
 				@MenuCard(menu, locale)

@@ -34,3 +34,9 @@ func (h *HubHandler) ExportDocs(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to render page", http.StatusInternalServerError)
 	}
 }
+
+func (h *HubHandler) ExternalApiDocs(w http.ResponseWriter, r *http.Request) {
+	if err := hub.ExternalApiDocsPage().Render(r.Context(), w); err != nil {
+		http.Error(w, "failed to render page", http.StatusInternalServerError)
+	}
+}

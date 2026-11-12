@@ -9,14 +9,11 @@ templ LoginPage(errorMessage string) {
 templ loginPageContent(errorMessage string) {
 	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
 		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">Admin Login</h2>
-
 		<div id="login-form" class="w-full lg:w-[65%] mx-auto p-6 gms-dark-bg rounded-lg shadow-xl border gms-border-medium">
 			<p class="gms-demo-accent-text mb-4 text-center text-sm">Please enter your credentials to access the admin panel.</p>
-
 			if errorMessage != "" {
 				<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm text-center">{ errorMessage }</p>
 			}
-
 			<form method="POST" action="/admin/login" class="space-y-4">
 				<label class="block">
 					<span class="text-sm font-medium mb-1 block gms-demo-accent-text">Username:</span>
@@ -38,6 +35,5 @@ templ loginPageContent(errorMessage string) {
 			</form>
 		</div>
 	</main>
-
 	<script src="/assets/jsscripts/toggle_password.js"></script>
 }

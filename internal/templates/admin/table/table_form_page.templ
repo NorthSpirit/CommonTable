@@ -28,30 +28,24 @@ templ tableFormContent(isEdit bool, table adminshared.TableView, errorMessage st
 				{ tableFormTitle(isEdit) }
 			</h2>
 		</div>
-
 		if errorMessage != "" {
 			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm w-full lg:w-[65%] mx-auto">{ errorMessage }</p>
 		}
-
 		<form method="POST" action={ tableFormAction(isEdit, table.ID) } class="w-full lg:w-[65%] mx-auto">
 			<fieldset class="border p-4 rounded-lg gms-border-medium">
 				<legend class="text-lg font-semibold px-2">Details</legend>
-
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Number</span>
 					<input type="number" name="number" min="1" max="100000" value={ adminshared.Itoa(table.Number) } required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
-
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Capacity</span>
 					<input type="number" name="capacity" min="1" max="1000" value={ adminshared.Itoa(table.Capacity) } required class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
-
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Section</span>
 					<input type="text" name="section" value={ table.Section } maxlength="255" class="p-2 border gms-border-medium rounded-md w-full"/>
 				</label>
-
 				if isEdit {
 					<label class="block">
 						<span class="text-sm font-medium mb-1 block">Status</span>
@@ -64,10 +58,9 @@ templ tableFormContent(isEdit bool, table adminshared.TableView, errorMessage st
 					</label>
 				}
 			</fieldset>
-
 			<div class="flex justify-end mt-4">
 				<input type="submit" value="Save" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
 			</div>
 		</form>
 	</main>
-}
+}

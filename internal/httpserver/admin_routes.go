@@ -23,6 +23,7 @@ type AdminHandlers struct {
 	Chat           *admin.ChatHandler
 	ChangePassword *admin.ChangePasswordHandler
 	Export         *admin.ExportHandler
+	OnlineOrder    *admin.OnlineOrderHandler
 }
 
 func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservices.AdminService) {
@@ -94,6 +95,10 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 					r.Post("/{orderID}/payments/new", h.Order.CreatePayment)
 					r.Post("/{orderID}/payments/quick-pay", h.Order.QuickPayCash)
 					r.Post("/{orderID}/items/add", h.Order.AddItem)
+
+					r.Get("/online", h.OnlineOrder.List)
+					r.Post("/online/{onlineOrderID}/approve", h.OnlineOrder.Approve)
+					r.Post("/online/{onlineOrderID}/reject", h.OnlineOrder.Reject)
 				})
 			})
 

@@ -18,7 +18,6 @@ templ menuDetailContent(restaurantID int32, menu adminshared.MenuView, items []a
 				+ New Item
 			</a>
 		</div>
-
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, item := range items {
 				<div class={ "flex flex-col border gms-border-medium rounded-lg shadow-lg overflow-hidden", templ.KV("opacity-50", item.IsDeleted) }>
@@ -37,7 +36,6 @@ templ menuDetailContent(restaurantID int32, menu adminshared.MenuView, items []a
 					<div class="flex flex-col flex-1 p-4">
 						<h4 class="text-lg font-bold gms-main-text">{ item.Name }</h4>
 						<p class="text-sm font-semibold gms-main-text">€{ formatPrice(item.Price) }</p>
-
 						<div class="flex gap-2 mt-auto pt-3">
 							<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/menus/" + adminshared.Itoa(menu.ID) + "/items/" + adminshared.Itoa(item.ID) + "/edit") } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 								Edit

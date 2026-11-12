@@ -15,15 +15,12 @@ templ orderFormContent(restaurantID int32, tables []adminshared.TableOptionView,
 			</h2>
 		</div>
 		<p class="text-sm opacity-70 mb-6 w-full lg:w-[65%] mx-auto">For emergency use only — normal orders should go through the waiter app.</p>
-
 		if errorMessage != "" {
 			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm w-full lg:w-[65%] mx-auto">{ errorMessage }</p>
 		}
-
 		<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/orders/new") } class="w-full lg:w-[65%] mx-auto">
 			<fieldset class="border p-4 rounded-lg gms-border-medium mb-4">
 				<legend class="text-lg font-semibold px-2">Order Details</legend>
-
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Table</span>
 					<select name="table_id" required class="p-2 border gms-border-medium rounded-md w-full">
@@ -33,7 +30,6 @@ templ orderFormContent(restaurantID int32, tables []adminshared.TableOptionView,
 						}
 					</select>
 				</label>
-
 				<label class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">Waiter</span>
 					<select name="waiter_id" required class="p-2 border gms-border-medium rounded-md w-full">
@@ -42,13 +38,11 @@ templ orderFormContent(restaurantID int32, tables []adminshared.TableOptionView,
 						}
 					</select>
 				</label>
-
 				<label class="block">
 					<span class="text-sm font-medium mb-1 block">Notes</span>
 					<textarea name="notes" rows="2" class="p-2 border gms-border-medium rounded-md w-full"></textarea>
 				</label>
 			</fieldset>
-
 			<fieldset class="border p-4 rounded-lg gms-border-medium mb-4">
 				<legend class="text-lg font-semibold px-2">Items</legend>
 				<div class="max-h-64 overflow-y-auto border gms-border-medium rounded p-2">
@@ -61,7 +55,6 @@ templ orderFormContent(restaurantID int32, tables []adminshared.TableOptionView,
 				</div>
 				<p class="text-xs opacity-70 mt-2">Set a quantity above 0 for each item to include.</p>
 			</fieldset>
-
 			<div class="flex justify-end">
 				<input type="submit" value="Create Order" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
 			</div>

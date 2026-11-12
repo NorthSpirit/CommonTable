@@ -16,7 +16,6 @@ type DashboardStats struct {
 templ dashboardContent(restaurantName string, stats DashboardStats) {
 	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
 		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">Welcome, { restaurantName } Manager</h2>
-
 		<div class="w-full lg:w-[65%] mx-auto">
 			<a href="/manager/orders" class="block gms-dark-bg gms-light-text rounded-lg shadow-lg p-6 mb-8 border gms-border-medium transition-all duration-300 hover:shadow-xl">
 				<div class="flex items-center justify-between">
@@ -27,7 +26,6 @@ templ dashboardContent(restaurantName string, stats DashboardStats) {
 					<span class="text-2xl gms-light-text opacity-80">→</span>
 				</div>
 			</a>
-
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<section class="border gms-border-medium rounded-lg overflow-hidden">
 					<h3 class="text-sm font-bold uppercase tracking-wide px-4 py-2 gms-dark-bg gms-light-text">Menu Content</h3>
@@ -36,7 +34,6 @@ templ dashboardContent(restaurantName string, stats DashboardStats) {
 						@statRow("Food Items", stats.FoodItems, "")
 					</div>
 				</section>
-
 				<section class="border gms-border-medium rounded-lg overflow-hidden">
 					<h3 class="text-sm font-bold uppercase tracking-wide px-4 py-2 gms-dark-bg gms-light-text">Team</h3>
 					<div class="divide-y gms-border-medium">

@@ -14,7 +14,6 @@ templ tablesPageContent(tables []adminshared.TableView, restaurants []adminshare
 				+ New Table
 			</a>
 		</div>
-
 		<form method="GET" action="/admin/tables" class="mb-6 flex items-center gap-2">
 			<label class="text-sm font-medium">View occupancy for:</label>
 			<select name="restaurant_id" onchange="this.form.submit()" class="p-2 border gms-border-medium rounded-md">
@@ -24,7 +23,6 @@ templ tablesPageContent(tables []adminshared.TableView, restaurants []adminshare
 				}
 			</select>
 		</form>
-
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			for _, t := range tables {
 				<div class={ "flex flex-col min-h-[140px] border gms-border-medium rounded-lg shadow p-4", templ.KV("opacity-50", t.IsDeleted) }>

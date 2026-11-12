@@ -1,0 +1,76 @@
+package hub
+
+templ ExternalApiDocsPage() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>CommonTable - External Orders API</title>
+			<meta charset="utf-8"/>
+			<link rel="icon" type="image/png" href="/assets/images/favicon.png"/>
+			<script src="https://cdn.tailwindcss.com"></script>
+			<link id="themeCSS" rel="stylesheet" href="/assets/css/CTStyleMain.css"/>
+			<link id="themeCSSAlt" rel="stylesheet" href="/assets/css/CTStyleAlt.css" disabled/>
+			<link id="themeCSSAltClean" rel="stylesheet" href="/assets/css/CTStyleAltClean.css" disabled/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<style>
+				html, body { height: 100%; }
+				:root { font-family: 'Lora', serif; }
+				a { color: inherit; }
+				code { font-family: monospace; }
+			</style>
+		</head>
+		<body>
+			<div class="min-h-screen flex flex-col gms-dark-bg">
+				<header class="gms-dark-bg gms-light-text p-2 shadow-md">
+					<div class="container mx-auto text-center">
+						<h1 class="gms-title-text lg:text-4xl sm:text-3xl font-bold mb-1">CommonTable</h1>
+						<p class="text-sm gms-demo-accent-text">External Orders API Reference</p>
+					</div>
+				</header>
+				<nav class="border-y-2 gms-border-dark uppercase font-bold sticky top-0 z-50 flex gms-content-bg">
+					<a href="/hub" class="flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light">&larr; Back to Hub</a>
+					<a href="#" id="MColour" class="flex-1 block py-2 text-center gms-content-bg gms-main-text gms-hover-bg-light border-l-2 gms-border-medium">Palette Swap</a>
+				</nav>
+				<main class="flex-1 px-6 py-6 gms-dark-bg">
+					<div class="w-full lg:w-[65%] mx-auto">
+						<p class="text-sm gms-light-text mb-6">
+							Reference for building a website or app that sends take-out orders to a restaurant. Orders are not placed straight away: a manager has to approve each one first.
+						</p>
+						<div class="gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6">
+							<h2 class="text-lg font-bold mb-2">Authentication</h2>
+							<p class="text-sm mb-2">
+								Every request needs an API key, sent as <code>Authorization: Bearer &lt;key&gt;</code>. A key belongs to one restaurant, so orders always go to that restaurant. A manager creates and revokes keys in the manager panel.
+							</p>
+							<p class="text-sm">
+								The full key is shown only once, when it is created. A revoked key stops working immediately.
+							</p>
+						</div>
+						<div class="gms-content-bg gms-main-text rounded-lg shadow-lg p-4 mb-6">
+							<h2 class="text-lg font-bold mb-2">How an order moves</h2>
+							<ol class="list-decimal pl-5 text-sm space-y-1">
+								<li>The client gets the item ids from <code>GET /api/external/items</code>.</li>
+								<li>The client submits the order. It is stored as <em>pending</em> and nothing reaches the kitchen yet.</li>
+								<li>A manager approves it, which creates a normal take-out order with the customer's name and phone in its notes, or rejects it.</li>
+							</ol>
+						</div>
+						<div class="flex justify-end gap-2 mb-4 text-xs font-bold uppercase">
+							<button type="button" id="apiExpandAll" class="px-3 py-1 rounded gms-content-bg gms-main-text gms-hover-bg-light border gms-border-medium">Expand all</button>
+							<button type="button" id="apiCollapseAll" class="px-3 py-1 rounded gms-content-bg gms-main-text gms-hover-bg-light border gms-border-medium">Collapse all</button>
+						</div>
+						for _, g := range externalApiGroups {
+							@endpointGroup(g)
+						}
+						<div class="text-xs gms-demo-accent-text mt-8 text-center">
+							<p>All requests/responses are JSON. Errors return { "{" }"error": "..."{ "}" } with a 4xx/5xx status.</p>
+						</div>
+					</div>
+				</main>
+				<footer class="gms-dark-bg gms-light-text p-4 text-center gms-accent-text">
+					<p>&copy; 2026 Mantas "IndomitableWastage" Jurevičius</p>
+				</footer>
+			</div>
+			<script src="/assets/jsscripts/colour_swap.js"></script>
+			<script src="/assets/jsscripts/api_docs.js"></script>
+		</body>
+	</html>
+}

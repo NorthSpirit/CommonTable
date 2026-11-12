@@ -1,0 +1,75 @@
+package manager
+
+type OnlineOrderItemView struct {
+	Name      string
+	Quantity  int32
+	UnitPrice string
+	Notes     string
+}
+
+type OnlineOrderView struct {
+	ID            int32
+	CustomerName  string
+	CustomerPhone string
+	Notes         string
+	CreatedAt     string
+	Total         string
+	Items         []OnlineOrderItemView
+}
+
+templ OnlineOrdersPage(restaurantName string, employeeName string, message string, orders []OnlineOrderView) {
+	@Layout(restaurantName+" - Online Orders", employeeName, onlineOrdersPageContent(message, orders))
+}
+
+templ onlineOrdersPageContent(message string, orders []OnlineOrderView) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@BackLink("/manager/orders", "Back")
+			<h2 class="text-2xl font-bold gms-main-text">Online Orders</h2>
+		</div>
+		if message != "" {
+			<p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm">{ message }</p>
+		}
+		if len(orders) == 0 {
+			<p class="italic opacity-70">No online orders are waiting for approval.</p>
+		}
+		<div class="space-y-4">
+			for _, o := range orders {
+				<div class="border-2 gms-border-medium rounded-lg p-4">
+					<div class="flex flex-col sm:flex-row sm:justify-between gap-1 mb-2">
+						<p class="font-bold">{ o.CustomerName } &middot; { o.CustomerPhone }</p>
+						<p class="text-xs opacity-70">{ o.CreatedAt }</p>
+					</div>
+					if o.Notes != "" {
+						<p class="text-sm mb-2 italic">{ o.Notes }</p>
+					}
+					<table class="w-full text-sm mb-2">
+						<tbody class="divide-y gms-border-medium">
+							for _, item := range o.Items {
+								<tr>
+									<td class="py-1">
+										{ itoa(item.Quantity) } &times; { item.Name }
+										if item.Notes != "" {
+											<span class="text-xs italic opacity-70">({ item.Notes })</span>
+										}
+									</td>
+									<td class="py-1 text-right">{ item.UnitPrice }</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+					<p class="text-sm font-bold text-right mb-3">Total: { o.Total }</p>
+					<div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+						<form method="POST" action={ templ.URL("/manager/orders/online/" + itoa(o.ID) + "/approve") }>
+							<input type="submit" value="Approve" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+						</form>
+						<form method="POST" action={ templ.URL("/manager/orders/online/" + itoa(o.ID) + "/reject") } class="flex flex-1 gap-2">
+							<input type="text" name="reason" maxlength="500" placeholder="Reason (optional)" class="flex-1 p-2 border gms-border-medium rounded-md gms-content-bg gms-main-text"/>
+							<input type="submit" value="Reject" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-clear border gms-border-medium"/>
+						</form>
+					</div>
+				</div>
+			}
+		</div>
+	</main>
+}

@@ -127,7 +127,7 @@ func menuDetailContent(menu MenuView, items []FoodItemView) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.ImageURL)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 24, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 23, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 				if templ_7745c5c3_Err != nil {
@@ -140,7 +140,7 @@ func menuDetailContent(menu MenuView, items []FoodItemView) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 24, Col: 49}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 23, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 				if templ_7745c5c3_Err != nil {
@@ -174,7 +174,7 @@ func menuDetailContent(menu MenuView, items []FoodItemView) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(item.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 35, Col: 61}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 34, Col: 61}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -187,7 +187,7 @@ func menuDetailContent(menu MenuView, items []FoodItemView) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(formatPrice(item.Price))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 36, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 35, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -205,7 +205,7 @@ func menuDetailContent(menu MenuView, items []FoodItemView) templ.Component {
 				var templ_7745c5c3_Var11 templ.SafeURL
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/" + itoa(item.ID) + "/restore"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 39, Col: 122}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 38, Col: 122}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -223,7 +223,7 @@ func menuDetailContent(menu MenuView, items []FoodItemView) templ.Component {
 				var templ_7745c5c3_Var12 templ.SafeURL
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/" + itoa(item.ID) + "/edit"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 43, Col: 100}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 42, Col: 100}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -236,7 +236,7 @@ func menuDetailContent(menu MenuView, items []FoodItemView) templ.Component {
 				var templ_7745c5c3_Var13 templ.SafeURL
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/manager/menus/" + itoa(menu.ID) + "/items/" + itoa(item.ID) + "/delete"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 46, Col: 121}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/manager/menu_detail_page.templ`, Line: 45, Col: 121}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {

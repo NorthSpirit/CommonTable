@@ -22,8 +22,12 @@ type Querier interface {
 	CountEmployees(ctx context.Context) (int64, error)
 	CountFoodItems(ctx context.Context) (int64, error)
 	CountFoodMenus(ctx context.Context) (int64, error)
+	CountPendingUnapprovedOrdersByApiKey(ctx context.Context, apiKeyID int32) (int64, error)
+	CountPendingUnapprovedOrdersByPhone(ctx context.Context, arg CountPendingUnapprovedOrdersByPhoneParams) (int64, error)
+	CountRecentUnapprovedOrdersByApiKey(ctx context.Context, arg CountRecentUnapprovedOrdersByApiKeyParams) (int64, error)
 	CountWaiterQuickItems(ctx context.Context, employeeID int32) (int64, error)
 	CreateAllergen(ctx context.Context, arg CreateAllergenParams) (Allergen, error)
+	CreateApiKey(ctx context.Context, arg CreateApiKeyParams) (RestaurantApiKey, error)
 	CreateChatMessage(ctx context.Context, arg CreateChatMessageParams) (ChatMessage, error)
 	CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (Employee, error)
 	CreateFoodIngredient(ctx context.Context, arg CreateFoodIngredientParams) (FoodIngredient, error)
@@ -34,6 +38,8 @@ type Querier interface {
 	CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error)
 	CreateRestaurant(ctx context.Context, arg CreateRestaurantParams) (Restaurant, error)
 	CreateTable(ctx context.Context, arg CreateTableParams) (Table, error)
+	CreateUnapprovedOrder(ctx context.Context, arg CreateUnapprovedOrderParams) (UnapprovedOrder, error)
+	CreateUnapprovedOrderItem(ctx context.Context, arg CreateUnapprovedOrderItemParams) error
 	DeleteAllergen(ctx context.Context, id int32) error
 	DeleteChatMessage(ctx context.Context, id int32) error
 	DeleteEmployee(ctx context.Context, id int32) error
@@ -42,6 +48,7 @@ type Querier interface {
 	DeleteFoodOrder(ctx context.Context, id int32) error
 	DeleteHomepageImage(ctx context.Context, slot int32) error
 	DeletePayment(ctx context.Context, id int32) error
+	GetActiveApiKeyByHash(ctx context.Context, keyHash string) (RestaurantApiKey, error)
 	GetActiveOrderForTable(ctx context.Context, arg GetActiveOrderForTableParams) (FoodOrder, error)
 	GetAllergen(ctx context.Context, id int32) (Allergen, error)
 	GetAllergenByCode(ctx context.Context, code string) (Allergen, error)
@@ -51,6 +58,7 @@ type Querier interface {
 	GetFoodIngredient(ctx context.Context, id int32) (FoodIngredient, error)
 	GetFoodItem(ctx context.Context, id int32) (GetFoodItemRow, error)
 	GetFoodItemForDisplay(ctx context.Context, arg GetFoodItemForDisplayParams) (GetFoodItemForDisplayRow, error)
+	GetFoodItemForExternalOrder(ctx context.Context, arg GetFoodItemForExternalOrderParams) (GetFoodItemForExternalOrderRow, error)
 	GetFoodMenu(ctx context.Context, id int32) (FoodMenu, error)
 	GetFoodMenuForDisplay(ctx context.Context, arg GetFoodMenuForDisplayParams) (GetFoodMenuForDisplayRow, error)
 	GetFoodOrder(ctx context.Context, id int32) (FoodOrder, error)
@@ -66,6 +74,8 @@ type Querier interface {
 	GetRestaurantForDisplay(ctx context.Context, arg GetRestaurantForDisplayParams) (GetRestaurantForDisplayRow, error)
 	GetRestaurantForExport(ctx context.Context, id int32) (GetRestaurantForExportRow, error)
 	GetTable(ctx context.Context, id int32) (Table, error)
+	GetUnapprovedOrderByIdempotencyKey(ctx context.Context, arg GetUnapprovedOrderByIdempotencyKeyParams) (UnapprovedOrder, error)
+	GetUnapprovedOrderForUpdate(ctx context.Context, arg GetUnapprovedOrderForUpdateParams) (UnapprovedOrder, error)
 	LinkRestaurantAllergen(ctx context.Context, arg LinkRestaurantAllergenParams) error
 	LinkRestaurantIngredient(ctx context.Context, arg LinkRestaurantIngredientParams) error
 	ListActiveEmployeesByRestaurant(ctx context.Context, restaurantID int32) ([]Employee, error)
@@ -75,6 +85,7 @@ type Querier interface {
 	ListAllergensForItem(ctx context.Context, itemID int32) ([]Allergen, error)
 	ListAllergensForItemDisplay(ctx context.Context, arg ListAllergensForItemDisplayParams) ([]ListAllergensForItemDisplayRow, error)
 	ListAllergensForRestaurant(ctx context.Context, restaurantID int32) ([]Allergen, error)
+	ListApiKeysByRestaurant(ctx context.Context, restaurantID int32) ([]RestaurantApiKey, error)
 	ListAvailableFoodItemsByRestaurant(ctx context.Context, restaurantID int32) ([]ListAvailableFoodItemsByRestaurantRow, error)
 	ListEmployeesByRestaurant(ctx context.Context, restaurantID int32) ([]Employee, error)
 	ListFoodIngredients(ctx context.Context) ([]FoodIngredient, error)
@@ -103,6 +114,7 @@ type Querier interface {
 	ListOrdersByStatus(ctx context.Context, arg ListOrdersByStatusParams) ([]FoodOrder, error)
 	ListOrdersByTable(ctx context.Context, tableID pgtype.Int4) ([]FoodOrder, error)
 	ListPaymentsByOrder(ctx context.Context, orderID int32) ([]Payment, error)
+	ListPendingUnapprovedOrders(ctx context.Context, restaurantID int32) ([]UnapprovedOrder, error)
 	ListRestaurants(ctx context.Context) ([]Restaurant, error)
 	ListRestaurantsForAdmin(ctx context.Context) ([]Restaurant, error)
 	ListRestaurantsForDisplay(ctx context.Context, locale string) ([]ListRestaurantsForDisplayRow, error)
@@ -112,7 +124,10 @@ type Querier interface {
 	ListTablesWithActiveOrderFlag(ctx context.Context, restaurantID int32) ([]ListTablesWithActiveOrderFlagRow, error)
 	ListTablesWithGlobalOrderStatus(ctx context.Context) ([]ListTablesWithGlobalOrderStatusRow, error)
 	ListTablesWithOrderStatusForRestaurant(ctx context.Context, restaurantID int32) ([]ListTablesWithOrderStatusForRestaurantRow, error)
+	ListUnapprovedOrderItems(ctx context.Context, unapprovedOrderID int32) ([]UnapprovedOrderItem, error)
 	ListWaiterQuickItems(ctx context.Context, employeeID int32) ([]ListWaiterQuickItemsRow, error)
+	MarkUnapprovedOrderApproved(ctx context.Context, arg MarkUnapprovedOrderApprovedParams) (int64, error)
+	MarkUnapprovedOrderRejected(ctx context.Context, arg MarkUnapprovedOrderRejectedParams) (int64, error)
 	RecordIdempotencyKey(ctx context.Context, key string) error
 	RemoveAllergenFromItem(ctx context.Context, arg RemoveAllergenFromItemParams) error
 	RemoveFoodItemFromMenu(ctx context.Context, arg RemoveFoodItemFromMenuParams) error
@@ -122,6 +137,7 @@ type Querier interface {
 	RestoreFoodItem(ctx context.Context, id int32) error
 	RestoreRestaurant(ctx context.Context, id int32) error
 	RestoreTable(ctx context.Context, id int32) error
+	RevokeApiKey(ctx context.Context, arg RevokeApiKeyParams) (int64, error)
 	SearchFoodItemsForWaiter(ctx context.Context, arg SearchFoodItemsForWaiterParams) ([]SearchFoodItemsForWaiterRow, error)
 	SetEmployeeActive(ctx context.Context, arg SetEmployeeActiveParams) error
 	SetFoodItemAvailability(ctx context.Context, arg SetFoodItemAvailabilityParams) error

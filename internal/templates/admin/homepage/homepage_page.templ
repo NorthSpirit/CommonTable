@@ -14,15 +14,12 @@ templ HomepagePage(welcomeText string, welcomeTextAlt string, images []htmlconte
 templ homepagePageContent(welcomeText string, welcomeTextAlt string, images []htmlcontent.Image, successMessage string) {
 	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
 		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">Homepage Content</h2>
-
 		if successMessage != "" {
 			<p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm">{ successMessage }</p>
 		}
-
 		<form method="POST" action="/admin/homepage" enctype="multipart/form-data" data-wysiwyg-form class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
 			<fieldset class="border p-4 rounded-lg gms-border-medium">
 				<legend class="text-lg font-semibold px-2">Welcome Text</legend>
-
 				<div class="mb-4 p-3 rounded-lg gms-dark-bg gms-light-text text-sm">
 					<p class="font-semibold mb-1 gms-demo-accent-text">Tips</p>
 					<ul class="list-disc pl-5 space-y-0.5">
@@ -31,7 +28,6 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, images []ht
 						<li><code>---</code> on its own line — the Spacer button inserts a visual spacer line.</li>
 					</ul>
 				</div>
-
 				<div class="block mb-4">
 					<span class="text-sm font-medium mb-1 block">English</span>
 					<div class="border gms-border-medium rounded-md overflow-hidden">
@@ -40,7 +36,6 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, images []ht
 					</div>
 					<input type="hidden" id="welcome_text" name="welcome_text" value={ welcomeText }/>
 				</div>
-
 				<div class="block">
 					<span class="text-sm font-medium mb-1 block">Alt Language (optional — falls back to English if blank)</span>
 					<div class="border gms-border-medium rounded-md overflow-hidden">
@@ -50,23 +45,18 @@ templ homepagePageContent(welcomeText string, welcomeTextAlt string, images []ht
 					<input type="hidden" id="welcome_text_alt" name="welcome_text_alt" value={ welcomeTextAlt }/>
 				</div>
 			</fieldset>
-
 			<fieldset class="border p-4 rounded-lg gms-border-medium">
 				<legend class="text-lg font-semibold px-2">Images</legend>
-
 				for i, img := range images {
 					@imageSlot(strconv.Itoa(i+1), img)
 				}
-
 				<span class="text-xs opacity-70 block mt-2">Width is a percentage of the text column. A shape other than Original crops the picture (it is never stretched). Position: 0 = left, 50 = centered, 100 = right.</span>
 			</fieldset>
-
 			<div class="lg:col-span-2 flex justify-end">
 				<input type="submit" value="Save Changes" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
 			</div>
 		</form>
 	</main>
-
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"/>
 	<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 	<script src="/assets/jsscripts/image_preview.js"></script>
@@ -86,6 +76,7 @@ templ editorToolbar(id string) {
 		</div>
 	</div>
 }
+
 templ imageSlot(n string, img htmlcontent.Image) {
 	<div class="mb-4 p-3 border rounded-lg gms-border-medium">
 		<span class="text-sm font-semibold mb-2 block">{ "Image " + n }</span>

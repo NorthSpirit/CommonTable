@@ -93,7 +93,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(successMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 18, Col: 84}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 17, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -112,7 +112,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.ImageURL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 22, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 20, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -125,7 +125,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(item.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 22, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 20, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -144,7 +144,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(item.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 25, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 23, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -162,7 +162,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 		var templ_7745c5c3_Var8 templ.SafeURL
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/chef/menus/" + strconv.Itoa(int(item.MenuID)) + "/items/" + strconv.Itoa(int(item.ID)) + "/instructions"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 30, Col: 173}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 27, Col: 173}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -175,7 +175,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(item.Instructions)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 31, Col: 118}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 28, Col: 118}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -188,7 +188,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 		var templ_7745c5c3_Var10 templ.SafeURL
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/chef/menus/" + strconv.Itoa(int(item.MenuID)) + "/items/" + strconv.Itoa(int(item.ID)) + "/availability"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 35, Col: 151}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 31, Col: 151}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -231,7 +231,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(ing.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 63, Col: 19}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 58, Col: 19}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -249,7 +249,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(formatAmount(ing.Amount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 65, Col: 63}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 60, Col: 62}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
@@ -262,7 +262,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(ing.Measurement)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 65, Col: 83}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 60, Col: 82}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
@@ -305,7 +305,7 @@ func chefItemDetailContent(item ChefItemDetailView, successMessage string) templ
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(allergen)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 80, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/chef/item_detail_page.templ`, Line: 74, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {

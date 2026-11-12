@@ -15,10 +15,9 @@ templ BoardPage(employeeName string, orders []KitchenOrderView) {
 // and this goes into its @content part
 templ boardContent(orders []KitchenOrderView) {
 	<div id="order-board" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
-
-	    // Since this an order display page, it has a for loop to render each of the smaller cards inside
-        // Since I don't know the number of orders known in advance
-        // It calls orderCard (which makes a "div") for each order in orders
+		// Since this an order display page, it has a for loop to render each of the smaller cards inside
+		// Since I don't know the number of orders known in advance
+		// It calls orderCard (which makes a "div") for each order in orders
 		for _, order := range orders {
 			@orderCard(order)
 		}
@@ -41,9 +40,9 @@ templ orderCard(order KitchenOrderView) {
 		<div class="p-3 flex flex-col flex-1">
 			<p class="text-xs opacity-60 mb-2">Order #{ itoa(order.OrderNumber) } — { order.CreatedAt }</p>
 			<ul class="text-sm gms-main-text mb-3 space-y-1">
-			    // Basically, a for loop inside a for loop of sorts - since orders themselves are in a loop
-			    // for (every order has a for every item in said order)
-			    // To list out orders items
+				// Basically, a for loop inside a for loop of sorts - since orders themselves are in a loop
+				// for (every order has a for every item in said order)
+				// To list out orders items
 				for _, item := range order.Items {
 					<li>
 						<span class="font-semibold">{ itoa(item.Quantity) }x</span> { item.Name }
@@ -58,8 +57,8 @@ templ orderCard(order KitchenOrderView) {
 			}
 			// The order's button, which automatically calls a post method with the route specified
 			// The hidden fields tell which order (order_id) should move to which status (status)
-            // The POST Method and the route is handled by internal/handlers/kitchen/orders_handler.go
-            // The form is shown only if the order has a next status
+			// The POST Method and the route is handled by internal/handlers/kitchen/orders_handler.go
+			// The form is shown only if the order has a next status
 			if order.NextStatus != "" {
 				<form method="POST" action="/kitchen/orders/status" class="mt-auto">
 					<input type="hidden" name="order_id" value={ itoa(order.ID) }/>

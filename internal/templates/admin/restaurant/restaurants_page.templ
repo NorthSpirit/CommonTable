@@ -1,8 +1,6 @@
 package restaurant
 
-import (
-	"CommonTable/internal/templates/admin/adminshared"
-)
+import "CommonTable/internal/templates/admin/adminshared"
 
 templ RestaurantsPage(restaurants []adminshared.RestaurantView) {
 	@adminshared.Layout("Restaurants", restaurantsPageContent(restaurants))
@@ -16,7 +14,6 @@ templ restaurantsPageContent(restaurants []adminshared.RestaurantView) {
 				+ New Restaurant
 			</a>
 		</div>
-
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			for _, restaurant := range restaurants {
 				<div class={ "flex flex-col min-h-[180px] gap-4 border gms-border-medium rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl p-4", templ.KV("opacity-50", restaurant.IsDeleted) }>
@@ -44,7 +41,6 @@ templ restaurantsPageContent(restaurants []adminshared.RestaurantView) {
 							}
 						</div>
 					</div>
-
 					<div class="flex gap-2 flex-wrap mt-auto">
 						<a href={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurant.ID)) } class="px-3 py-1 text-sm font-bold rounded-md shadow gms-btn-submit border gms-border-medium">
 							View

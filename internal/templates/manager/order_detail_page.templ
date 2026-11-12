@@ -15,11 +15,9 @@ templ orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOption
 				<p class="text-sm opacity-70">{ formatTableLabel(order.TableNumber) } — { order.WaiterName } — { order.CreatedAt }</p>
 			</div>
 		</div>
-
 		if errorMessage != "" {
 			<p class="my-4 p-2 rounded bg-red-100 text-red-800 text-sm">{ errorMessage }</p>
 		}
-
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 			<div class="border gms-border-medium rounded-lg p-4 h-fit">
 				<h3 class="font-semibold mb-2">Items</h3>
@@ -27,7 +25,8 @@ templ orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOption
 					for _, item := range order.Items {
 						<li class="py-2">
 							<div class="flex justify-between items-center">
-								<span>{ itoa(item.Quantity) }x { item.Name }
+								<span>
+									{ itoa(item.Quantity) }x { item.Name }
 									if item.Notes != "" {
 										<span class="block text-xs opacity-70">{ item.Notes }</span>
 									}
@@ -51,7 +50,6 @@ templ orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOption
 						<li class="py-2 italic opacity-70">No items.</li>
 					}
 				</ul>
-
 				if order.Status == "pending" {
 					<form method="POST" action={ templ.URL("/manager/orders/" + itoa(order.ID) + "/items/add") } class="flex flex-wrap gap-2 items-end pt-3 border-t gms-border-medium">
 						<label class="text-xs">
@@ -73,7 +71,6 @@ templ orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOption
 					</form>
 				}
 			</div>
-
 			<div class="flex flex-col gap-6">
 				<div class="border gms-border-medium rounded-lg p-4">
 					<h3 class="font-semibold mb-2">Payments</h3>
@@ -105,13 +102,11 @@ templ orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOption
 							<li class="py-2 italic opacity-70">No payments recorded.</li>
 						}
 					</ul>
-
 					<div class="pt-3 border-t gms-border-medium">
 						<p class="text-sm mb-2">
 							Total: €{ formatPrice(order.Total) } — Paid: €{ formatPrice(order.TotalPaid) } —
 							<span class="font-bold">Remaining: €{ formatPrice(order.Remaining) }</span>
 						</p>
-
 						if order.Status != "cancelled" {
 							if order.Remaining > 0 {
 								<form method="POST" action={ templ.URL("/manager/orders/" + itoa(order.ID) + "/payments/quick-pay") } class="mb-3">
@@ -120,7 +115,6 @@ templ orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOption
 									</button>
 								</form>
 							}
-
 							<details>
 								<summary class="text-xs opacity-70 cursor-pointer mb-2">Or record a different amount / method</summary>
 								<form method="POST" action={ templ.URL("/manager/orders/" + itoa(order.ID) + "/payments/new") } class="flex flex-wrap gap-2 items-end">
@@ -153,7 +147,6 @@ templ orderDetailContent(order OrderDetailView, menuItemOptions []MenuItemOption
 						}
 					</div>
 				</div>
-
 				<form method="POST" action={ templ.URL("/manager/orders/" + itoa(order.ID)) } class="border gms-border-medium rounded-lg p-4">
 					<h3 class="font-semibold mb-2">Edit</h3>
 					<label class="block mb-4">
