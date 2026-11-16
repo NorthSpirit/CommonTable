@@ -78,12 +78,12 @@ func main() {
 	waiterAPIHandlers := container.NewWaiterAPIHandlers(services, pool)
 	managerHandlers := container.NewManagerHandlers(services, pool)
 	staffHandlers := container.NewStaffHandlers(services)
-	extServices := container.NewExternalOrderServices(queries, pool)
 	externalServices := container.NewExternalOrderServices(queries, pool)
 	externalAPIHandlers := container.NewExternalAPIHandlers(externalServices)
 	managerHandlers.OnlineOrder = container.NewManagerOnlineOrderHandler(services, externalServices)
 	adminHandlers.OnlineOrder = container.NewAdminOnlineOrderHandler(services, externalServices)
-	managerHandlers.ApiKey = container.NewManagerApiKeyHandler(services, extServices)
+	adminHandlers.ApiKey = container.NewAdminApiKeyHandler(services, externalServices)
+	managerHandlers.ApiKey = container.NewManagerApiKeyHandler(services, externalServices)
 
 	// Hub is a "landing" page (links, APK download, API docs). It doesn't need services.
 	hubHandler := hub.NewHubHandler()
@@ -128,6 +128,7 @@ func main() {
 	// Hub and it's related routes
 	r.Get("/hub", hubHandler.Page)
 	r.Get("/download/waiter-app.apk", hub.ServeAPK("./assets/downloads/waiter_app.apk"))
+	r.Get("/download/waiter-app-windows.exe", hub.ServeDownload("./assets/downloads/waiter-app-windows.exe", "application/vnd.microsoft.portable-executable", "waiter-app-windows.exe"))
 	r.Get("/api/discover", hub.Discover)
 	r.Get("/api-docs", hubHandler.ApiDocs)
 	r.Get("/api-docs/export", hubHandler.ExportDocs)

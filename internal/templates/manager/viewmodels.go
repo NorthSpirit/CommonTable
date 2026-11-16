@@ -14,6 +14,7 @@ type ChatMessageView struct {
 	SenderName string
 	Message    string
 	SentAt     string
+	Deleted    bool
 }
 
 type RestaurantProfileView struct {

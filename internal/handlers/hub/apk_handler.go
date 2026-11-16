@@ -15,3 +15,12 @@ func ServeAPK(apkPath string) http.HandlerFunc {
 		http.ServeFile(w, r, apkPath)
 	}
 }
+
+// ServeDownload serves a file as a download with an explicit content type.
+func ServeDownload(path string, contentType string, fileName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", contentType)
+		w.Header().Set("Content-Disposition", `attachment; filename="`+fileName+`"`)
+		http.ServeFile(w, r, path)
+	}
+}

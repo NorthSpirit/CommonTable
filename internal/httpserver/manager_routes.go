@@ -61,6 +61,8 @@ func RegisterManagerRoutes(r chi.Router, h ManagerHandlers, authService *authser
 			r.Get("/chat", h.Chat.Page)
 			r.Post("/chat/send", h.Chat.Send)
 			r.Get("/chat/messages", h.Chat.Poll)
+			r.Get("/chat/deleted", h.Chat.Deleted)
+			r.Post("/chat/{messageID}/delete", h.Chat.Delete)
 
 			// Restaurant profile: view/edit form, then save
 			r.Get("/profile", h.Profile.Edit)

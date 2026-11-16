@@ -42,8 +42,9 @@ func (h *ChatHandler) Page(w http.ResponseWriter, r *http.Request) {
 		views = append(views, managertmpl.ChatMessageView{
 			ID:         m.ID,
 			SenderName: m.SenderName,
-			Message:    m.Message,
+			Message:    chatservices.DisplayMessage(m.Message, m.DeletedAt, m.DeleteReason),
 			SentAt:     helpers.FormatSentAt(m.SentAt),
+			Deleted:    m.DeletedAt.Valid,
 		})
 	}
 
@@ -81,6 +82,7 @@ type chatMessageJSON struct {
 	SenderName string `json:"sender_name"`
 	Message    string `json:"message"`
 	SentAt     string `json:"sent_at"`
+	Deleted    bool   `json:"deleted"`
 }
 
 // Poll handles GET /manager/chat/messages?after={id}
@@ -100,8 +102,9 @@ func (h *ChatHandler) Poll(w http.ResponseWriter, r *http.Request) {
 		out = append(out, chatMessageJSON{
 			ID:         m.ID,
 			SenderName: m.SenderName,
-			Message:    m.Message,
+			Message:    chatservices.DisplayMessage(m.Message, m.DeletedAt, m.DeleteReason),
 			SentAt:     helpers.FormatSentAt(m.SentAt),
+			Deleted:    m.DeletedAt.Valid,
 		})
 	}
 

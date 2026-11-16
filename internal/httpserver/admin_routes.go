@@ -24,6 +24,7 @@ type AdminHandlers struct {
 	ChangePassword *admin.ChangePasswordHandler
 	Export         *admin.ExportHandler
 	OnlineOrder    *admin.OnlineOrderHandler
+	ApiKey         *admin.ApiKeyHandler
 }
 
 func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservices.AdminService) {
@@ -47,6 +48,8 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Get("/{id}", h.Restaurant.Detail)
 				r.Get("/{id}/chat", h.Chat.Page)
 				r.Get("/{id}/chat/messages", h.Chat.Poll)
+				r.Get("/{id}/chat/deleted", h.Chat.Deleted)
+				r.Post("/{id}/chat/{messageID}/delete", h.Chat.Delete)
 				r.Get("/{id}/table-status", h.TableStatus.Page)
 				r.Get("/{id}/export", h.Export.Export)
 				r.Get("/{id}/edit", h.Restaurant.EditForm)
@@ -100,6 +103,12 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 					r.Post("/online/{onlineOrderID}/approve", h.OnlineOrder.Approve)
 					r.Post("/online/{onlineOrderID}/reject", h.OnlineOrder.Reject)
 				})
+
+				r.Route("/{id}/api-keys", func(r chi.Router) {
+					r.Get("/", h.ApiKey.List)
+					r.Post("/", h.ApiKey.Create)
+					r.Post("/{keyID}/revoke", h.ApiKey.Revoke)
+				})
 			})
 
 			r.Route("/ingredients", func(r chi.Router) {
@@ -131,6 +140,7 @@ func RegisterAdminRoutes(r chi.Router, h AdminHandlers, adminService *adminservi
 				r.Post("/{id}/delete", h.Table.Delete)
 				r.Post("/{id}/restore", h.Table.Restore)
 			})
+
 		})
 	})
 }

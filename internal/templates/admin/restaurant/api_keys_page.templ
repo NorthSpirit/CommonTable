@@ -1,0 +1,91 @@
+package restaurant
+
+import "CommonTable/internal/templates/admin/adminshared"
+
+type ApiKeyView struct {
+	ID        int32
+	Label     string
+	Prefix    string
+	CreatedAt string
+	Active    bool
+}
+
+templ ApiKeysPage(restaurantID int32, restaurantName string, message string, errorMessage string, newKey string, keys []ApiKeyView) {
+	@adminshared.Layout(restaurantName+" - API Keys", apiKeysPageContent(restaurantID, restaurantName, message, errorMessage, newKey, keys))
+}
+
+templ apiKeysPageContent(restaurantID int32, restaurantName string, message string, errorMessage string, newKey string, keys []ApiKeyView) {
+	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
+		<div class="flex items-center gap-4 mb-6 border-b-2 gms-border-medium pb-4">
+			@adminshared.BackLink("/admin/restaurants/"+adminshared.Itoa(restaurantID), "Back")
+			<h2 class="text-2xl font-bold gms-main-text">API Keys: { restaurantName }</h2>
+		</div>
+
+		<p class="text-sm mb-4">
+			A website or app needs a key to send online orders to this restaurant. See the
+			<a href="/api-docs/external" class="underline">External Orders API docs</a>.
+		</p>
+
+		if errorMessage != "" {
+			<p class="mb-4 p-2 rounded bg-red-100 text-red-800 text-sm">{ errorMessage }</p>
+		}
+		if message != "" {
+			<p class="mb-4 p-2 rounded bg-green-100 text-green-800 text-sm">{ message }</p>
+		}
+
+		if newKey != "" {
+			<div class="mb-6 p-4 rounded-lg border-2 gms-border-medium">
+				<p class="font-bold mb-1">Copy this key now.</p>
+				<p class="text-sm mb-2">It is shown only once. If it is lost, revoke it and create a new one.</p>
+				<code class="block p-2 rounded gms-dark-bg gms-light-text text-sm break-all select-all">{ newKey }</code>
+			</div>
+		}
+
+		<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/api-keys") } class="flex flex-col sm:flex-row gap-2 mb-6">
+			<input type="text" name="label" maxlength="255" required placeholder="Label, for example: Website" class="flex-1 p-2 border gms-border-medium rounded-md gms-content-bg gms-main-text"/>
+			<input type="submit" value="Create key" class="px-4 py-2 font-bold rounded-lg shadow-md cursor-pointer gms-btn-submit border gms-border-medium"/>
+		</form>
+
+		<div class="border gms-border-medium rounded-lg overflow-hidden">
+			<table class="w-full text-sm whitespace-nowrap">
+				<thead>
+					<tr class="gms-dark-bg gms-light-text">
+						<th class="text-left p-2">Label</th>
+						<th class="text-left p-2">Key starts with</th>
+						<th class="text-left p-2">Created</th>
+						<th class="text-left p-2">Status</th>
+						<th class="p-2 w-px"></th>
+					</tr>
+				</thead>
+				<tbody class="divide-y gms-border-medium">
+					for _, k := range keys {
+						<tr>
+							<td class="p-2">{ k.Label }</td>
+							<td class="p-2"><code>{ k.Prefix }&hellip;</code></td>
+							<td class="p-2">{ k.CreatedAt }</td>
+							<td class="p-2 uppercase text-xs font-bold">
+								if k.Active {
+									Active
+								} else {
+									Revoked
+								}
+							</td>
+							<td class="px-4 py-[5px]">
+								if k.Active {
+									<form method="POST" action={ templ.URL("/admin/restaurants/" + adminshared.Itoa(restaurantID) + "/api-keys/" + adminshared.Itoa(k.ID) + "/revoke") }>
+										<input type="submit" value="Revoke" class="block w-32 text-center py-1 text-xs font-bold rounded-md shadow cursor-pointer gms-btn-clear border gms-border-medium"/>
+									</form>
+								}
+							</td>
+						</tr>
+					}
+					if len(keys) == 0 {
+						<tr>
+							<td colspan="5" class="p-4 text-center italic opacity-70">No API keys yet.</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</main>
+}

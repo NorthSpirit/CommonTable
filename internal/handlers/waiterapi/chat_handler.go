@@ -42,7 +42,7 @@ func (h *ChatHandler) List(w http.ResponseWriter, r *http.Request) {
 		out = append(out, chatMessageJSON{
 			ID:         m.ID,
 			SenderName: m.SenderName,
-			Message:    m.Message,
+			Message:    chatservices.DisplayMessage(m.Message, m.DeletedAt, m.DeleteReason),
 			SentAt:     helpers.FormatSentAt(m.SentAt),
 		})
 	}
@@ -71,7 +71,7 @@ func (h *ChatHandler) Poll(w http.ResponseWriter, r *http.Request) {
 		out = append(out, chatMessageJSON{
 			ID:         m.ID,
 			SenderName: m.SenderName,
-			Message:    m.Message,
+			Message:    chatservices.DisplayMessage(m.Message, m.DeletedAt, m.DeleteReason),
 			SentAt:     helpers.FormatSentAt(m.SentAt),
 		})
 	}

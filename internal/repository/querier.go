@@ -87,6 +87,7 @@ type Querier interface {
 	ListAllergensForRestaurant(ctx context.Context, restaurantID int32) ([]Allergen, error)
 	ListApiKeysByRestaurant(ctx context.Context, restaurantID int32) ([]RestaurantApiKey, error)
 	ListAvailableFoodItemsByRestaurant(ctx context.Context, restaurantID int32) ([]ListAvailableFoodItemsByRestaurantRow, error)
+	ListDeletedMessagesByRestaurant(ctx context.Context, restaurantID int32) ([]ListDeletedMessagesByRestaurantRow, error)
 	ListEmployeesByRestaurant(ctx context.Context, restaurantID int32) ([]Employee, error)
 	ListFoodIngredients(ctx context.Context) ([]FoodIngredient, error)
 	ListFoodItemsByRestaurant(ctx context.Context, restaurantID int32) ([]ListFoodItemsByRestaurantRow, error)
@@ -144,6 +145,7 @@ type Querier interface {
 	SetFoodItemInstructions(ctx context.Context, arg SetFoodItemInstructionsParams) error
 	SetPaymentTransactionID(ctx context.Context, arg SetPaymentTransactionIDParams) error
 	SetTableStatus(ctx context.Context, arg SetTableStatusParams) error
+	SoftDeleteChatMessage(ctx context.Context, arg SoftDeleteChatMessageParams) (SoftDeleteChatMessageRow, error)
 	SoftDeleteFoodItem(ctx context.Context, id int32) error
 	SoftDeleteRestaurant(ctx context.Context, id int32) error
 	SoftDeleteTable(ctx context.Context, id int32) error

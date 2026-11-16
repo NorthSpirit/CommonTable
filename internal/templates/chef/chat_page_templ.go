@@ -73,7 +73,7 @@ func chatPageContent(messages []ChatMessageView) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2 mb-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-deleted-url=\"/chef/chat/deleted\" class=\"gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2 mb-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -28,6 +28,7 @@ func RegisterStaffRoutes(r chi.Router, h StaffHandlers, authService *authservice
 			r.Get("/chat", h.Chat.Page)
 			r.Post("/chat/send", h.Chat.Send)
 			r.Get("/chat/messages", h.Chat.Poll)
+			r.Get("/chat/deleted", h.Chat.Deleted)
 		})
 	})
 }

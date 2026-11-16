@@ -17,7 +17,7 @@ templ chatPageContent(messages []ChatMessageView) {
 	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
 		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">Restaurant Chat</h2>
 		<div class="max-w-3xl mx-auto w-full">
-			<div id="chat-messages" data-last-id={ lastMessageID(messages) } data-poll-url="/staff/chat/messages" class="gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2 mb-4">
+			<div id="chat-messages" data-last-id={ lastMessageID(messages) } data-poll-url="/staff/chat/messages" data-deleted-url="/staff/chat/deleted" class="gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2 mb-4">
 				for _, m := range messages {
 					<div class="text-sm gms-light-text" data-message-id={ strconv.Itoa(int(m.ID)) }>
 						<span class="font-bold">{ m.SenderName }</span>

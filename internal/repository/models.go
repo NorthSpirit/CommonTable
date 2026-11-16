@@ -244,6 +244,9 @@ type ChatMessage struct {
 	EmployeeID   int32            `json:"employee_id"`
 	Message      string           `json:"message"`
 	SentAt       pgtype.Timestamp `json:"sent_at"`
+	DeletedAt    pgtype.Timestamp `json:"deleted_at"`
+	DeletedBy    pgtype.Text      `json:"deleted_by"`
+	DeleteReason pgtype.Text      `json:"delete_reason"`
 }
 
 type Employee struct {

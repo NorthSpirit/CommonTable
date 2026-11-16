@@ -80,7 +80,7 @@ func chatPageContent(messages []ChatMessageView) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-poll-url=\"/staff/chat/messages\" class=\"gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2 mb-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-poll-url=\"/staff/chat/messages\" data-deleted-url=\"/staff/chat/deleted\" class=\"gms-dark-bg rounded-lg p-4 h-96 overflow-y-auto space-y-2 mb-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -14,7 +14,7 @@ import (
 const createChatMessage = `-- name: CreateChatMessage :one
 INSERT INTO chat_messages (restaurant_id, employee_id, message, sent_at)
 VALUES ($1, $2, $3, $4)
-RETURNING id, restaurant_id, employee_id, message, sent_at
+RETURNING id, restaurant_id, employee_id, message, sent_at, deleted_at, deleted_by, delete_reason
 `
 
 type CreateChatMessageParams struct {
@@ -38,6 +38,9 @@ func (q *Queries) CreateChatMessage(ctx context.Context, arg CreateChatMessagePa
 		&i.EmployeeID,
 		&i.Message,
 		&i.SentAt,
+		&i.DeletedAt,
+		&i.DeletedBy,
+		&i.DeleteReason,
 	)
 	return i, err
 }
@@ -53,7 +56,7 @@ func (q *Queries) DeleteChatMessage(ctx context.Context, id int32) error {
 }
 
 const getChatMessage = `-- name: GetChatMessage :one
-SELECT id, restaurant_id, employee_id, message, sent_at FROM chat_messages
+SELECT id, restaurant_id, employee_id, message, sent_at, deleted_at, deleted_by, delete_reason FROM chat_messages
 WHERE id = $1
 `
 
@@ -66,12 +69,47 @@ func (q *Queries) GetChatMessage(ctx context.Context, id int32) (ChatMessage, er
 		&i.EmployeeID,
 		&i.Message,
 		&i.SentAt,
+		&i.DeletedAt,
+		&i.DeletedBy,
+		&i.DeleteReason,
 	)
 	return i, err
 }
 
+const listDeletedMessagesByRestaurant = `-- name: ListDeletedMessagesByRestaurant :many
+SELECT cm.id, cm.deleted_by, cm.delete_reason
+FROM chat_messages cm
+WHERE cm.restaurant_id = $1 AND cm.deleted_at IS NOT NULL
+`
+
+type ListDeletedMessagesByRestaurantRow struct {
+	ID           int32       `json:"id"`
+	DeletedBy    pgtype.Text `json:"deleted_by"`
+	DeleteReason pgtype.Text `json:"delete_reason"`
+}
+
+func (q *Queries) ListDeletedMessagesByRestaurant(ctx context.Context, restaurantID int32) ([]ListDeletedMessagesByRestaurantRow, error) {
+	rows, err := q.db.Query(ctx, listDeletedMessagesByRestaurant, restaurantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListDeletedMessagesByRestaurantRow
+	for rows.Next() {
+		var i ListDeletedMessagesByRestaurantRow
+		if err := rows.Scan(&i.ID, &i.DeletedBy, &i.DeleteReason); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listMessagesByEmployee = `-- name: ListMessagesByEmployee :many
-SELECT id, restaurant_id, employee_id, message, sent_at FROM chat_messages
+SELECT id, restaurant_id, employee_id, message, sent_at, deleted_at, deleted_by, delete_reason FROM chat_messages
 WHERE employee_id = $1
 ORDER BY sent_at DESC
 `
@@ -91,6 +129,9 @@ func (q *Queries) ListMessagesByEmployee(ctx context.Context, employeeID int32) 
 			&i.EmployeeID,
 			&i.Message,
 			&i.SentAt,
+			&i.DeletedAt,
+			&i.DeletedBy,
+			&i.DeleteReason,
 		); err != nil {
 			return nil, err
 		}
@@ -103,7 +144,7 @@ func (q *Queries) ListMessagesByEmployee(ctx context.Context, employeeID int32) 
 }
 
 const listMessagesByRestaurant = `-- name: ListMessagesByRestaurant :many
-SELECT id, restaurant_id, employee_id, message, sent_at FROM chat_messages
+SELECT id, restaurant_id, employee_id, message, sent_at, deleted_at, deleted_by, delete_reason FROM chat_messages
 WHERE restaurant_id = $1
 ORDER BY sent_at
 `
@@ -123,6 +164,9 @@ func (q *Queries) ListMessagesByRestaurant(ctx context.Context, restaurantID int
 			&i.EmployeeID,
 			&i.Message,
 			&i.SentAt,
+			&i.DeletedAt,
+			&i.DeletedBy,
+			&i.DeleteReason,
 		); err != nil {
 			return nil, err
 		}
@@ -135,7 +179,13 @@ func (q *Queries) ListMessagesByRestaurant(ctx context.Context, restaurantID int
 }
 
 const listMessagesByRestaurantAfterID = `-- name: ListMessagesByRestaurantAfterID :many
-SELECT cm.id, cm.message, cm.sent_at, e.name AS sender_name
+SELECT cm.id,
+       CASE WHEN cm.deleted_at IS NULL THEN cm.message ELSE ''::text END::text AS message,
+       cm.sent_at,
+       e.name AS sender_name,
+       cm.deleted_at,
+       cm.deleted_by,
+       cm.delete_reason
 FROM chat_messages cm
          JOIN employee e ON e.id = cm.employee_id
 WHERE cm.restaurant_id = $1 AND cm.id > $2
@@ -148,10 +198,13 @@ type ListMessagesByRestaurantAfterIDParams struct {
 }
 
 type ListMessagesByRestaurantAfterIDRow struct {
-	ID         int32            `json:"id"`
-	Message    string           `json:"message"`
-	SentAt     pgtype.Timestamp `json:"sent_at"`
-	SenderName string           `json:"sender_name"`
+	ID           int32            `json:"id"`
+	Message      string           `json:"message"`
+	SentAt       pgtype.Timestamp `json:"sent_at"`
+	SenderName   string           `json:"sender_name"`
+	DeletedAt    pgtype.Timestamp `json:"deleted_at"`
+	DeletedBy    pgtype.Text      `json:"deleted_by"`
+	DeleteReason pgtype.Text      `json:"delete_reason"`
 }
 
 func (q *Queries) ListMessagesByRestaurantAfterID(ctx context.Context, arg ListMessagesByRestaurantAfterIDParams) ([]ListMessagesByRestaurantAfterIDRow, error) {
@@ -168,6 +221,9 @@ func (q *Queries) ListMessagesByRestaurantAfterID(ctx context.Context, arg ListM
 			&i.Message,
 			&i.SentAt,
 			&i.SenderName,
+			&i.DeletedAt,
+			&i.DeletedBy,
+			&i.DeleteReason,
 		); err != nil {
 			return nil, err
 		}
@@ -180,7 +236,13 @@ func (q *Queries) ListMessagesByRestaurantAfterID(ctx context.Context, arg ListM
 }
 
 const listMessagesByRestaurantWithSender = `-- name: ListMessagesByRestaurantWithSender :many
-SELECT cm.id, cm.message, cm.sent_at, e.name AS sender_name
+SELECT cm.id,
+       CASE WHEN cm.deleted_at IS NULL THEN cm.message ELSE ''::text END::text AS message,
+       cm.sent_at,
+       e.name AS sender_name,
+       cm.deleted_at,
+       cm.deleted_by,
+       cm.delete_reason
 FROM chat_messages cm
          JOIN employee e ON e.id = cm.employee_id
 WHERE cm.restaurant_id = $1
@@ -188,10 +250,13 @@ ORDER BY cm.sent_at, cm.id
 `
 
 type ListMessagesByRestaurantWithSenderRow struct {
-	ID         int32            `json:"id"`
-	Message    string           `json:"message"`
-	SentAt     pgtype.Timestamp `json:"sent_at"`
-	SenderName string           `json:"sender_name"`
+	ID           int32            `json:"id"`
+	Message      string           `json:"message"`
+	SentAt       pgtype.Timestamp `json:"sent_at"`
+	SenderName   string           `json:"sender_name"`
+	DeletedAt    pgtype.Timestamp `json:"deleted_at"`
+	DeletedBy    pgtype.Text      `json:"deleted_by"`
+	DeleteReason pgtype.Text      `json:"delete_reason"`
 }
 
 func (q *Queries) ListMessagesByRestaurantWithSender(ctx context.Context, restaurantID int32) ([]ListMessagesByRestaurantWithSenderRow, error) {
@@ -208,6 +273,9 @@ func (q *Queries) ListMessagesByRestaurantWithSender(ctx context.Context, restau
 			&i.Message,
 			&i.SentAt,
 			&i.SenderName,
+			&i.DeletedAt,
+			&i.DeletedBy,
+			&i.DeleteReason,
 		); err != nil {
 			return nil, err
 		}
@@ -217,4 +285,50 @@ func (q *Queries) ListMessagesByRestaurantWithSender(ctx context.Context, restau
 		return nil, err
 	}
 	return items, nil
+}
+
+const softDeleteChatMessage = `-- name: SoftDeleteChatMessage :one
+UPDATE chat_messages
+SET deleted_at    = now(),
+    deleted_by    = $3,
+    delete_reason = $4
+WHERE id = $1 AND restaurant_id = $2 AND deleted_at IS NULL
+RETURNING id, restaurant_id, employee_id, sent_at, deleted_at, deleted_by, delete_reason
+`
+
+type SoftDeleteChatMessageParams struct {
+	ID           int32       `json:"id"`
+	RestaurantID int32       `json:"restaurant_id"`
+	DeletedBy    pgtype.Text `json:"deleted_by"`
+	DeleteReason pgtype.Text `json:"delete_reason"`
+}
+
+type SoftDeleteChatMessageRow struct {
+	ID           int32            `json:"id"`
+	RestaurantID int32            `json:"restaurant_id"`
+	EmployeeID   int32            `json:"employee_id"`
+	SentAt       pgtype.Timestamp `json:"sent_at"`
+	DeletedAt    pgtype.Timestamp `json:"deleted_at"`
+	DeletedBy    pgtype.Text      `json:"deleted_by"`
+	DeleteReason pgtype.Text      `json:"delete_reason"`
+}
+
+func (q *Queries) SoftDeleteChatMessage(ctx context.Context, arg SoftDeleteChatMessageParams) (SoftDeleteChatMessageRow, error) {
+	row := q.db.QueryRow(ctx, softDeleteChatMessage,
+		arg.ID,
+		arg.RestaurantID,
+		arg.DeletedBy,
+		arg.DeleteReason,
+	)
+	var i SoftDeleteChatMessageRow
+	err := row.Scan(
+		&i.ID,
+		&i.RestaurantID,
+		&i.EmployeeID,
+		&i.SentAt,
+		&i.DeletedAt,
+		&i.DeletedBy,
+		&i.DeleteReason,
+	)
+	return i, err
 }

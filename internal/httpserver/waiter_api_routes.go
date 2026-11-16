@@ -33,6 +33,7 @@ func RegisterWaiterAPIRoutes(r chi.Router, h WaiterAPIHandlers, authService *aut
 			r.Patch("/quick-items/{itemID}", h.QuickItems.Reorder)
 			r.Get("/chat/messages", h.Chat.List)
 			r.Get("/chat/messages/after/{id}", h.Chat.Poll)
+			r.Get("/chat/deleted", h.Chat.Deleted)
 			r.Post("/chat/send", h.Chat.Send)
 			r.Get("/items/{itemID}", h.Menu.ItemDetail)
 			r.Post("/orders", h.Order.Create)
