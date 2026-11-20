@@ -1,9 +1,11 @@
 package main
 
 import (
+	"CommonTable/internal/setup"
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	"CommonTable/internal/config"
 	"CommonTable/internal/container"
@@ -23,6 +25,9 @@ import (
 const httpPort = ":41241"
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "setup" {
+		os.Exit(setup.Run(os.Args[2:]))
+	}
 	// Sets logging up by creating the file, with the date of the server start as a name (and also printing to the screen)
 	logWriter, logFile, err := logging.Setup("./logs")
 	if err != nil {

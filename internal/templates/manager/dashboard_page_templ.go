@@ -80,7 +80,7 @@ func dashboardContent(restaurantName string, stats DashboardStats) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " Manager</h2><div class=\"w-full lg:w-[65%] mx-auto\"><a href=\"/manager/orders\" class=\"block gms-dark-bg gms-light-text rounded-lg shadow-lg p-6 mb-8 border gms-border-medium transition-all duration-300 hover:shadow-xl\"><div class=\"flex items-center justify-between\"><div><p class=\"text-sm uppercase tracking-wide gms-light-text opacity-80\">Orders</p><p class=\"text-4xl font-bold mt-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " Manager</h2><div class=\"w-full lg:w-[65%] mx-auto\"><a href=\"/manager/orders\" class=\"block gms-dark-bg gms-light-text gms-dashboard-highlight rounded-lg shadow-lg p-6 mb-8 border gms-border-medium transition-all duration-300\"><div class=\"flex items-center justify-between\"><div><p class=\"text-sm uppercase tracking-wide gms-light-text font-bold\">Orders</p><p class=\"text-4xl font-bold mt-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -17,10 +17,10 @@ templ dashboardContent(restaurantName string, stats DashboardStats) {
 	<main class="flex-1 px-6 py-4 gms-content-bg gms-main-text">
 		<h2 class="text-2xl font-bold gms-main-text mb-6 border-b-2 gms-border-medium pb-4">Welcome, { restaurantName } Manager</h2>
 		<div class="w-full lg:w-[65%] mx-auto">
-			<a href="/manager/orders" class="block gms-dark-bg gms-light-text rounded-lg shadow-lg p-6 mb-8 border gms-border-medium transition-all duration-300 hover:shadow-xl">
+			<a href="/manager/orders" class="block gms-dark-bg gms-light-text gms-dashboard-highlight rounded-lg shadow-lg p-6 mb-8 border gms-border-medium transition-all duration-300">
 				<div class="flex items-center justify-between">
 					<div>
-						<p class="text-sm uppercase tracking-wide gms-light-text opacity-80">Orders</p>
+						<p class="text-sm uppercase tracking-wide gms-light-text font-bold">Orders</p>
 						<p class="text-4xl font-bold mt-1">{ formatCount(stats.Orders) }</p>
 					</div>
 					<span class="text-2xl gms-light-text opacity-80">→</span>
